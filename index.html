@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -11,7 +11,7 @@
     --accent:#0F2D56; --pill:#eef4ff; --pill-border:#cfe1ff; --ok:#16a34a;
     --phone-w:430px; --phone-h:800px; --footer-h:76px; --status-h:46px;
     --card:#fff; --radius:16px; --shadow:0 14px 38px rgba(0,0,0,.08);
-    --slide-ms:320ms; --pager-gap:124px; /* increased gap to keep content away from dots/nav */
+    --slide-ms:320ms; --pager-gap:156px; /* more gap so content never overlaps nav/dots */
   }
   *{box-sizing:border-box}
   html,body{
@@ -38,7 +38,7 @@
   }
   .head{padding:10px 12px 0}
   .h1{font-size:20px;font-weight:800;color:var(--accent)}
-  .p{font-size:13px;color:var(--muted);line-height:1.5;margin-top:4px}
+  .p{font-size:13px;color:#667085;line-height:1.5;margin-top:4px}
   .hero{
     background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;
     box-shadow:var(--shadow);display:grid;place-items:center;min-height:300px
@@ -68,7 +68,12 @@
     box-shadow:var(--shadow);padding:14px
   }
   .row{display:flex;gap:10px}
-  .row.actions{margin-bottom:16px;} /* extra spacing below the action buttons */
+  .row.actions{margin-bottom:16px;}
+  .row.actions .btn{ /* make AI buttons more visible */
+    border-width:2px;
+    box-shadow:0 6px 14px rgba(15,45,86,.12), 0 2px 6px rgba(15,45,86,.08);
+    letter-spacing:.2px;
+  }
   .col{flex:1}
   .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .chip{
@@ -99,13 +104,13 @@
   .preview-mail .subj{font-weight:800;margin-bottom:6px}
   .preview-mail .body{white-space:pre-wrap}
 
-  /* Pager & nav (only for steps, not intro) */
+  /* Pager & nav (move very close to phone icons) */
   .nav{
-    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 56px);
+    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 6px);
     display:flex;gap:8px;justify-content:space-between;padding:0 14px
   }
   .pager{
-    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 20px);
+    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 2px);
     display:flex;justify-content:center;gap:6px
   }
   .dot{width:8px;height:8px;border-radius:50%;background:#c9d2e4;opacity:.8}
@@ -121,7 +126,7 @@
   }
   .sheet-wrap.show .sheet{transform:translateY(0)}
   .sheet .title{font-weight:800;color:var(--accent);margin-bottom:6px}
-  .sheet .text{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+  .sheet .text{font-size:13px;color:#667085;line-height:1.5;margin-bottom:12px}
 
   /* Toggle */
   .toggle{display:flex;align-items:center;gap:10px}
@@ -131,7 +136,7 @@
   .knob{
     position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s ease
   }
-  .switch.active{background:#16a34a;border-color:#16a34a} /* green when active */
+  .switch.active{background:#16a34a;border-color:#16a34a}
   .switch.active .knob{left:22px}
 
   /* Tray (unchanged) */
@@ -265,8 +270,8 @@
             <div class="scroll">
               <div class="card">
                 <div class="row actions">
-                  <button class="btn ghost" id="btnGenerate">Generate with AI</button>
-                  <button class="btn" id="btnRegenerate">Regenerate</button>
+                  <button class="btn primary" id="btnGenerate">Generate with AI</button>
+                  <button class="btn ghost" id="btnRegenerate">Regenerate</button>
                 </div>
                 <div class="label">Company Overview</div>
                 <textarea id="overview" placeholder="Here’s who we serve, what we do, and the outcomes we deliver."></textarea>
@@ -357,12 +362,11 @@
               <div class="card">
                 <div class="row">
                   <button class="btn ghost full" id="seeUpgrade">See upgrade options</button>
-                  <button class="btn full" id="skipUpgrade">Skip for now</button>
                 </div>
               </div>
               <div class="card">
                 <div class="toggle">
-                  <div class="switch active" id="activateSwitch"><div class="knob"></div></div>
+                  <div class="switch" id="activateSwitch"><div class="knob"></div></div>
                   <div class="label">Activate this journey</div>
                 </div>
               </div>
@@ -637,14 +641,26 @@ function renderEmail(){
   const addr = [
     (acct.addr1.value||'').trim(),
     (acct.addr2.value||'').trim()
-  ].filter(Boolean).join(', ');
+  ].filter(Boolean).join(' | ');
   const city = (acct.city.value||'').trim();
   const state = (acct.state.value||'').trim();
   const zip = (acct.zip.value||'').trim();
 
-  const footerName   = acct_name || '[account_name]';
-  const footerLine1  = [acct_phone, acct_email, acct_site].filter(Boolean).join(' | ') || '[account_phone] | [account_email] | [account_website]';
-  const footerLine2  = [addr, city, state, zip].filter(Boolean).join(' | ') || '[account_address] | [account_city] | [account_state] | [account_zip]';
+  /* Compact email-signature footer (headshot fixed circle, top-aligned) */
+  const footerHTML = `
+<div style="white-space:normal;display:flex;align-items:flex-start;gap:12px;margin-top:10px;">
+  <div style="flex:0 0 auto;display:flex;align-items:flex-start;">
+    <div style="width:64px;height:64px;border-radius:50%;background:#dfe9ff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#667085;">headshot</div>
+  </div>
+  <div style="flex:1 1 auto;line-height:1.2;">
+    <div style="font-weight:700;margin:0;">[owner_firstname] [owner_lastname]</div>
+    <div style="margin:0;">${acct_name || '[account_name]'}</div>
+    <div style="margin:0;">${acct_site || '[account_website]'}</div>
+    <div style="margin:4px 0 0 0;">[owner_phone]</div>
+    <div style="margin:0;">[owner_email]</div>
+    <div style="margin:4px 0 0 0;">${[addr, city, state, zip].filter(Boolean).join(' | ') || '[account_address] | [account_city] | [account_state] | [account_zip]'}</div>
+  </div>
+</div>`.trim();
 
   const body = `
 ${logo}
@@ -670,14 +686,10 @@ ${organization_values || '[account.organization_values]'}
 
 Looking forward to staying connected.
 
-<div style="text-align:center;margin-top:8px;">
-  ${footerName}<br>
-  ${footerLine1}<br>
-  ${footerLine2}
-</div>
+${footerHTML}
   `.trim();
 
-  emailRendered.innerHTML = body; // render actual HTML (logo image, centered footer, etc.)
+  emailRendered.innerHTML = body; // render HTML (logo + refined signature footer)
 }
 renderEmail();
 
@@ -718,7 +730,6 @@ document.getElementById('upgradeNow').addEventListener('click', ()=>{ toggleShee
 const activateSwitch = document.getElementById('activateSwitch');
 activateSwitch.addEventListener('click', ()=>activateSwitch.classList.toggle('active'));
 document.getElementById('seeUpgrade').addEventListener('click', ()=>alert('Upgrade options (mock)'));
-document.getElementById('skipUpgrade').addEventListener('click', ()=>alert('You can upgrade anytime.'));
 document.getElementById('finishBtn').addEventListener('click', ()=>{
   const active = activateSwitch.classList.contains('active');
   alert(`Saved! (Mock)\nJourney ${active ? 'activated' : 'saved as draft'}.`);

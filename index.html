@@ -104,6 +104,18 @@
   .preview-mail .subj{font-weight:800;margin-bottom:6px}
   .preview-mail .body{white-space:pre-wrap}
 
+  /* Fake AI loader */
+  .ai-status{
+    display:none;align-items:center;gap:8px;margin-bottom:10px;padding:8px 10px;
+    border:1px dashed var(--pill-border);background:#f8fbff;border-radius:10px;font-size:12px;color:#43506a
+  }
+  .ai-status.show{display:flex}
+  .spinner{
+    width:16px;height:16px;border-radius:50%;
+    border:2px solid #cfe1ff;border-top-color:#0F2D56;animation:spin 1s linear infinite
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
   /* Pager & nav (move very close to phone icons) */
   .nav{
     position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 6px);
@@ -269,6 +281,9 @@
             </div>
             <div class="scroll">
               <div class="card">
+                <!-- Fake AI status row -->
+                <div id="aiStatus" class="ai-status"><div class="spinner"></div><div id="aiStatusText">Generating your copy…</div></div>
+
                 <div class="row actions">
                   <button class="btn primary" id="btnGenerate">Generate with AI</button>
                   <button class="btn ghost" id="btnRegenerate">Regenerate</button>
@@ -296,14 +311,14 @@
             </div>
             <div class="scroll">
               <div class="card">
-                <div class="subj" id="emailSubj">Subject: Great connecting with you!</div>
+                <div class="subj" id="emailSubj">Subject: Great connecting with you!</div><br>
                 <div class="preview-mail">
                   <div class="body" id="emailRendered">
                     <!-- filled by JS with shortcodes replaced -->
                   </div>
                 </div>
-                <div class="gap12"></div>
-                <div class="mini">Shortcodes are already rendered using your company details and the AI text you provided.</div>
+                <div class="gap12"></div><br>
+                <div class="mini">The contents in this email are dynamically rendered using premade shortcodes — including your company details, contact info, and ai-generated text.</div>
               </div>
             </div>
           </section>
@@ -323,8 +338,8 @@
                   <div class="label" id="ctaLabel">Destination</div>
                   <input type="url" id="ctaUrl" placeholder="https://your-booking-link.com" />
                   <div class="gap8"></div>
-                  <div class="label">Button label (optional)</div>
-                  <input type="text" id="ctaText" placeholder="Book a meeting" />
+                  <div class="label">Button label</div>
+                  <input type="text" id="ctaText" placeholder="Book a Meeting, Download PDF, Click Here" />
                 </div>
               </div>
             </div>
@@ -551,6 +566,8 @@ personalities.forEach(p=>{
     document.querySelectorAll('#personalityChips .chip').forEach(c=>c.classList.remove('active'));
     el.classList.add('active');
     tonePreview.textContent = p.preview;
+    // reset variant index when changing personality
+    currentVariantIndex = -1;
   };
   chipHost.appendChild(el);
 });
@@ -564,65 +581,134 @@ const O = {
 ['overview','mission','values','diffprop'].forEach(id=>{
   document.getElementById(id).addEventListener('input', renderEmail);
 });
+
+/* Base voice (seed for variants) */
 function voice(style){
   switch(style){
     case 'bold':
       return {
-        overview:`I help busy professionals move faster by turning follow-ups into real conversations and closed deals.`,
-        mission:`I’m here to shorten the path from first contact to “yes”—with zero fluff.`,
-        values:`Ownership, Speed, Clarity, Accountability`,
-        diff:`I give you a feed that tells you exactly what to do next—no guesswork.`
+        overview: `I help busy professionals move faster by transforming follow-ups into real conversations that actually close deals. My approach cuts the noise and focuses on what drives momentum.`,
+        mission: `My mission is to shorten the path from first contact to “yes” by keeping every step direct, purposeful, and results-driven.`,
+        values: `I believe in ownership, speed, clarity, and accountability—because progress only happens when we take action with focus.`,
+        diff: `I don’t just track your pipeline—I give you a clear feed that shows exactly what to do next, removing all guesswork and hesitation.`
       };
     case 'warm':
       return {
-        overview:`I support small teams with simple tools that keep relationships warm, visible, and responsive.`,
-        mission:`I want every client to feel seen, supported, and remembered.`,
-        values:`Empathy, Reliability, Transparency, Care`,
-        diff:`I write automations that sound like you, not a robot.`
+        overview: `I support small teams with simple, human tools that make every relationship feel close and cared for, even as you grow.`,
+        mission: `I want every client and partner to feel seen, supported, and remembered—never just another name on a list.`,
+        values: `I value empathy, reliability, transparency, and care. These principles shape how I build and maintain lasting connections.`,
+        diff: `I design automations that sound like you and speak from the heart—so your messages feel real, not robotic.`
       };
     case 'analytical':
       return {
-        overview:`I streamline your pipeline with measurable workflows that reduce cycle time and raise conversion.`,
-        mission:`I operationalize best practices with data-driven iteration.`,
-        values:`Rigor, Precision, Iteration, Results`,
-        diff:`I focus on actionable tasks and milestone tracking you can quantify.`
+        overview: `I streamline your entire pipeline with data-backed workflows that reduce cycle time, remove friction, and raise conversion.`,
+        mission: `My mission is to operationalize your best practices through measurable systems that constantly improve through iteration.`,
+        values: `I believe in rigor, precision, iteration, and results—because consistent improvement starts with clear measurement.`,
+        diff: `I focus on actionable insights, milestone tracking, and metrics you can quantify, so progress is always visible and provable.`
       };
     case 'playful':
       return {
-        overview:`I turn follow-ups into quick wins with swipe-friendly tasks that keep your momentum high.`,
-        mission:`I make staying in touch feel easy, fast, and fun.`,
-        values:`Energy, Curiosity, Creativity, Momentum`,
-        diff:`I spark action with lightweight nudges that get replies.`
+        overview: `I turn follow-ups into quick, feel-good wins with swipe-friendly tasks that keep your energy high and your conversations moving.`,
+        mission: `I make staying in touch feel easy, light, and even fun—because progress doesn’t have to feel like work.`,
+        values: `I bring energy, curiosity, creativity, and momentum to everything I do.`,
+        diff: `I create small, clever nudges that inspire action and spark replies without pressure or pushiness.`
       };
     case 'luxury':
       return {
-        overview:`I craft refined client journeys that feel thoughtful and effortless from the first touch.`,
-        mission:`I elevate every interaction with clarity, care, and confidence.`,
-        values:`Excellence, Discretion, Trust, Consistency`,
-        diff:`I tailor white-glove automations for premium brands.`
+        overview: `I design refined client journeys that feel elegant, seamless, and deeply personal from the very first interaction.`,
+        mission: `My mission is to elevate every touchpoint with clarity, care, and quiet confidence—creating experiences that build lasting trust.`,
+        values: `I uphold excellence, discretion, trust, and consistency in every detail.`,
+        diff: `I craft white-glove automations tailored for premium brands that want to deliver a high-touch experience at every stage.`
       };
     case 'mentor':
     default:
       return {
-        overview:`I help teams build repeatable relationship habits that grow trust and revenue.`,
-        mission:`I guide leaders to be consistent without losing the personal touch.`,
-        values:`Integrity, Service, Stewardship, Learning`,
-        diff:`I provide advisory-led setup with templates that adapt as you grow.`
+        overview: `I help teams build repeatable, healthy relationship habits that strengthen trust and grow long-term revenue.`,
+        mission: `I guide leaders to stay consistent and thoughtful, blending structure with the personal touch that relationships deserve.`,
+        values: `I believe in integrity, service, stewardship, and continuous learning as the foundation for sustainable growth.`,
+        diff: `I provide an advisory-led setup with adaptable templates that evolve as your business and team grow.`
       };
   }
 }
-function fillWithAI(regen=false){
-  const s = voice(chosenPersonality || 'mentor');
-  // light variation demo
-  if(regen){ s.diff += ' I keep things clear, specific, and practical.'; }
-  O.overview.value = s.overview;
-  O.mission.value  = s.mission;
-  O.values.value   = s.values;
-  O.diff.value     = s.diff;
+
+/* Build 4 variants per style (1 seed + 3 alternates) */
+function variants(style){
+  const b = voice(style);
+  return [
+    b,
+    {
+      overview: b.overview.replace('follow-ups', 'next steps').replace('close deals','win work'),
+      mission:  b.mission + ' Every touch has a clear purpose and outcome.',
+      values:   b.values.replace('and', 'plus'),
+      diff:     b.diff + ' You’ll always know the single highest-leverage action to take.'
+    },
+    {
+      overview: b.overview.split('.').slice(0,1).join('.') + '. I remove busywork so you can focus on conversations that matter.',
+      mission:  b.mission.replace('results-driven','impact-led'),
+      values:   b.values + ' Consistency and courage keep us moving.',
+      diff:     b.diff.replace('shows exactly','surfaces exactly') + ' No more paralysis by analysis.'
+    },
+    {
+      overview: 'Here’s the simple truth: ' + b.overview,
+      mission:  'In short: ' + b.mission,
+      values:   'Core values: ' + b.values,
+      diff:     'Practically speaking, ' + b.diff
+    }
+  ];
+}
+
+/* Fake AI loader + variant cycling */
+const aiStatus = document.getElementById('aiStatus');
+const aiStatusText = document.getElementById('aiStatusText');
+const btnGenerate = document.getElementById('btnGenerate');
+const btnRegenerate = document.getElementById('btnRegenerate');
+let currentVariantIndex = -1;
+
+function setFields(v){
+  O.overview.value = v.overview;
+  O.mission.value  = v.mission;
+  O.values.value   = v.values;
+  O.diff.value     = v.diff;
   renderEmail();
 }
-document.getElementById('btnGenerate').addEventListener('click', ()=>fillWithAI(false));
-document.getElementById('btnRegenerate').addEventListener('click', ()=>fillWithAI(true));
+
+function startLoading(text){
+  aiStatusText.textContent = text || 'Generating your copy…';
+  aiStatus.classList.add('show');
+  btnGenerate.disabled = true; btnRegenerate.disabled = true;
+  btnGenerate.setAttribute('aria-busy','true');
+  btnRegenerate.setAttribute('aria-busy','true');
+}
+function stopLoading(){
+  aiStatus.classList.remove('show');
+  btnGenerate.disabled = false; btnRegenerate.disabled = false;
+  btnGenerate.removeAttribute('aria-busy');
+  btnRegenerate.removeAttribute('aria-busy');
+}
+
+function doGenerate(useNextVariant=false){
+  const style = chosenPersonality || 'mentor';
+  const v = variants(style);
+  let nextIndex;
+
+  if(useNextVariant){
+    nextIndex = (currentVariantIndex + 1) % v.length;
+  }else{
+    nextIndex = 0; // first variant on "Generate"
+  }
+
+  startLoading(useNextVariant ? 'Regenerating alternate version…' : 'Generating your copy…');
+
+  // Fake delay to simulate AI work
+  setTimeout(()=>{
+    setFields(v[nextIndex]);
+    currentVariantIndex = nextIndex;
+    stopLoading();
+  }, 1000);
+}
+
+btnGenerate.addEventListener('click', ()=>doGenerate(false));
+btnRegenerate.addEventListener('click', ()=>doGenerate(true));
 
 /* ==== Render the autoresponder (shortcodes -> actual) ==== */
 const emailRendered = document.getElementById('emailRendered');
@@ -696,7 +782,7 @@ renderEmail();
 /* ==== CTA (upgrade on Next) ==== */
 const ctaOptions = [
   {key:'book', label:'Book a Meeting (URL)', placeholder:'https://cal.com/your-link'},
-  {key:'email', label:'Email Me (mailto:)', placeholder:'mailto:you@company.com'},
+  {key:'email', label:'Email Me (mailto:)', placeholder:'you@company.com'},
   {key:'free', label:'Free Resource (URL)', placeholder:'https://your-asset-link.com/guide.pdf'}
 ];
 const ctaHost = document.getElementById('ctaChips');

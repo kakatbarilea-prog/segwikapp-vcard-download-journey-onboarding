@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Segwik Mobile – vCard Journey Onboarding (Revised)</title>
+<style>
+  :root {
+    --bg:#f6f8fb; --ink:#243048; --muted:#667085; --line:#e6ebf2;
+    --accent:#0F2D56; --pill:#eef4ff; --pill-border:#cfe1ff; --ok:#16a34a;
+    --phone-w:430px; --phone-h:800px; --footer-h:76px; --status-h:46px;
+    --card:#fff; --radius:16px; --shadow:0 14px 38px rgba(0,0,0,.08);
+    --slide-ms:320ms; --pager-gap:124px; /* increased gap to keep content away from dots/nav */
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;height:100%;background:var(--bg);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--ink)
+  }
+  .phone{
+    width:var(--phone-w);height:var(--phone-h);background:#fff;border-radius:36px;
+    border:8px solid #111;box-shadow:0 20px 60px rgba(0,0,0,.12),0 8px 16px rgba(0,0,0,.08);
+    position:relative;display:flex;flex-direction:column;overflow:hidden
+  }
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);
+    width:180px;height:30px;background:#111;border-radius:20px 20px 28px 28px;z-index:10}
+  .status{
+    height:var(--status-h);display:flex;align-items:center;justify-content:center;
+    border-bottom:1px solid var(--line);font-weight:700;letter-spacing:.4px;color:#0F2D56
+  }
+  .screen{flex:1;background:#f6f8fb;overflow:hidden;position:relative}
+
+  /* Intro (standalone, no dots/nav) */
+  .intro{
+    position:absolute; inset:0; padding:14px; display:flex; flex-direction:column; gap:12px;
+  }
+  .head{padding:10px 12px 0}
+  .h1{font-size:20px;font-weight:800;color:var(--accent)}
+  .p{font-size:13px;color:var(--muted);line-height:1.5;margin-top:4px}
+  .hero{
+    background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;
+    box-shadow:var(--shadow);display:grid;place-items:center;min-height:300px
+  }
+  .hero svg{width:220px;height:220px;opacity:.9}
+  .btn{
+    appearance:none;border:1px solid var(--line);background:#fff;color:var(--accent);
+    padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer
+  }
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.ghost{background:#f8fafc}
+  .btn.small{padding:8px 10px;border-radius:10px;font-size:12px}
+  .btn.full{width:100%}
+
+  /* Carousel (steps after Start) */
+  .carousel{height:100%;display:flex;width:100%;touch-action:pan-y;
+    transition:transform var(--slide-ms) cubic-bezier(.22,.61,.36,1)}
+  .slide{min-width:100%;height:100%;padding:14px;display:flex;flex-direction:column}
+  .scroll{
+    background:transparent; overflow:auto; padding:12px 0;
+    /* keep content clear of pager + nav */
+    margin-bottom:var(--pager-gap);
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:14px
+  }
+  .row{display:flex;gap:10px}
+  .row.actions{margin-bottom:16px;} /* extra spacing below the action buttons */
+  .col{flex:1}
+  .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .chip{
+    border:1px solid var(--pill-border);background:var(--pill);border-radius:12px;
+    padding:10px;cursor:pointer;font-weight:700;display:flex;justify-content:space-between;align-items:center
+  }
+  .chip .tick{width:18px;height:18px;border:2px solid #9bbdff;border-radius:50%;background:#fff}
+  .chip.active{outline:2px solid #a8c6ff;background:#f3f7ff}
+  .chip.active .tick{background:#0F2D56;border-color:#0F2D56}
+
+  textarea,input[type="text"],input[type="url"],input[type="email"],input[type="file"],select{
+    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;
+    background:#f8fafc;font-family:inherit;font-size:13px;outline:none
+  }
+  textarea{min-height:110px;resize:vertical}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .label{font-size:12px;color:#667085;font-weight:700;margin-bottom:6px}
+  .mini{font-size:12px;color:#7a849a}
+  .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px}
+
+  /* vCard & email preview */
+  .vcard{display:flex;gap:10px;align-items:center;border:1px dashed #dbe7ff;border-radius:12px;padding:10px}
+  .avatar{width:52px;height:52px;border-radius:14px;background:#dfe9ff;display:grid;place-items:center;overflow:hidden}
+  .avatar img{width:100%;height:100%;object-fit:cover;border-radius:14px}
+  .vmeta .name{font-weight:800}
+  .vmeta .role{font-size:12px;color:var(--muted)}
+  .preview-mail{border:1px solid #e6ebf2;border-radius:12px;padding:12px;background:#fff}
+  .preview-mail .subj{font-weight:800;margin-bottom:6px}
+  .preview-mail .body{white-space:pre-wrap}
+
+  /* Pager & nav (only for steps, not intro) */
+  .nav{
+    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 56px);
+    display:flex;gap:8px;justify-content:space-between;padding:0 14px
+  }
+  .pager{
+    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 20px);
+    display:flex;justify-content:center;gap:6px
+  }
+  .dot{width:8px;height:8px;border-radius:50%;background:#c9d2e4;opacity:.8}
+  .dot.active{background:#0F2D56;opacity:1}
+
+  /* Bottom Sheet (upgrade) */
+  .sheet-wrap{position:absolute;inset:0;display:none;align-items:flex-end;background:rgba(15,45,86,.28);z-index:60}
+  .sheet-wrap.show{display:flex}
+  .sheet{
+    width:100%;background:#fff;border-top:1px solid var(--pill-border);
+    border-radius:16px 16px 0 0;box-shadow:0 18px 40px rgba(15,45,86,.18);
+    padding:14px;transform:translateY(100%);transition:transform .25s ease
+  }
+  .sheet-wrap.show .sheet{transform:translateY(0)}
+  .sheet .title{font-weight:800;color:var(--accent);margin-bottom:6px}
+  .sheet .text{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+
+  /* Toggle */
+  .toggle{display:flex;align-items:center;gap:10px}
+  .switch{
+    width:44px;height:26px;border-radius:999px;background:#e5eaf4;position:relative;cursor:pointer;border:1px solid var(--line)
+  }
+  .knob{
+    position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s ease
+  }
+  .switch.active{background:#16a34a;border-color:#16a34a} /* green when active */
+  .switch.active .knob{left:22px}
+
+  /* Tray (unchanged) */
+  .tray{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px;border-top:1px solid var(--line);
+    background:#fff;position:sticky;bottom:0
+  }
+  .ibtn{padding:8px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;display:grid;place-items:center;cursor:pointer}
+  svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;width:17px;height:17px}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="status">SEGWiK</div>
+
+    <div class="screen">
+      <!-- INTRO (no dots/nav/swipe) -->
+      <section id="intro" class="intro">
+        <div class="head">
+          <div class="h1">Set-Up Your vCard Download Journey</div>
+          <div class="p">When someone downloads your vCard, Segwik can automatically send an autoresponder, alert you, and guide that person to their next step.</div>
+        </div>
+        <div class="hero" aria-hidden="true">
+          <!-- simple vCard sharing graphic -->
+          <svg viewBox="0 0 360 360">
+            <rect x="40" y="60" rx="20" ry="20" width="280" height="180" fill="#eef4ff" stroke="#cfe1ff"/>
+            <rect x="68" y="90" width="90" height="90" rx="12" fill="#dfe9ff"/>
+            <rect x="168" y="90" width="132" height="16" rx="8" fill="#cfe1ff"/>
+            <rect x="168" y="114" width="120" height="10" rx="6" fill="#d7e6ff"/>
+            <rect x="168" y="134" width="140" height="10" rx="6" fill="#e3edff"/>
+            <rect x="168" y="156" width="110" height="10" rx="6" fill="#e3edff"/>
+            <circle cx="260" cy="270" r="38" fill="none" stroke="#a9c6ff" stroke-width="10"/>
+            <path d="M240 270h40" stroke="#0F2D56" stroke-width="10" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <button class="btn primary full" id="startBtn">Start</button>
+      </section>
+
+      <!-- STEPS CAROUSEL (appears after Start) -->
+      <div id="flow" style="display:none; height:100%; position:relative;">
+        <div id="carousel" class="carousel">
+          <!-- Step 1: Company Details -->
+          <section class="slide">
+            <div class="head">
+              <div class="h1">Review Company Details</div>
+              <div class="p">These details populate your email headers/footers and help personalize your autoresponder.</div>
+            </div>
+            <div class="scroll">
+              <div class="card">
+                <div class="label">Company Name</div>
+                <input type="text" id="acct_name" />
+                <div class="gap12"></div>
+
+                <div class="split">
+                  <div>
+                    <div class="label">Company Phone</div>
+                    <input type="text" id="acct_phone" />
+                  </div>
+                  <div>
+                    <div class="label">Company Email</div>
+                    <input type="email" id="acct_email" />
+                  </div>
+                </div>
+                <div class="gap12"></div>
+
+                <div class="label">Company Website</div>
+                <input type="url" id="acct_site" />
+                <div class="gap12"></div>
+
+                <div class="label">Company Location</div>
+                <div class="split">
+                  <input type="text" id="addr1" placeholder="Address line 1" />
+                  <input type="text" id="addr2" placeholder="Address line 2 (optional)" />
+                </div>
+                <div class="split" style="margin-top:10px">
+                  <input type="text" id="city" placeholder="City" />
+                  <input type="text" id="state" placeholder="State" />
+                </div>
+                <div class="split" style="margin-top:10px">
+                  <input type="text" id="zip" placeholder="ZIP" />
+                  <input type="text" id="country" placeholder="Country" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 2: Upload Logo -->
+          <section class="slide">
+            <div class="head">
+              <div class="h1">Add Your Company Logo</div>
+              <div class="p">We’ll use this in your autoresponder and previews.</div>
+            </div>
+            <div class="scroll">
+              <div class="card">
+                <input type="file" id="logoInput" accept="image/*" />
+                <div class="gap12"></div>
+                <div class="label">Preview (Email Header)</div>
+                <div class="preview-mail">
+                  <div class="body" id="logoEmailPreview" style="text-align:center;">
+                    <!-- centered logo image goes here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 3: Brand Personality (unchanged) -->
+          <section class="slide">
+            <div class="head">
+              <div class="h1">Pick Your Brand Personality</div>
+              <div class="p">This guides AI when composing your overview, mission, values, and differentiator.</div>
+            </div>
+            <div class="scroll">
+              <div class="card">
+                <div class="chips" id="personalityChips"></div>
+              </div>
+              <div class="card">
+                <div class="label">Tone preview</div>
+                <div id="tonePreview" class="p">Select a personality to preview tone.</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 4: AI Compose (heading + button visibility/spacing) -->
+          <section class="slide">
+            <div class="head">
+              <div class="h1">Tell Your Story</div>
+              <div class="p">I’ll introduce your brand in a clear, human voice. You can edit anything before sending.</div>
+            </div>
+            <div class="scroll">
+              <div class="card">
+                <div class="row actions">
+                  <button class="btn ghost" id="btnGenerate">Generate with AI</button>
+                  <button class="btn" id="btnRegenerate">Regenerate</button>
+                </div>
+                <div class="label">Company Overview</div>
+                <textarea id="overview" placeholder="Here’s who we serve, what we do, and the outcomes we deliver."></textarea>
+                <div class="gap12"></div>
+                <div class="label">Mission Statement</div>
+                <textarea id="mission" placeholder="Here’s the promise that guides our work every day."></textarea>
+                <div class="gap12"></div>
+                <div class="label">Organization Values</div>
+                <textarea id="values" placeholder="Here are the principles we live by (comma or line-separated)."></textarea>
+                <div class="gap12"></div>
+                <div class="label">Differentiating Proposition</div>
+                <textarea id="diffprop" placeholder="Here’s what makes us meaningfully different."></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 5: Preview – rendered autoresponder -->
+          <section class="slide">
+            <div class="head">
+              <div class="h1">Autoresponder Preview</div>
+              <div class="p">This is the email your contact will receive after they download your vCard.</div>
+            </div>
+            <div class="scroll">
+              <div class="card">
+                <div class="subj" id="emailSubj">Subject: Great connecting with you!</div>
+                <div class="preview-mail">
+                  <div class="body" id="emailRendered">
+                    <!-- filled by JS with shortcodes replaced -->
+                  </div>
+                </div>
+                <div class="gap12"></div>
+                <div class="mini">Shortcodes are already rendered using your company details and the AI text you provided.</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 6: Additional CTA (upgrade sheet on Next) -->
+          <section class="slide" data-step="cta">
+            <div class="head">
+              <div class="h1">Add an Extra Call-to-Action</div>
+              <div class="p">Include an additional button in the autoresponder that nudges contacts toward a next step.</div>
+            </div>
+            <div class="scroll">
+              <div class="card">
+                <div class="label">Choose a CTA</div>
+                <div class="chips" id="ctaChips"></div>
+                <div class="gap12"></div>
+                <div id="ctaFields" style="display:none">
+                  <div class="label" id="ctaLabel">Destination</div>
+                  <input type="url" id="ctaUrl" placeholder="https://your-booking-link.com" />
+                  <div class="gap8"></div>
+                  <div class="label">Button label (optional)</div>
+                  <input type="text" id="ctaText" placeholder="Book a meeting" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 7: Auto-add to Journey -->
+          <section class="slide">
+            <div class="head">
+              <div class="h1">Auto-Add to a Journey</div>
+              <div class="p">Automatically place new contacts into a journey when they download your vCard.</div>
+            </div>
+            <div class="scroll">
+              <div class="card">
+                <div class="label">Select a journey</div>
+                <select id="journeySelect">
+                  <option value="">— Choose a journey —</option>
+                  <option>Event New Contact Follow-Up</option>
+                  <option>Warm Reconnect</option>
+                  <option>Cold/General Meeting Request</option>
+                  <option>Demo Request</option>
+                </select>
+                <div class="gap12"></div>
+                <div class="mini">You can change this anytime from your automation settings.</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 8: You're All Set (final) -->
+          <section class="slide">
+            <div class="head">
+              <div class="h1">You’re All Set!</div>
+              <div class="p">You can further personalize your automation by attaching more emails to the sequence or creating custom journeys.</div>
+            </div>
+            <div class="scroll">
+              <div class="card">
+                <div class="row">
+                  <button class="btn ghost full" id="seeUpgrade">See upgrade options</button>
+                  <button class="btn full" id="skipUpgrade">Skip for now</button>
+                </div>
+              </div>
+              <div class="card">
+                <div class="toggle">
+                  <div class="switch active" id="activateSwitch"><div class="knob"></div></div>
+                  <div class="label">Activate this journey</div>
+                </div>
+              </div>
+              <button class="btn primary full" id="finishBtn">Finish & Save Automation</button>
+            </div>
+          </section>
+        </div>
+
+        <!-- pager & nav for steps only -->
+        <div class="nav">
+          <button class="btn small ghost" id="backBtn">Back</button>
+          <button class="btn small" id="nextBtn">Next</button>
+        </div>
+        <div class="pager" id="pager"></div>
+      </div>
+
+      <!-- Upgrade sheet -->
+      <div id="upgradeSheet" class="sheet-wrap" onclick="if(event.target.id==='upgradeSheet'){toggleSheet(false)}">
+        <div class="sheet" onclick="event.stopPropagation()">
+          <div class="title">Requires an Upgrade</div>
+          <div class="text">Adding an extra CTA to the autoresponder is available on paid plans.</div>
+          <div class="row">
+            <button class="btn full" id="notNow">Not now</button>
+            <button class="btn primary full" id="upgradeNow">Upgrade now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fixed tray (unchanged) -->
+    <div class="tray" id="footer-tray">
+      <div class="ibtn" data-icon="phone"></div>
+      <div class="ibtn" data-icon="mail"></div>
+      <div class="ibtn" data-icon="chat"></div>
+      <div class="ibtn" data-icon="calendar"></div>
+      <div class="ibtn" data-icon="note"></div>
+    </div>
+  </div>
+
+<script>
+/* ==== Footer icons (unchanged) ==== */
+function icon(name){
+  switch(name){
+    case 'mail': return `<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>`;
+    case 'phone': return `<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0  0 1-3.07-8.67A2 2 0  0 1 4.11 2h3a2 2 0  0 1 2 1.72c.12 .9.3 1.77.57 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0  0 0 6 6l1.47-1.11a2 2 0 0 1 2.11-.45c.84 .27 1.71 .45 2.61 .57A2 2 0  0 1 22 16.92z"/></svg>`;
+    case 'chat': return `<svg viewBox="0 0 24 24"><path d="M21 15a4 4 0  0 1-4 4H8l-5 3V7a4 4 0  0 1 4-4h10a4 4 0  0 1 4 4z"/></svg>`;
+    case 'calendar': return `<svg viewBox="0 0 24 24"><path d="M3 8h18M5 4h14v16H5z"/><path d="M16 2v4M8 2v4"/></svg>`;
+    case 'note': return `<svg viewBox="0 0 24 24"><path d="M4 3h14l2 2v16H4z"/><path d="M9 13h6M9 9h6M9 17h3"/></svg>`;
+  }
+}
+document.querySelectorAll('#footer-tray [data-icon]').forEach(el=>{
+  el.innerHTML = icon(el.getAttribute('data-icon')) || '';
+});
+
+/* ==== Intro -> Steps reveal ==== */
+const intro = document.getElementById('intro');
+const flow = document.getElementById('flow');
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  intro.style.display = 'none';
+  flow.style.display = 'block';
+  goTo(0); // start at first step (company details)
+});
+
+/* ==== Carousel core ==== */
+const carousel = document.getElementById('carousel');
+const slides = Array.from(carousel.children);
+const pager = document.getElementById('pager');
+let idx = 0;
+const maxIdx = slides.length - 1;
+let startX = 0, currentX = 0, isDragging = false;
+
+function renderDots(){
+  pager.innerHTML = '';
+  for(let i=0;i<slides.length;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===idx?' active':'');
+    d.dataset.i = i;
+    d.onclick = ()=>goTo(i);
+    pager.appendChild(d);
+  }
+}
+function goTo(i){
+  idx = Math.max(0, Math.min(maxIdx, i));
+  carousel.style.transform = `translateX(-${idx*100}%)`;
+  renderDots();
+  updateNav();
+  // keep previews live
+  syncCompanyPreview();
+  renderEmail();
+}
+function updateNav(){
+  document.getElementById('backBtn').style.visibility = idx===0 ? 'hidden' : 'visible';
+  document.getElementById('nextBtn').textContent = idx===maxIdx ? 'Done' : 'Next';
+}
+renderDots(); updateNav();
+
+/* Touch swipe */
+carousel.addEventListener('touchstart', (e)=>{
+  startX = e.touches[0].clientX; currentX = startX; isDragging = true; carousel.style.transition='none';
+});
+carousel.addEventListener('touchmove', (e)=>{
+  if(!isDragging) return;
+  currentX = e.touches[0].clientX;
+  const dx = currentX - startX;
+  const pct = -idx*100 + (dx / carousel.clientWidth) * 100;
+  carousel.style.transform = `translateX(${pct}%)`;
+});
+carousel.addEventListener('touchend', ()=>{
+  if(!isDragging) return; isDragging=false; carousel.style.transition='';
+  const dx = currentX - startX;
+  if(Math.abs(dx)>60){ if(dx<0) goTo(idx+1); else goTo(idx-1); } else { goTo(idx); }
+});
+
+/* Nav buttons */
+document.getElementById('backBtn').addEventListener('click', ()=>goTo(idx-1));
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  // If on CTA step and a CTA selected, show upgrade sheet instead of advancing
+  const stepEl = slides[idx];
+  if(stepEl && stepEl.dataset.step === 'cta' && chosenCTA){
+    toggleSheet(true);
+    return;
+  }
+  if(idx<maxIdx) goTo(idx+1); else goTo(maxIdx);
+});
+
+/* ==== Company details -> live into previews ==== */
+const acct = {
+  name:   document.getElementById('acct_name'),
+  phone:  document.getElementById('acct_phone'),
+  email:  document.getElementById('acct_email'),
+  site:   document.getElementById('acct_site'),
+  addr1:  document.getElementById('addr1'),
+  addr2:  document.getElementById('addr2'),
+  city:   document.getElementById('city'),
+  state:  document.getElementById('state'),
+  zip:    document.getElementById('zip'),
+  country:document.getElementById('country'),
+};
+Object.values(acct).forEach(el=>el.addEventListener('input', ()=>{
+  syncCompanyPreview(); renderEmail();
+}));
+function syncCompanyPreview(){
+  document.getElementById('prevCompanyName') && (document.getElementById('prevCompanyName').textContent = acct.name.value || '[account_name]');
+  document.getElementById('prevCompanySite') && (document.getElementById('prevCompanySite').textContent = acct.site.value || '[account_website]');
+}
+
+/* ==== Logo upload ==== */
+const logoInput   = document.getElementById('logoInput');
+const logoPreviewEmail = document.getElementById('logoEmailPreview');
+let logoDataUrl = '';
+logoInput.addEventListener('change', ()=>{
+  const f = logoInput.files?.[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    logoDataUrl = e.target.result;
+    // Centered logo in the email-style preview
+    logoPreviewEmail.innerHTML = `<img alt="logo" src="${logoDataUrl}" style="max-width:160px;display:block;margin:0 auto 8px;border-radius:10px">`;
+    renderEmail();
+  };
+  reader.readAsDataURL(f);
+});
+
+/* ==== Personality & AI compose ==== */
+const personalities = [
+  {key:'bold', label:'Bold & Direct', preview:'I’ll get to the point and focus on outcomes.'},
+  {key:'warm', label:'Warm & Approachable', preview:'I’ll sound friendly, helpful, and human.'},
+  {key:'analytical', label:'Analytical & Precise', preview:'I’ll be clear, concise, and data-driven.'},
+  {key:'playful', label:'Playful & Energetic', preview:'I’ll keep the tone upbeat and engaging.'},
+  {key:'luxury', label:'Refined & Premium', preview:'I’ll write with polish and restraint.'},
+  {key:'mentor', label:'Mentor & Advisory', preview:'I’ll guide with pragmatism and clarity.'}
+];
+let chosenPersonality = null;
+const chipHost = document.getElementById('personalityChips');
+const tonePreview = document.getElementById('tonePreview');
+personalities.forEach(p=>{
+  const el = document.createElement('label');
+  el.className = 'chip';
+  el.innerHTML = `<span>${p.label}</span><span class="tick"></span>`;
+  el.onclick = ()=>{
+    chosenPersonality = p.key;
+    document.querySelectorAll('#personalityChips .chip').forEach(c=>c.classList.remove('active'));
+    el.classList.add('active');
+    tonePreview.textContent = p.preview;
+  };
+  chipHost.appendChild(el);
+});
+
+const O = {
+  overview: document.getElementById('overview'),
+  mission:  document.getElementById('mission'),
+  values:   document.getElementById('values'),
+  diff:     document.getElementById('diffprop'),
+};
+['overview','mission','values','diffprop'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderEmail);
+});
+function voice(style){
+  switch(style){
+    case 'bold':
+      return {
+        overview:`I help busy professionals move faster by turning follow-ups into real conversations and closed deals.`,
+        mission:`I’m here to shorten the path from first contact to “yes”—with zero fluff.`,
+        values:`Ownership, Speed, Clarity, Accountability`,
+        diff:`I give you a feed that tells you exactly what to do next—no guesswork.`
+      };
+    case 'warm':
+      return {
+        overview:`I support small teams with simple tools that keep relationships warm, visible, and responsive.`,
+        mission:`I want every client to feel seen, supported, and remembered.`,
+        values:`Empathy, Reliability, Transparency, Care`,
+        diff:`I write automations that sound like you, not a robot.`
+      };
+    case 'analytical':
+      return {
+        overview:`I streamline your pipeline with measurable workflows that reduce cycle time and raise conversion.`,
+        mission:`I operationalize best practices with data-driven iteration.`,
+        values:`Rigor, Precision, Iteration, Results`,
+        diff:`I focus on actionable tasks and milestone tracking you can quantify.`
+      };
+    case 'playful':
+      return {
+        overview:`I turn follow-ups into quick wins with swipe-friendly tasks that keep your momentum high.`,
+        mission:`I make staying in touch feel easy, fast, and fun.`,
+        values:`Energy, Curiosity, Creativity, Momentum`,
+        diff:`I spark action with lightweight nudges that get replies.`
+      };
+    case 'luxury':
+      return {
+        overview:`I craft refined client journeys that feel thoughtful and effortless from the first touch.`,
+        mission:`I elevate every interaction with clarity, care, and confidence.`,
+        values:`Excellence, Discretion, Trust, Consistency`,
+        diff:`I tailor white-glove automations for premium brands.`
+      };
+    case 'mentor':
+    default:
+      return {
+        overview:`I help teams build repeatable relationship habits that grow trust and revenue.`,
+        mission:`I guide leaders to be consistent without losing the personal touch.`,
+        values:`Integrity, Service, Stewardship, Learning`,
+        diff:`I provide advisory-led setup with templates that adapt as you grow.`
+      };
+  }
+}
+function fillWithAI(regen=false){
+  const s = voice(chosenPersonality || 'mentor');
+  // light variation demo
+  if(regen){ s.diff += ' I keep things clear, specific, and practical.'; }
+  O.overview.value = s.overview;
+  O.mission.value  = s.mission;
+  O.values.value   = s.values;
+  O.diff.value     = s.diff;
+  renderEmail();
+}
+document.getElementById('btnGenerate').addEventListener('click', ()=>fillWithAI(false));
+document.getElementById('btnRegenerate').addEventListener('click', ()=>fillWithAI(true));
+
+/* ==== Render the autoresponder (shortcodes -> actual) ==== */
+const emailRendered = document.getElementById('emailRendered');
+function renderEmail(){
+  const logo = logoDataUrl ? `<img src="${logoDataUrl}" alt="logo" style="max-width:140px; display:block; margin:0 auto 8px;border-radius:10px">` : '';
+  const firstname = '[firstname]'; // preview exactly as requested
+  const company_overview = (O.overview.value || '').trim();
+  const mission_statement = (O.mission.value || '').trim();
+  const organization_values = (O.values.value || '').trim();
+  const differentiator = (O.diff.value || '').trim();
+
+  const acct_name = (acct.name.value || '').trim();
+  const acct_phone = (acct.phone.value || '').trim();
+  const acct_email = (acct.email.value || '').trim();
+  const acct_site  = (acct.site.value  || '').trim();
+  const addr = [
+    (acct.addr1.value||'').trim(),
+    (acct.addr2.value||'').trim()
+  ].filter(Boolean).join(', ');
+  const city = (acct.city.value||'').trim();
+  const state = (acct.state.value||'').trim();
+  const zip = (acct.zip.value||'').trim();
+
+  const footerName   = acct_name || '[account_name]';
+  const footerLine1  = [acct_phone, acct_email, acct_site].filter(Boolean).join(' | ') || '[account_phone] | [account_email] | [account_website]';
+  const footerLine2  = [addr, city, state, zip].filter(Boolean).join(' | ') || '[account_address] | [account_city] | [account_state] | [account_zip]';
+
+  const body = `
+${logo}
+<div style="font-weight:800;margin-bottom:6px;">It’s Great to Be Connected!</div>
+
+Hello ${firstname},
+
+Thanks for downloading my digital business card — I’m excited we crossed paths.
+
+Let me introduce myself a bit more:
+
+<div style="font-weight:700;margin-top:8px;">About My Business:</div>
+${company_overview || '[account.company_overview]'}
+
+<div style="font-weight:700;margin-top:8px;">What Drives Us:</div>
+${mission_statement || '[account.mission_statement]'}
+
+<div style="font-weight:700;margin-top:8px;">What Makes Us Different:</div>
+${differentiator || '[account.differentiating_proposition]'}
+
+<div style="font-weight:700;margin-top:8px;">Our Core Values:</div>
+${organization_values || '[account.organization_values]'}
+
+Looking forward to staying connected.
+
+<div style="text-align:center;margin-top:8px;">
+  ${footerName}<br>
+  ${footerLine1}<br>
+  ${footerLine2}
+</div>
+  `.trim();
+
+  emailRendered.innerHTML = body; // render actual HTML (logo image, centered footer, etc.)
+}
+renderEmail();
+
+/* ==== CTA (upgrade on Next) ==== */
+const ctaOptions = [
+  {key:'book', label:'Book a Meeting (URL)', placeholder:'https://cal.com/your-link'},
+  {key:'email', label:'Email Me (mailto:)', placeholder:'mailto:you@company.com'},
+  {key:'free', label:'Free Resource (URL)', placeholder:'https://your-asset-link.com/guide.pdf'}
+];
+const ctaHost = document.getElementById('ctaChips');
+const ctaFields = document.getElementById('ctaFields');
+const ctaLabel  = document.getElementById('ctaLabel');
+const ctaUrl    = document.getElementById('ctaUrl');
+const ctaText   = document.getElementById('ctaText');
+let chosenCTA = null;
+ctaOptions.forEach(o=>{
+  const el = document.createElement('label');
+  el.className = 'chip';
+  el.innerHTML = `<span>${o.label}</span><span class="tick"></span>`;
+  el.onclick = ()=>{
+    chosenCTA = o.key;
+    document.querySelectorAll('#ctaChips .chip').forEach(c=>c.classList.remove('active'));
+    el.classList.add('active');
+    ctaFields.style.display = 'block';
+    ctaLabel.textContent = o.label.includes('mailto') ? 'Email' : 'Destination';
+    ctaUrl.placeholder = o.placeholder;
+  };
+  ctaHost.appendChild(el);
+});
+
+/* Bottom sheet controls */
+const sheet = document.getElementById('upgradeSheet');
+function toggleSheet(show){ sheet.classList.toggle('show', !!show); }
+document.getElementById('notNow').addEventListener('click', ()=>{ toggleSheet(false); goTo(idx+1); });
+document.getElementById('upgradeNow').addEventListener('click', ()=>{ toggleSheet(false); alert('Upgrade flow (mock)'); });
+
+/* Final screen */
+const activateSwitch = document.getElementById('activateSwitch');
+activateSwitch.addEventListener('click', ()=>activateSwitch.classList.toggle('active'));
+document.getElementById('seeUpgrade').addEventListener('click', ()=>alert('Upgrade options (mock)'));
+document.getElementById('skipUpgrade').addEventListener('click', ()=>alert('You can upgrade anytime.'));
+document.getElementById('finishBtn').addEventListener('click', ()=>{
+  const active = activateSwitch.classList.contains('active');
+  alert(`Saved! (Mock)\nJourney ${active ? 'activated' : 'saved as draft'}.`);
+});
+
+/* Keep company preview live */
+['input','change'].forEach(ev=>{
+  document.getElementById('acct_name').addEventListener(ev, syncCompanyPreview);
+  document.getElementById('acct_site').addEventListener(ev, syncCompanyPreview);
+});
+
+/* Initialize previews once more */
+syncCompanyPreview();
+
+/* Accessibility: keyboard navigation between steps */
+window.addEventListener('keydown', (e)=>{
+  if(e.key==='ArrowLeft') goTo(idx-1);
+  if(e.key==='ArrowRight') goTo(idx+1);
+});
+</script>
+</body>
+</html>

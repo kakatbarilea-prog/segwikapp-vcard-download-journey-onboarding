@@ -13,6 +13,12 @@
     --card:#fff; --radius:16px; --shadow:0 14px 38px rgba(0,0,0,.08);
     --slide-ms:320ms; --pager-gap:156px; /* global default, preview step overrides */
     --banner:#fff7c2; --banner-ink:#4a3b00; --banner-border:#fde68a;
+
+    /* blues for buttons */
+    --blue:#2563eb;        /* 600 */
+    --blue-700:#1d4ed8;
+    --blue-50:#eff6ff;
+    --blue-200:#bfdbfe;
   }
   *{box-sizing:border-box}
   html,body{
@@ -45,14 +51,22 @@
     box-shadow:var(--shadow);display:grid;place-items:center;min-height:300px
   }
   .hero svg{width:220px;height:220px;opacity:.9}
+
   .btn{
     appearance:none;border:1px solid var(--line);background:#fff;color:var(--accent);
-    padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer
+    padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px
   }
+  .btn svg{width:16px;height:16px}
   .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   .btn.ghost{background:#f8fafc}
   .btn.small{padding:8px 10px;border-radius:10px;font-size:12px}
   .btn.full{width:100%}
+
+  /* new blue styles */
+  .btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
+  .btn.blue:hover{background:var(--blue-700);border-color:var(--blue-700)}
+  .btn.outline-blue{background:#fff;color:var(--blue);border-color:var(--blue-200)}
+  .btn.outline-blue:hover{background:var(--blue-50);border-color:var(--blue)}
 
   /* Carousel (steps after Start) */
   .carousel{height:100%;display:flex;width:100%;touch-action:pan-y;
@@ -60,7 +74,6 @@
   .slide{min-width:100%;height:100%;padding:14px;display:flex;flex-direction:column}
   .scroll{
     background:transparent; overflow:auto; padding:12px 0;
-    /* keep content clear of pager + nav */
     margin-bottom:var(--pager-gap);
     display:flex; flex-direction:column; gap:12px;
   }
@@ -75,6 +88,7 @@
     box-shadow:0 6px 14px rgba(15,45,86,.12), 0 2px 6px rgba(15,45,86,.08);
     letter-spacing:.2px;
   }
+  .row.wrap{flex-wrap:wrap}
   .col{flex:1}
   .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .chip{
@@ -233,8 +247,6 @@
   .full-content .mail-frame{
     height:100%; width:100%; display:flex; flex-direction:column;  /* ensure inner .mail-body can flex/scroll */
   }
-  
-  /* For all non-preview steps, keep the original reserved space below content */
 </style>
 </head>
 <body>
@@ -333,7 +345,7 @@
             </div>
           </section>
 
-          <!-- Step 3: Brand Personality (unchanged) -->
+          <!-- Step 3: Brand Personality -->
           <section class="slide">
             <div class="head">
               <div class="h1">Pick Your Brand Personality</div>
@@ -418,8 +430,24 @@
                     <!-- dynamic HTML body injected via JS -->
                   </div>
                 </div>
+
                 <div class="gap12"></div>
-                <button class="btn full" id="btnFullPreview">View Full Preview</button>
+
+                <!-- New dual buttons row -->
+                <div class="row wrap">
+                  <button class="btn outline-blue" id="btnEditTemplate" title="Edit email template">
+                    <!-- pencil icon -->
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    Edit Email Template
+                  </button>
+
+                  <button class="btn blue" id="btnFullPreview">
+                    <!-- eye icon -->
+                    <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    View Full Preview
+                  </button>
+                </div>
+
                 <div class="gap12"></div>
                 <div class="mini">Tip: The email body above is fully rendered — subject and sender chrome are included to mimic a real phone view.</div>
               </div>
@@ -501,7 +529,7 @@
         <div class="pager" id="pager"></div>
       </div>
 
-      <!-- Upgrade sheet -->
+      <!-- Upgrade sheet (CTA) -->
       <div id="upgradeSheet" class="sheet-wrap" onclick="if(event.target.id==='upgradeSheet'){toggleSheet(false)}">
         <div class="sheet" onclick="event.stopPropagation()">
           <div class="title">Requires an Upgrade</div>
@@ -509,6 +537,18 @@
           <div class="row">
             <button class="btn full" id="notNow">Not now</button>
             <button class="btn primary full" id="upgradeNow">Upgrade now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW: Edit Template sheet -->
+      <div id="editSheet" class="sheet-wrap" onclick="if(event.target.id==='editSheet'){toggleEditSheet(false)}">
+        <div class="sheet" onclick="event.stopPropagation()">
+          <div class="title">Requires an Upgrade</div>
+          <div class="text">Customizing your email content is available on paid plans.</div>
+          <div class="row">
+            <button class="btn full" id="editNotNow">Not now</button>
+            <button class="btn primary full" id="editUpgradeNow">Upgrade now</button>
           </div>
         </div>
       </div>
@@ -694,7 +734,7 @@ const O = {
   document.getElementById(id).addEventListener('input', renderEmail);
 });
 
-/* Voice + variants (unchanged) */
+/* Voice + variants */
 function voice(style){
   switch(style){
     case 'bold':
@@ -808,7 +848,7 @@ function doGenerate(useNextVariant=false){
 btnGenerate.addEventListener('click', ()=>doGenerate(false));
 btnRegenerate.addEventListener('click', ()=>doGenerate(true));
 
-/* ==== Render the autoresponder into the Step 5 phone-like preview ==== */
+/* ==== Render the autoresponder preview ==== */
 function renderEmail(){
   // Subject (fixed)
   const subjEl = document.getElementById('mailSubject');
@@ -910,11 +950,18 @@ ctaOptions.forEach(o=>{
   ctaHost.appendChild(el);
 });
 
-/* Bottom sheet controls */
+/* Bottom sheet controls (CTA step) */
 const sheet = document.getElementById('upgradeSheet');
 function toggleSheet(show){ sheet.classList.toggle('show', !!show); }
 document.getElementById('notNow').addEventListener('click', ()=>{ toggleSheet(false); goTo(idx+1); });
 document.getElementById('upgradeNow').addEventListener('click', ()=>{ toggleSheet(false); alert('Upgrade flow (mock)'); });
+
+/* Edit Template sheet controls (no nav on Not now) */
+const editSheet = document.getElementById('editSheet');
+function toggleEditSheet(show){ editSheet.classList.toggle('show', !!show); }
+document.getElementById('btnEditTemplate').addEventListener('click', ()=>toggleEditSheet(true));
+document.getElementById('editNotNow').addEventListener('click', ()=>toggleEditSheet(false));
+document.getElementById('editUpgradeNow').addEventListener('click', ()=>{ toggleEditSheet(false); alert('Upgrade flow (mock)'); });
 
 /* Final screen */
 const activateSwitch = document.getElementById('activateSwitch');

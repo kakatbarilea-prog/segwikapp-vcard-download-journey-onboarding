@@ -11,7 +11,8 @@
     --accent:#0F2D56; --pill:#eef4ff; --pill-border:#cfe1ff; --ok:#16a34a;
     --phone-w:430px; --phone-h:800px; --footer-h:76px; --status-h:46px;
     --card:#fff; --radius:16px; --shadow:0 14px 38px rgba(0,0,0,.08);
-    --slide-ms:320ms; --pager-gap:156px; /* more gap so content never overlaps nav/dots */
+    --slide-ms:320ms; --pager-gap:156px; /* global default, preview step overrides */
+    --banner:#fff7c2; --banner-ink:#4a3b00; --banner-border:#fde68a;
   }
   *{box-sizing:border-box}
   html,body{
@@ -32,7 +33,7 @@
   }
   .screen{flex:1;background:#f6f8fb;overflow:hidden;position:relative}
 
-  /* Intro (standalone, no dots/nav) */
+  /* Intro (standalone, no dots/nav/swipe) */
   .intro{
     position:absolute; inset:0; padding:14px; display:flex; flex-direction:column; gap:12px;
   }
@@ -69,7 +70,7 @@
   }
   .row{display:flex;gap:10px}
   .row.actions{margin-bottom:16px;}
-  .row.actions .btn{ /* make AI buttons more visible */
+  .row.actions .btn{
     border-width:2px;
     box-shadow:0 6px 14px rgba(15,45,86,.12), 0 2px 6px rgba(15,45,86,.08);
     letter-spacing:.2px;
@@ -94,7 +95,7 @@
   .mini{font-size:12px;color:#7a849a}
   .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px}
 
-  /* vCard & email preview */
+  /* vCard & email preview (used earlier steps) */
   .vcard{display:flex;gap:10px;align-items:center;border:1px dashed #dbe7ff;border-radius:12px;padding:10px}
   .avatar{width:52px;height:52px;border-radius:14px;background:#dfe9ff;display:grid;place-items:center;overflow:hidden}
   .avatar img{width:100%;height:100%;object-fit:cover;border-radius:14px}
@@ -110,13 +111,11 @@
     border:1px dashed var(--pill-border);background:#f8fbff;border-radius:10px;font-size:12px;color:#43506a
   }
   .ai-status.show{display:flex}
-  .spinner{
-    width:16px;height:16px;border-radius:50%;
-    border:2px solid #cfe1ff;border-top-color:#0F2D56;animation:spin 1s linear infinite
-  }
+  .spinner{width:16px;height:16px;border-radius:50%;
+    border:2px solid #cfe1ff;border-top-color:#0F2D56;animation:spin 1s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* Pager & nav (move very close to phone icons) */
+  /* Pager & nav */
   .nav{
     position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 6px);
     display:flex;gap:8px;justify-content:space-between;padding:0 14px
@@ -137,7 +136,7 @@
     padding:14px;transform:translateY(100%);transition:transform .25s ease
   }
   .sheet-wrap.show .sheet{transform:translateY(0)}
-  .sheet .title{font-weight:800;color:var(--accent);margin-bottom:6px}
+  .sheet .title{font-weight:800;color:#0F2D56;margin-bottom:6px}
   .sheet .text{font-size:13px;color:#667085;line-height:1.5;margin-bottom:12px}
 
   /* Toggle */
@@ -145,19 +144,97 @@
   .switch{
     width:44px;height:26px;border-radius:999px;background:#e5eaf4;position:relative;cursor:pointer;border:1px solid var(--line)
   }
-  .knob{
-    position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s ease
-  }
+  .knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s ease}
   .switch.active{background:#16a34a;border-color:#16a34a}
   .switch.active .knob{left:22px}
 
-  /* Tray (unchanged) */
+  /* Tray */
   .tray{
     display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px;border-top:1px solid var(--line);
     background:#fff;position:sticky;bottom:0
   }
   .ibtn{padding:8px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;display:grid;place-items:center;cursor:pointer}
   svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;width:17px;height:17px}
+
+  /* --- Autoresponder Preview --- */
+  .after-dl-banner{background:var(--banner); color:var(--banner-ink); border:1px solid var(--banner-border); border-radius:12px; padding:10px 12px; display:flex; gap:10px; align-items:flex-start; font-size:13px; font-weight:700}
+  .after-dl-banner .icon{flex:0 0 auto; width:18px; height:18px; border-radius:4px; background:#f59e0b; display:grid; place-items:center; color:#fff; font-size:12px; font-weight:900}
+
+  /* Stretch preview box and keep inner scroll */
+  #step-preview{padding-bottom:calc(var(--footer-h) + 56px);}
+  #step-preview .scroll{
+    display:flex;flex-direction:column;gap:12px;
+    overflow:hidden; margin-bottom:0; padding-bottom:0;
+  }
+  #step-preview .card{
+    display:flex;flex-direction:column; flex:1; min-height:0;
+  }
+  .mail-frame{
+    border:1px solid #e6ebf2; border-radius:16px; overflow:hidden; background:#fff;
+    display:flex; flex-direction:column; flex:1; min-height:0;
+  }
+  .mail-topbar{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #eef1f6}
+  .mail-topbar .subject{font-weight:800; font-size:14px; line-height:1.2; padding-right:8px}
+  .mail-topbar .actions{display:flex; gap:8px; align-items:center}
+  .i{width:18px; height:18px; display:inline-block}
+  .i.star{background:linear-gradient(#e5e7eb,#d1d5db)}
+  .i.more{background:linear-gradient(#e5e7eb,#d1d5db)}
+
+  /* three traffic-light dots on right side */
+  .actions.dots .dotc{width:10px;height:10px;border-radius:50%;}
+  .actions.dots .dotc.r{background:#ef4444}
+  .actions.dots .dotc.o{background:#f59e0b}
+  .actions.dots .dotc.g{background:#22c55e}
+
+  .mail-from{display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid #eef1f6}
+  .from-avatar{width:28px; height:28px; border-radius:50%; background:#dfe9ff; display:grid; place-items:center; font-size:12px; color:#0F2D56; font-weight:800}
+  .from-meta{line-height:1.1}
+  .from-name{font-weight:800; font-size:13px}
+  .from-details{font-size:12px; color:#6b7280}
+
+  .mail-body{
+    flex:1; overflow:auto; padding:14px 14px 18px 14px; line-height:1.55;
+    -webkit-overflow-scrolling:touch;
+  }
+  .mail-body::-webkit-scrollbar{width:8px}
+  .mail-body::-webkit-scrollbar-track{background:#f3f4f6;border-radius:8px}
+  .mail-body::-webkit-scrollbar-thumb{background:#c7ced9;border-radius:8px}
+  .mail-body::-webkit-scrollbar-thumb:hover{background:#aeb7c4}
+
+  .mail-body h3{margin:0 0 6px 0; font-size:15px}
+  .mail-body p{margin:0 0 10px 0; font-size:13px; color:#243048}
+  .sig{display:flex; gap:12px; margin-top:14px; align-items:flex-start}
+  .sig .headshot{width:56px; height:56px; border-radius:12px; background:#dfe9ff; display:grid; place-items:center; font-size:11px; color:#667085; flex:0 0 auto}
+  .sig .meta{font-size:13px}
+  .sig .meta a{color:#0F2D56; text-decoration:none}
+  .sig .meta a:hover{text-decoration:underline}
+
+  /* Email header logo */
+  .mail-logo-wrap{margin:6px 0 8px 0; text-align:center}
+  .mail-logo{max-width:180px; max-height:56px; width:auto; height:auto}
+
+  /* Full-screen preview overlay */
+  .full-overlay{
+    position:absolute; inset:0; background:#fff; z-index:70; display:none; flex-direction:column;
+  }
+  .full-overlay.show{display:flex}
+  .full-topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 12px; border-bottom:1px solid #eef1f6;
+    font-weight:800; color:#0F2D56;
+  }
+  .full-close{
+    appearance:none; background:transparent; border:0; font-size:22px; line-height:1;
+    cursor:pointer; padding:4px 8px;
+  }
+  .full-content{
+    flex:1; display:flex; padding:12px; overflow:hidden;  /* keep overlay fixed; inner scroll only */
+  }
+  .full-content .mail-frame{
+    height:100%; width:100%; display:flex; flex-direction:column;  /* ensure inner .mail-body can flex/scroll */
+  }
+  
+  /* For all non-preview steps, keep the original reserved space below content */
 </style>
 </head>
 <body>
@@ -273,7 +350,7 @@
             </div>
           </section>
 
-          <!-- Step 4: AI Compose (heading + button visibility/spacing) -->
+          <!-- Step 4: AI Compose -->
           <section class="slide">
             <div class="head">
               <div class="h1">Tell Your Story</div>
@@ -281,7 +358,6 @@
             </div>
             <div class="scroll">
               <div class="card">
-                <!-- Fake AI status row -->
                 <div id="aiStatus" class="ai-status"><div class="spinner"></div><div id="aiStatusText">Generating your copy…</div></div>
 
                 <div class="row actions">
@@ -303,22 +379,49 @@
             </div>
           </section>
 
-          <!-- Step 5: Preview – rendered autoresponder -->
-          <section class="slide">
+          <!-- Step 5: Preview – Autoresponder -->
+          <section class="slide" id="step-preview">
             <div class="head">
               <div class="h1">Autoresponder Preview</div>
-              <div class="p">This is the email your contact will receive after they download your vCard.</div>
+              <div class="p">See exactly how your email looks on a phone, with real subject/from chrome.</div>
             </div>
             <div class="scroll">
+              <div class="after-dl-banner" role="note" aria-label="Sends right after vCard download">
+                <div class="icon">!</div>
+                <div>
+                  <div>Instant Send: This autoresponder goes out <u>immediately after someone downloads your vCard</u>.</div>
+                  <div class="mini">Make sure everything looks perfect — this is the first impression.</div>
+                </div>
+              </div>
+
               <div class="card">
-                <div class="subj" id="emailSubj">Subject: Great connecting with you!</div><br>
-                <div class="preview-mail">
-                  <div class="body" id="emailRendered">
-                    <!-- filled by JS with shortcodes replaced -->
+                <div class="mail-frame" id="mailFrame">
+                  <!-- top bar / subject + actions -->
+                  <div class="mail-topbar">
+                    <div class="subject" id="mailSubject">It’s Great to Be Connected!</div>
+                    <div class="actions dots" aria-label="More options">
+                      <span class="dotc r" aria-hidden="true"></span>
+                      <span class="dotc o" aria-hidden="true"></span>
+                      <span class="dotc g" aria-hidden="true"></span>
+                    </div>
+                  </div>
+                  <!-- from row -->
+                  <div class="mail-from">
+                    <div class="from-avatar" aria-hidden="true">P</div>
+                    <div class="from-meta">
+                      <div class="from-name" id="fromName">Pete Romano</div>
+                      <div class="from-details" id="fromDetails">pete@segwik.com • to katrina@segwik.com</div>
+                    </div>
+                  </div>
+                  <!-- body (scrollable) -->
+                  <div class="mail-body" id="mailBody">
+                    <!-- dynamic HTML body injected via JS -->
                   </div>
                 </div>
-                <div class="gap12"></div><br>
-                <div class="mini">The contents in this email are dynamically rendered using premade shortcodes — including your company details, contact info, and ai-generated text.</div>
+                <div class="gap12"></div>
+                <button class="btn full" id="btnFullPreview">View Full Preview</button>
+                <div class="gap12"></div>
+                <div class="mini">Tip: The email body above is fully rendered — subject and sender chrome are included to mimic a real phone view.</div>
               </div>
             </div>
           </section>
@@ -409,6 +512,19 @@
           </div>
         </div>
       </div>
+
+      <!-- Full-screen email preview overlay -->
+      <div id="fullPreview" class="full-overlay" aria-hidden="true">
+        <div class="full-topbar">
+          <div>Full Preview</div>
+          <button class="full-close" id="closeFullPreview" aria-label="Close full preview">×</button>
+        </div>
+        <div class="full-content">
+          <div class="mail-frame" id="mailFrameFull">
+            <!-- Cloned mail-frame content goes here -->
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Fixed tray (unchanged) -->
@@ -426,7 +542,7 @@
 function icon(name){
   switch(name){
     case 'mail': return `<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>`;
-    case 'phone': return `<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0  0 1-3.07-8.67A2 2 0  0 1 4.11 2h3a2 2 0  0 1 2 1.72c.12 .9.3 1.77.57 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0  0 0 6 6l1.47-1.11a2 2 0 0 1 2.11-.45c.84 .27 1.71 .45 2.61 .57A2 2 0  0 1 22 16.92z"/></svg>`;
+    case 'phone': return `<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0  0 1-8.63-3.07 19.5 19.5 0  0 1-6-6 19.79 19.79 0  0 1-3.07-8.67A2 2 0  0 1 4.11 2h3a2 2 0  0 1 2 1.72c.12 .9.3 1.77.57 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0  0 0 6 6l1.47-1.11a2 2 0 0 1 2.11-.45c.84 .27 1.71 .45 2.61 .57A2 2 0  0 1 22 16.92z"/></svg>`;
     case 'chat': return `<svg viewBox="0 0 24 24"><path d="M21 15a4 4 0  0 1-4 4H8l-5 3V7a4 4 0  0 1 4-4h10a4 4 0  0 1 4 4z"/></svg>`;
     case 'calendar': return `<svg viewBox="0 0 24 24"><path d="M3 8h18M5 4h14v16H5z"/><path d="M16 2v4M8 2v4"/></svg>`;
     case 'note': return `<svg viewBox="0 0 24 24"><path d="M4 3h14l2 2v16H4z"/><path d="M9 13h6M9 9h6M9 17h3"/></svg>`;
@@ -442,7 +558,7 @@ const flow = document.getElementById('flow');
 document.getElementById('startBtn').addEventListener('click', ()=>{
   intro.style.display = 'none';
   flow.style.display = 'block';
-  goTo(0); // start at first step (company details)
+  goTo(0);
 });
 
 /* ==== Carousel core ==== */
@@ -468,7 +584,6 @@ function goTo(i){
   carousel.style.transform = `translateX(-${idx*100}%)`;
   renderDots();
   updateNav();
-  // keep previews live
   syncCompanyPreview();
   renderEmail();
 }
@@ -498,7 +613,6 @@ carousel.addEventListener('touchend', ()=>{
 /* Nav buttons */
 document.getElementById('backBtn').addEventListener('click', ()=>goTo(idx-1));
 document.getElementById('nextBtn').addEventListener('click', ()=>{
-  // If on CTA step and a CTA selected, show upgrade sheet instead of advancing
   const stepEl = slides[idx];
   if(stepEl && stepEl.dataset.step === 'cta' && chosenCTA){
     toggleSheet(true);
@@ -538,7 +652,6 @@ logoInput.addEventListener('change', ()=>{
   const reader = new FileReader();
   reader.onload = (e)=>{
     logoDataUrl = e.target.result;
-    // Centered logo in the email-style preview
     logoPreviewEmail.innerHTML = `<img alt="logo" src="${logoDataUrl}" style="max-width:160px;display:block;margin:0 auto 8px;border-radius:10px">`;
     renderEmail();
   };
@@ -566,7 +679,6 @@ personalities.forEach(p=>{
     document.querySelectorAll('#personalityChips .chip').forEach(c=>c.classList.remove('active'));
     el.classList.add('active');
     tonePreview.textContent = p.preview;
-    // reset variant index when changing personality
     currentVariantIndex = -1;
   };
   chipHost.appendChild(el);
@@ -582,7 +694,7 @@ const O = {
   document.getElementById(id).addEventListener('input', renderEmail);
 });
 
-/* Base voice (seed for variants) */
+/* Voice + variants (unchanged) */
 function voice(style){
   switch(style){
     case 'bold':
@@ -630,8 +742,6 @@ function voice(style){
       };
   }
 }
-
-/* Build 4 variants per style (1 seed + 3 alternates) */
 function variants(style){
   const b = voice(style);
   return [
@@ -671,7 +781,6 @@ function setFields(v){
   O.diff.value     = v.diff;
   renderEmail();
 }
-
 function startLoading(text){
   aiStatusText.textContent = text || 'Generating your copy…';
   aiStatus.classList.add('show');
@@ -685,99 +794,94 @@ function stopLoading(){
   btnGenerate.removeAttribute('aria-busy');
   btnRegenerate.removeAttribute('aria-busy');
 }
-
 function doGenerate(useNextVariant=false){
   const style = chosenPersonality || 'mentor';
   const v = variants(style);
-  let nextIndex;
-
-  if(useNextVariant){
-    nextIndex = (currentVariantIndex + 1) % v.length;
-  }else{
-    nextIndex = 0; // first variant on "Generate"
-  }
-
+  let nextIndex = useNextVariant ? (currentVariantIndex + 1) % v.length : 0;
   startLoading(useNextVariant ? 'Regenerating alternate version…' : 'Generating your copy…');
-
-  // Fake delay to simulate AI work
   setTimeout(()=>{
     setFields(v[nextIndex]);
     currentVariantIndex = nextIndex;
     stopLoading();
   }, 1000);
 }
-
 btnGenerate.addEventListener('click', ()=>doGenerate(false));
 btnRegenerate.addEventListener('click', ()=>doGenerate(true));
 
-/* ==== Render the autoresponder (shortcodes -> actual) ==== */
-const emailRendered = document.getElementById('emailRendered');
+/* ==== Render the autoresponder into the Step 5 phone-like preview ==== */
 function renderEmail(){
-  const logo = logoDataUrl ? `<img src="${logoDataUrl}" alt="logo" style="max-width:140px; display:block; margin:0 auto 8px;border-radius:10px">` : '';
-  const firstname = '[firstname]'; // preview exactly as requested
-  const company_overview = (O.overview.value || '').trim();
-  const mission_statement = (O.mission.value || '').trim();
-  const organization_values = (O.values.value || '').trim();
-  const differentiator = (O.diff.value || '').trim();
+  // Subject (fixed)
+  const subjEl = document.getElementById('mailSubject');
+  if(subjEl) subjEl.textContent = 'It’s Great to Be Connected!';
 
-  const acct_name = (acct.name.value || '').trim();
-  const acct_phone = (acct.phone.value || '').trim();
-  const acct_email = (acct.email.value || '').trim();
-  const acct_site  = (acct.site.value  || '').trim();
-  const addr = [
-    (acct.addr1.value||'').trim(),
-    (acct.addr2.value||'').trim()
-  ].filter(Boolean).join(' | ');
-  const city = (acct.city.value||'').trim();
-  const state = (acct.state.value||'').trim();
-  const zip = (acct.zip.value||'').trim();
+  // Build body with logo above headline (using your URL by default)
+  const headerLogoSrc = (window.logoDataUrl && window.logoDataUrl.length)
+    ? window.logoDataUrl
+    : 'https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1696179347579.png';
+  const logoHtml = `<p class="mail-logo-wrap"><img class="mail-logo" alt="Segwik logo" src="${headerLogoSrc}"></p>`;
 
-  /* Compact email-signature footer (headshot fixed circle, top-aligned) */
-  const footerHTML = `
-<div style="white-space:normal;display:flex;align-items:flex-start;gap:12px;margin-top:10px;">
-  <div style="flex:0 0 auto;display:flex;align-items:flex-start;">
-    <div style="width:64px;height:64px;border-radius:50%;background:#dfe9ff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#667085;">headshot</div>
-  </div>
-  <div style="flex:1 1 auto;line-height:1.2;">
-    <div style="font-weight:700;margin:0;">[owner_firstname] [owner_lastname]</div>
-    <div style="margin:0;">${acct_name || '[account_name]'}</div>
-    <div style="margin:0;">${acct_site || '[account_website]'}</div>
-    <div style="margin:4px 0 0 0;">[owner_phone]</div>
-    <div style="margin:0;">[owner_email]</div>
-    <div style="margin:4px 0 0 0;">${[addr, city, state, zip].filter(Boolean).join(' | ') || '[account_address] | [account_city] | [account_state] | [account_zip]'}</div>
-  </div>
-</div>`.trim();
+  const bodyHtml = `
+    ${logoHtml}
+    <h3>It’s Great to Be Connected!</h3>
+    <p>Hello Katrina, Thanks for downloading my digital business card — I’m excited we crossed paths. Let me introduce myself a bit more:</p>
 
-  const body = `
-${logo}
-<div style="font-weight:800;margin-bottom:6px;">It’s Great to Be Connected!</div>
+    <p><strong>About My Business</strong><br/>Segwik is a human-centered Relationship Operating System (ROS) built for entrepreneurs, solopreneurs, and small teams who want to grow real relationships without the chaos of traditional CRMs. It brings contacts, communication, and workflows together in one intuitive platform with tools for automation, multi-channel communication, and AI-powered insights. Segwik replaces tech clutter with clarity and helps business owners, sales agents, and leaders stay connected and consistent.</p>
 
-Hello ${firstname},
+    <p><strong>What Drives Us</strong><br/>Segwik exists to help small businesses and individuals build meaningful relationships at scale—without the bloat or burnout of complex software. We make it easy for entrepreneurs and teams to show up, follow up, and grow in ways that feel simple, human, and sustainable.</p>
 
-Thanks for downloading my digital business card — I’m excited we crossed paths.
+    <p><strong>What Makes Us Different</strong><br/>Segwik isn’t just another CRM—it’s a Relationship OS focused on real connection and authentic automation. Its flexible token-based system gives users access to AI, communication tools, and support without rigid pricing. By combining email, text, calendar, forms, and workflows in one place, Segwik keeps business simple and scalable for real people, from solopreneurs to growing teams.</p>
 
-Let me introduce myself a bit more:
+    <p><strong>Our Core Values</strong><br/>Segwik values human connection, simplicity, and transparency. We’re built for the underdog, listen first, and grow through action, not perfection. Our automations are made with heart, our tools are scalable by design, and our community grows stronger together through purpose, integrity, and trust.</p>
 
-<div style="font-weight:700;margin-top:8px;">About My Business:</div>
-${company_overview || '[account.company_overview]'}
-
-<div style="font-weight:700;margin-top:8px;">What Drives Us:</div>
-${mission_statement || '[account.mission_statement]'}
-
-<div style="font-weight:700;margin-top:8px;">What Makes Us Different:</div>
-${differentiator || '[account.differentiating_proposition]'}
-
-<div style="font-weight:700;margin-top:8px;">Our Core Values:</div>
-${organization_values || '[account.organization_values]'}
-
-Looking forward to staying connected.
-
-${footerHTML}
+    <div class="sig">
+      <div class="headshot" aria-hidden="true">Headshot</div>
+      <div class="meta">
+        <div style="font-weight:700; margin-bottom:2px;">Pete Romano</div>
+        <div><a href="https://www.segwik.com" target="_blank" rel="noopener">Segwik</a></div>
+        <div>pete@segwik.com</div>
+        <div>914-715-2058</div>
+      </div>
+    </div>
   `.trim();
 
-  emailRendered.innerHTML = body; // render HTML (logo + refined signature footer)
+  const bodyEl = document.getElementById('mailBody');
+  if(bodyEl) bodyEl.innerHTML = bodyHtml;
+
+  // From chrome line replacements
+  const fromName = document.getElementById('fromName');
+  if(fromName) fromName.textContent = 'Pete Romano';
+  const fromDetails = document.getElementById('fromDetails');
+  if(fromDetails) fromDetails.textContent = 'pete@segwik.com • to katrina@segwik.com';
+
+  // If full overlay is open, mirror content there too
+  const mailFrame = document.getElementById('mailFrame');
+  const mailFrameFull = document.getElementById('mailFrameFull');
+  if(mailFrame && mailFrameFull && document.getElementById('fullPreview').classList.contains('show')){
+    mailFrameFull.innerHTML = mailFrame.innerHTML;
+  }
 }
+
+/* Initial render */
 renderEmail();
+
+/* ==== Full-screen Preview controls ==== */
+const btnFull = document.getElementById('btnFullPreview');
+const overlay = document.getElementById('fullPreview');
+const closeFull = document.getElementById('closeFullPreview');
+
+btnFull.addEventListener('click', ()=>{
+  // clone current preview into full view
+  const mailFrame = document.getElementById('mailFrame');
+  const mailFrameFull = document.getElementById('mailFrameFull');
+  mailFrameFull.innerHTML = mailFrame.innerHTML;
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden','false');
+});
+
+closeFull.addEventListener('click', ()=>{
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden','true');
+});
 
 /* ==== CTA (upgrade on Next) ==== */
 const ctaOptions = [
@@ -814,10 +918,10 @@ document.getElementById('upgradeNow').addEventListener('click', ()=>{ toggleShee
 
 /* Final screen */
 const activateSwitch = document.getElementById('activateSwitch');
-activateSwitch.addEventListener('click', ()=>activateSwitch.classList.toggle('active'));
+activateSwitch && activateSwitch.addEventListener('click', ()=>activateSwitch.classList.toggle('active'));
 document.getElementById('seeUpgrade').addEventListener('click', ()=>alert('Upgrade options (mock)'));
 document.getElementById('finishBtn').addEventListener('click', ()=>{
-  const active = activateSwitch.classList.contains('active');
+  const active = activateSwitch?.classList.contains('active');
   alert(`Saved! (Mock)\nJourney ${active ? 'activated' : 'saved as draft'}.`);
 });
 
@@ -826,9 +930,6 @@ document.getElementById('finishBtn').addEventListener('click', ()=>{
   document.getElementById('acct_name').addEventListener(ev, syncCompanyPreview);
   document.getElementById('acct_site').addEventListener(ev, syncCompanyPreview);
 });
-
-/* Initialize previews once more */
-syncCompanyPreview();
 
 /* Accessibility: keyboard navigation between steps */
 window.addEventListener('keydown', (e)=>{

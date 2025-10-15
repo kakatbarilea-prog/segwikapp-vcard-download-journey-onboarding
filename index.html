@@ -9,7 +9,7 @@
   :root {
     --bg:#f6f8fb; --ink:#243048; --muted:#667085; --line:#e6ebf2;
     --accent:#0F2D56; --pill:#eef4ff; --pill-border:#cfe1ff; --ok:#16a34a;
-    --phone-w:430px; --phone-h:800px; --footer-h:76px; --status-h:46px;
+    --phone-w:430px; --phone-h:800px; --footer-h:36px; --status-h:46px;
     --card:#fff; --radius:16px; --shadow:0 14px 38px rgba(0,0,0,.08);
     --slide-ms:320ms; --pager-gap:156px; /* global default, preview step overrides */
     --banner:#fff7c2; --banner-ink:#4a3b00; --banner-border:#fde68a;
@@ -131,11 +131,11 @@
 
   /* Pager & nav */
   .nav{
-    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 6px);
+    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) - 2px);
     display:flex;gap:8px;justify-content:space-between;padding:0 14px
   }
   .pager{
-    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 2px);
+    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) - 2px);
     display:flex;justify-content:center;gap:6px
   }
   .dot{width:8px;height:8px;border-radius:50%;background:#c9d2e4;opacity:.8}
@@ -395,14 +395,14 @@
           <section class="slide" id="step-preview">
             <div class="head">
               <div class="h1">Autoresponder Preview</div>
-              <div class="p">See exactly how your email looks on a phone, with real subject/from chrome.</div>
+             
             </div>
             <div class="scroll">
               <div class="after-dl-banner" role="note" aria-label="Sends right after vCard download">
                 <div class="icon">!</div>
                 <div>
                   <div>Instant Send: This autoresponder goes out <u>immediately after someone downloads your vCard</u>.</div>
-                  <div class="mini">Make sure everything looks perfect — this is the first impression.</div>
+            
                 </div>
               </div>
 
@@ -432,7 +432,7 @@
                 </div>
 
                 <div class="gap12"></div>
-
+<br>
                 <!-- New dual buttons row -->
                 <div class="row wrap">
                   <button class="btn outline-blue" id="btnEditTemplate" title="Edit email template">
@@ -449,7 +449,7 @@
                 </div>
 
                 <div class="gap12"></div>
-                <div class="mini">Tip: The email body above is fully rendered — subject and sender chrome are included to mimic a real phone view.</div>
+      
               </div>
             </div>
           </section>

@@ -166,6 +166,8 @@
   #step-preview{padding-bottom:calc(var(--footer-h) + 48px);}
   #step-preview .scroll{display:flex;flex-direction:column;gap:12px;overflow:hidden; margin-bottom:0; padding-bottom:0;}
   #step-preview .card{display:flex;flex-direction:column; flex:1; min-height:0;}
+
+  /* Email frame (shared) */
   .mail-frame{
     border:1px solid #e6ebf2; border-radius:16px; overflow:hidden; background:#fff;
     display:flex; flex-direction:column; flex:1; min-height:0;
@@ -202,8 +204,22 @@
   .full-overlay.show{display:flex}
   .full-topbar{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #eef1f6; font-weight:800; color:#0F2D56;}
   .full-close{appearance:none; background:transparent; border:0; font-size:22px; line-height:1; cursor:pointer; padding:4px 8px;}
-  .full-content{flex:1; display:flex; padding:12px; overflow:hidden;}
+  .full-content{flex:1; display:flex; flex-direction:column; padding:0; overflow:hidden;}
   .full-content .mail-frame{height:100%; width:100%; display:flex; flex-direction:column;}
+
+  /* Rich editor toolbar (NEW) */
+  .richbar{
+    display:none; gap:8px; align-items:center; padding:8px 10px; border-bottom:1px solid #eef1f6; background:#f8fbff;
+    position:sticky; top:0; z-index:2;
+  }
+  .richbar.show{display:flex}
+  .rbtn{
+    appearance:none; border:1px solid var(--blue-200); background:#fff; border-radius:10px; padding:8px; display:inline-grid; place-items:center; cursor:pointer; 
+  }
+  .rbtn:hover{background:#eff6ff;border-color:#0000}
+  .rsep{width:1px;height:24px;background:#e7edf8;margin:0 4px}
+  .rlabel{font-size:12px;color:#667085;margin-right:6px;font-weight:700}
+  .richSave{margin-left:auto}
 
   /* ---- CTA Insert styles ---- */
   .cta-insert{
@@ -224,7 +240,7 @@
   /* NEW: arrows instead of dots */
   .cta-arrows{display:flex; gap:8px; justify-content:space-between; align-items:center; margin-top:8px}
   .icon-btn{appearance:none; background:#fff; border:1px solid var(--blue-200); border-radius:10px; padding:8px; display:inline-grid; place-items:center; cursor:pointer}
-  .icon-btn:hover{background:#eff6ff; border-color:#0000} /* keep hover without changing tone */
+  .icon-btn:hover{background:#eff6ff; border-color:#0000}
   .icon-btn svg{width:18px; height:18px}
   .cta-action-row{display:flex; gap:8px; align-items:center; margin-top:8px}
 
@@ -245,12 +261,12 @@
   }
   .flash{animation:cta-flash 1.1s ease}
 
-  /* Step 6 layout: stretch preview to use space (fix empty gap) */
-  .slide[data-step="cta"] .scroll{display:flex; flex-direction:column; gap:12px; overflow:hidden; margin-bottom:0; padding-bottom:60px;} /* << tiny spacer added */
+  /* Step 6 layout: stretch preview to use space */
+  .slide[data-step="cta"] .scroll{display:flex; flex-direction:column; gap:12px; overflow:hidden; margin-bottom:0; padding-bottom:60px;}
   .slide[data-step="cta"] .card{display:flex; flex-direction:column; flex:1; min-height:0;}
   .slide[data-step="cta"] .mail-frame{flex:1; min-height:0;}
 
-  /* NEW: Centered CTA editor modal (replaces bottom-sheet style) */
+  /* NEW: Centered CTA editor modal */
   .modal-wrap{position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(15,45,86,.28); z-index:80}
   .modal-wrap.show{display:flex}
   .modal{
@@ -261,8 +277,9 @@
   .modal .title{font-weight:800; color:#0F2D56; margin-bottom:6px}
   .modal .text{font-size:13px; color:#667085; line-height:1.5; margin-bottom:12px}
   .modal .x{position:absolute; top:8px; right:10px; appearance:none; border:0; background:transparent; font-size:20px; cursor:pointer; line-height:1}
+  .modal .divider{height:1px;background:#eef1f6;margin:10px 0}
 
-  /* NEW: CTA step preview bar (initially hidden) */
+  /* NEW: CTA step preview bar */
   #ctaSendPreviewBar{display:none; margin-bottom:8px; align-items:center; gap:8px}
 
   /* ===== UPGRADE SCREEN ===== */
@@ -278,8 +295,8 @@
   .price{font-weight:900; font-size:18px; margin:4px 0 6px 0; color:#0F2D56}
   .desc{font-size:13px; color:#243048; margin-bottom:12px}
   .features{list-style:none; padding:0; margin:0 0 12px 0; display:grid; gap:8px}
-  .feature{display:flex; align-items:center; justify-content:center; gap:8px; font-size:13px; color:#243048}
-  .badge{width:18px; height:18px; border-radius:50%; background:var(--blue-50); border:1px solid var(--blue-200); display:grid; place-items:center; color:var(--blue)}
+  .feature{display:flex; align-items:center; justify-content:flex-start; gap:8px; font-size:13px; color:#243048}
+  .badge{width:18px; height:18px; border-radius:50%; background:var(--blue-50); border:1px solid var(--blue-200); display:grid; place-items:center;}
   .badge svg{width:12px; height:12px}
   .plans-grid{display:grid; grid-template-columns:1fr; gap:12px}
   @media (min-width:420px){ .plans-grid{grid-template-columns:1fr} }
@@ -290,16 +307,44 @@
     to   { transform:translateX(0);   opacity:1 }
   }
   .return-anim{ animation:returnSlide .35s ease }
-  /* left-align only the features inside each plan */
-.plan .features { 
-  text-align: left;         /* text flows left */
-}
 
-.plan .feature {
-  justify-content: flex-start; /* stop centering the row */
-  align-items: flex-start;     /* (optional) keep multi-line bullets neat */
-}
+  /* ===== NEW: Follow-up modal extras ===== */
+  .btn.orange{background:#f59e0b;border-color:#f59e0b;color:#fff}
+  .btn.orange:hover{background:#d97706;border-color:#d97706}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .inline-note{font-size:12px;color:#7a849a;margin-top:6px}
+  .linklike{color:#2563eb;cursor:pointer;text-decoration:underline;font-weight:700}
+  .right{display:flex;justify-content:flex-end;gap:8px}
 
+  /* NEW: subtle cue when editing in full preview */
+  .editing .mail-body[contenteditable="true"]{outline:2px dashed #bfdbfe; outline-offset:6px}
+  .editing .mail-topbar .subject[contenteditable="true"]{outline:2px dashed #bfdbfe; outline-offset:4px}
+
+  /* ===== NEW: Touchpoints stack (collapsible cards) ===== */
+  .tp-card{position:relative}
+  .tp-head{
+    display:flex; align-items:center; gap:8px; justify-content:space-between;
+    padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:#f8fafc; margin-bottom:10px;
+  }
+  .tp-title{font-weight:800; font-size:13px; color:#0F2D56}
+  .tp-meta{font-size:12px; color:#667085}
+  .tp-toggle{appearance:none; background:#fff; border:1px solid var(--line); border-radius:10px; padding:6px; display:grid; place-items:center; cursor:pointer}
+  .tp-content{transition:max-height .25s ease, opacity .25s ease; overflow:hidden}
+  .tp-collapsed .tp-content{max-height:0; opacity:.0; pointer-events:none}
+  .tp-expanded .tp-content{max-height:1200px; opacity:1}
+
+  /* ===== NEW: On-brand number field for Schedule Interval ===== */
+  .numfield{
+    display:flex; align-items:center; background:#fff; border:1px solid var(--blue-200); border-radius:12px; overflow:hidden;
+  }
+  .numfield input{
+    border:0; background:#fff; padding:10px 8px; width:100%; text-align:center; font-weight:800; color:#0F2D56;
+  }
+  .numbtn{
+    appearance:none; border:0; background:#eff6ff; padding:10px; display:grid; place-items:center; cursor:pointer;
+  }
+  .numbtn:active{transform:scale(.98)}
+  .numbtn svg{width:16px; height:16px}
 </style>
 </head>
 <body>
@@ -449,46 +494,67 @@
               <div class="h1">Autoresponder Preview</div>
             </div>
             <div class="scroll">
+
               <div class="after-dl-banner" role="note" aria-label="Sends right after vCard download">
                 <div class="icon">!</div>
                 <div>Instant Send: This autoresponder goes out <u>immediately after someone downloads your vCard</u>.</div>
               </div>
 
-              <div class="card">
+              <!-- FIRST TOUCHPOINT (Autoresponder) as a collapsible tp-card -->
+              <div class="card tp-card tp-expanded" id="tp0">
+                <div class="tp-head">
+                  <div>
+                    <div class="tp-title">Autoresponder (Immediate)</div>
+                    <div class="tp-meta">Sends right away after download</div>
+                  </div>
+                  <button class="tp-toggle" data-tp-toggle="tp0" title="Collapse/Expand">
+                    <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                  </button>
+                </div>
+
                 <div class="row wrap">
                   <button class="btn" id="btnEditTemplate" title="Edit email template">
                     <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    Edit
                   </button>
                   <button class="btn" id="btnFullPreview" title="View full preview">
                     <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    View
                   </button>
                   <button class="btn blue" id="btnSendPreview" style="margin-left:auto; margin-bottom:6px;">Send Me a Preview</button>
                 </div>
-<br>
-                <div class="mail-frame" id="mailFrame">
-                  <div class="mail-topbar">
-                    <div class="subject" id="mailSubject">It’s Great to Be Connected!</div>
-                    <div class="actions dots" aria-label="More options">
-                      <span class="dotc r"></span><span class="dotc o"></span><span class="dotc g"></span>
+
+                <div class="tp-content">
+                  <div class="mail-frame" id="mailFrame">
+                    <div class="mail-topbar">
+                      <div class="subject" id="mailSubject">It’s Great to Be Connected!</div>
+                      <div class="actions dots" aria-label="More options">
+                        <span class="dotc r"></span><span class="dotc o"></span><span class="dotc g"></span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="mail-from">
-                    <div class="from-avatar">P</div>
-                    <div class="from-meta">
-                      <div class="from-name" id="fromName">Pete Romano</div>
-                      <div class="from-details" id="fromDetails">pete@segwik.com • to katrina@segwik.com</div>
+                    <div class="mail-from">
+                      <div class="from-avatar">P</div>
+                      <div class="from-meta">
+                        <div class="from-name" id="fromName">Pete Romano</div>
+                        <div class="from-details" id="fromDetails">pete@segwik.com • to katrina@segwik.com</div>
+                      </div>
                     </div>
+                    <div class="mail-body" id="mailBody"></div>
                   </div>
-                  <div class="mail-body" id="mailBody"></div>
                 </div>
 
-                <div class="row wrap" style="margin-top:12px">
+                <!-- This button will be moved under the latest card dynamically -->
+                <div class="row wrap" id="addFollowUpRow" style="margin-top:12px">
                   <button class="btn outline-blue" id="btnAddFollowUp" title="Add another follow-up email" style="margin-left:auto;">
                     <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
                     Add Another Follow-Up Email
                   </button>
                 </div>
               </div>
+
+              <!-- FOLLOW-UP CARDS WILL APPEND HERE -->
+              <div id="followupList"></div>
+
             </div>
           </section>
 
@@ -521,7 +587,7 @@
                     </div>
                   </div>
                   <div class="mail-body" id="mailBodyCTA">
-                    <!-- injected via JS: email body + CTA insert/saved + signature -->
+                    <!-- injected via JS -->
                   </div>
                 </div>
               </div>
@@ -636,18 +702,92 @@
         </div>
       </div>
 
+      <!-- NEW: Follow-up Email MODAL (upgraded state) -->
+      <div id="followupModalWrap" class="modal-wrap" onclick="if(event.target.id==='followupModalWrap'){toggleFollowupModal(false)}">
+        <div class="modal" onclick="event.stopPropagation()">
+          <button class="x" id="followupModalClose" aria-label="Close">×</button>
+          <div class="title">Add Follow-Up Email</div>
+          <div class="text">Configure when to send it and which content to use.</div>
+
+          <div class="label">Schedule Interval</div>
+          <div class="two-col">
+            <!-- NEW on-brand number with steppers -->
+            <div class="numfield">
+              <button class="numbtn" id="fuMinus" aria-label="Decrease interval">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+              </button>
+              <input type="number" id="fuInterval" min="1" value="1" />
+              <button class="numbtn" id="fuPlus" aria-label="Increase interval">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+            </div>
+            <select id="fuUnit">
+              <option>minute(s)</option>
+              <option>hour(s)</option>
+              <option selected>day(s)</option>
+              <option>week(s)</option>
+              <option>month(s)</option>
+            </select>
+          </div>
+
+          <div class="gap8"></div>
+          <div class="label">Choose Email</div>
+          <select id="fuTemplate">
+            <option value="">— Select a template —</option>
+            <option value="welcome-quick">Welcome – Quick Check-in</option>
+            <option value="value-drop">Share a Helpful Resource</option>
+            <option value="book-call">Book a Quick Intro Call</option>
+          </select>
+
+          <div class="inline-note" style="margin-top:8px;">
+            <span id="fuCreateLink" class="linklike">+ Create New Email</span>
+          </div>
+
+          <div id="fuCreateWrap" style="display:none; margin-top:10px;">
+            <div class="label">Subject Line</div>
+            <input type="text" id="fuNewSubj" placeholder="Subject line" />
+            <div class="gap8"></div>
+            <div class="label">Email Body</div>
+            <textarea id="fuNewBody" placeholder="Write your follow-up email…"></textarea>
+          </div>
+
+          <div class="divider"></div>
+          <div class="right">
+            <button class="btn orange" id="fuSubmit">Submit Email Touchpoint</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Full-screen email preview overlay -->
       <div id="fullPreview" class="full-overlay" aria-hidden="true">
         <div class="full-topbar">
           <div>Full Preview</div>
           <button class="full-close" id="closeFullPreview" aria-label="Close full preview">×</button>
         </div>
+
+        <!-- NEW: Rich editor toolbar -->
+        <div class="richbar" id="richToolbar">
+          <span class="rlabel">Editing</span>
+          <button class="rbtn" data-cmd="bold" title="Bold"><svg viewBox="0 0 24 24"><path d="M13 12A5 5 0 0 0 8 7H6v10h8a4 4 0 0 0 0-8h-1Z"/></svg></button>
+          <button class="rbtn" data-cmd="italic" title="Italic"><svg viewBox="0 0 24 24"><path d="M19 4h-9"/><path d="M14 20H5"/><path d="M15 4L9 20"/></svg></button>
+          <button class="rbtn" data-cmd="underline" title="Underline"><svg viewBox="0 0 24 24"><path d="M6 4v6a6 6 0 0 0 12 0V4"/><path d="M4 20h16"/></svg></button>
+          <div class="rsep"></div>
+          <button class="rbtn" id="rtH3" title="Heading"><svg viewBox="0 0 24 24"><path d="M4 6v12M4 12h8M12 6v12M18 6v12"/></svg></button>
+          <button class="rbtn" id="rtBullets" title="Bullets"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
+          <button class="rbtn" id="rtLink" title="Link"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 1 7 0l1 1a5 5 0 0 1-7 7l-1-1"/><path d="M14 11a5 5 0 0 1-7 0l-1-1a5 5 0 0 1 7-7l1 1"/></svg></button>
+          <div class="rsep"></div>
+          <button class="rbtn" data-cmd="undo" title="Undo"><svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 1 0 3-7"/></svg></button>
+          <button class="rbtn" data-cmd="redo" title="Redo"><svg viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M21 13A9 9 0 1 1 18 6"/></svg></button>
+          <button class="rbtn" id="rtClear" title="Clear formatting"><svg viewBox="0 0 24 24"><path d="M6 7h11"/><path d="M6 7l6-3 6 3"/><path d="M6 7v10"/><path d="M18 7v4"/></svg></button>
+          <button class="btn blue small richSave" id="rtSave">Save</button>
+        </div>
+
         <div class="full-content">
           <div class="mail-frame" id="mailFrameFull"></div>
         </div>
       </div>
 
-      <!-- ===== NEW: Dedicated Upgrade Screen ===== -->
+      <!-- ===== Dedicated Upgrade Screen ===== -->
       <section id="upgradeScreen">
         <div id="upgradeTopbar">
           <button id="upgradeBack" aria-label="Back">
@@ -763,7 +903,6 @@ function goTo(i){
   renderEmail();
   const stepEl = slides[idx];
   renderEmailCTA();
-  // Auto-scroll when entering the CTA screen
   if(stepEl && stepEl.getAttribute('data-step') === 'cta'){
     setTimeout(()=>scrollMailBodyToCTA(), 250);
   }
@@ -1107,7 +1246,6 @@ function renderEmailCTA(){
   const intro = getEmailIntroHtml();
   const sig   = getSignatureHtml();
 
-  // NEW: toggle "Send Me a Preview" bar visibility based on whether CTA is applied
   const ctaBar = document.getElementById('ctaSendPreviewBar');
   if (ctaBar) ctaBar.style.display = ctaApplied ? 'flex' : 'none';
   const ctaBarBtn = document.getElementById('btnSendPreviewCTA');
@@ -1116,13 +1254,12 @@ function renderEmailCTA(){
       ctaBarBtn.disabled = true;
       ctaBarBtn.classList.add('ghost');
     } else {
-      ctaBarBtn.addEventListener('click', ()=>alert('A preview has been sent to your email. (Mock)'));
+      ctaBarBtn.onclick = ()=>alert('A preview has been sent to your email. (Mock)');
     }
   }
 
   if(ctaApplied){
     host.innerHTML = `${intro}${ctaSavedHtml(ctaApplied)}${sig}`;
-    // pencil on saved CTA -> revert to dashed insert
     const editApplied = document.getElementById('editApplied');
     editApplied && editApplied.addEventListener('click', ()=>{
       ctaApplied = null;
@@ -1134,7 +1271,6 @@ function renderEmailCTA(){
 
   host.innerHTML = `${intro}${ctaInsertHtml()}${sig}`;
 
-  // Bind CTA buttons (either main button OR pencil both open editor)
   host.querySelectorAll('[data-ctatype]').forEach(btn=>{
     btn.addEventListener('click', ()=>openCtaModal(btn.getAttribute('data-ctatype')));
   });
@@ -1142,7 +1278,6 @@ function renderEmailCTA(){
     btn.addEventListener('click', ()=>openCtaModal(btn.getAttribute('data-edit')));
   });
 
-  // Swipe handling + arrows for slides
   const track = document.getElementById('ctaTrack');
   const idxNote = document.getElementById('ctaIndexNote');
   let sx = 0, cx = 0, dragging = false;
@@ -1234,7 +1369,7 @@ function openCtaModal(type){
   toggleCtaModal(true);
 }
 
-/* Save CTA -> apply into email and remove dashed box. Keep pencil to edit */
+/* Save CTA -> apply into email and remove dashed box. */
 document.getElementById('ctaCfgSave').addEventListener('click', ()=>{
   const label = (ctaCfgLabel.value || '').trim() || 'Learn More';
   let href = '#';
@@ -1245,36 +1380,54 @@ document.getElementById('ctaCfgSave').addEventListener('click', ()=>{
     href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent('Let’s connect')}`;
   }
 
-  // Pull the currently visible slide's title/desc to apply matching content
+  // Pull the visible slide's title/desc
   const body = document.getElementById('mailBodyCTA');
   const slides = body.querySelectorAll('.cta-slide');
   const activeSlide = slides[ctaIndex];
   const title = activeSlide.querySelector('[data-ctatitle]').textContent.trim();
   const desc  = activeSlide.querySelector('[data-ctadesc]').textContent.trim();
 
-  ctaApplied = {
-    type: ctaEditingType || 'book',
-    label, href, title, desc
-  };
+  ctaApplied = { type: ctaEditingType || 'book', label, href, title, desc };
   toggleCtaModal(false);
   renderEmailCTA();
   setTimeout(()=>scrollMailBodyToCTA(true), 80);
 });
 
-/* Full-screen Preview controls */
+/* Full-screen Preview controls + Rich editor mode */
 const btnFull = document.getElementById('btnFullPreview');
 const overlay = document.getElementById('fullPreview');
 const closeFull = document.getElementById('closeFullPreview');
+let editModeActive = false;
+
 btnFull && btnFull.addEventListener('click', ()=>{
   const mailFrame = document.getElementById('mailFrame');
   const mailFrameFull = document.getElementById('mailFrameFull');
   mailFrameFull.innerHTML = mailFrame.innerHTML;
   overlay.classList.add('show');
   overlay.setAttribute('aria-hidden','false');
+  overlay.classList.remove('editing');
+  mailFrameFull.querySelector('.mail-body')?.setAttribute('contenteditable','false');
+  mailFrameFull.querySelector('.subject')?.setAttribute('contenteditable','false');
+  document.getElementById('richToolbar').classList.remove('show');
+  editModeActive = false;
 });
 closeFull && closeFull.addEventListener('click', ()=>{
+  // If editing, sync edits back
+  if(editModeActive){
+    const full = document.getElementById('mailFrameFull');
+    const main = document.getElementById('mailFrame');
+    const editedSubject = full.querySelector('.subject')?.textContent || '';
+    const editedBodyHTML = full.querySelector('.mail-body')?.innerHTML || '';
+    if(editedSubject) main.querySelector('.subject').textContent = editedSubject;
+    if(editedBodyHTML) main.querySelector('.mail-body').innerHTML = editedBodyHTML;
+    // keep step 6 in sync
+    renderEmailCTA();
+  }
   overlay.classList.remove('show');
   overlay.setAttribute('aria-hidden','true');
+  overlay.classList.remove('editing');
+  document.getElementById('richToolbar').classList.remove('show');
+  editModeActive = false;
 });
 
 /* Send Me a Preview (mock) */
@@ -1288,18 +1441,15 @@ if (sendBtn) {
   }
 }
 
-/* ==== Upgrade flow wiring ==== */
+/* ===== Upgrade flow wiring ===== */
 let isUpgraded = false;
 let returnSlideIdx = 0;
 const upgradeScreen = document.getElementById('upgradeScreen');
 const upgradeBack = document.getElementById('upgradeBack');
 
 function openUpgradeScreen(){
-  // Remember where we were
   returnSlideIdx = idx;
-  // Hide any open sheets first
   toggleSheet(false); toggleEditSheet(false); toggleFollowupSheet(false);
-  // Show upgrade screen
   flow.style.display = 'none';
   intro.style.display = 'none';
   upgradeScreen.style.display = 'flex';
@@ -1307,31 +1457,46 @@ function openUpgradeScreen(){
 function closeUpgradeScreenWithReturn(){
   upgradeScreen.style.display = 'none';
   flow.style.display = 'block';
-  // Animate return to prior slide
-  flow.classList.remove('return-anim'); // reset if present
-  void flow.offsetWidth;                // reflow to restart animation
-  flow.classList.add('return-anim');
+  flow.classList.remove('return-anim'); void flow.offsetWidth; flow.classList.add('return-anim');
   goTo(returnSlideIdx);
-  // remove the class after animation ends
   setTimeout(()=>flow.classList.remove('return-anim'), 400);
 }
 upgradeBack.addEventListener('click', closeUpgradeScreenWithReturn);
 
-/* Success + apply upgrade UI */
-/* Success + apply upgrade UI */
+/* ===== NEW: Apply upgraded state ===== */
 function applyUpgradeUI(){
   isUpgraded = true;
-  // Remove any elements that showed "Requires an Upgrade"
   document.querySelectorAll('.requires-upgrade').forEach(el=>el.remove());
-  // Also hide "See upgrade options" since we’re upgraded
   const seeUpgradeBtn = document.getElementById('seeUpgrade');
   if (seeUpgradeBtn) {
-    const parentCard = seeUpgradeBtn.closest('.card');
-    if (parentCard) parentCard.remove(); // remove the empty box
+    const parentCard = seeUpgradeBtn.closest('.card'); if (parentCard) parentCard.remove();
     seeUpgradeBtn.remove();
   }
-}
 
+  /* 1) Edit email template -> open full preview in EDIT MODE with rich toolbar */
+  const editBtn = document.getElementById('btnEditTemplate');
+  if (editBtn){
+    editBtn.onclick = ()=>{
+      const mailFrame = document.getElementById('mailFrame');
+      const mailFrameFull = document.getElementById('mailFrameFull');
+      mailFrameFull.innerHTML = mailFrame.innerHTML;
+      const subj = mailFrameFull.querySelector('.subject');
+      const body = mailFrameFull.querySelector('.mail-body');
+      subj && subj.setAttribute('contenteditable','true');
+      body && body.setAttribute('contenteditable','true');
+      overlay.classList.add('show','editing');
+      overlay.setAttribute('aria-hidden','false');
+      document.getElementById('richToolbar').classList.add('show');
+      editModeActive = true;
+    };
+  }
+
+  /* 2) Add Another Follow-Up Email -> open our upgraded modal */
+  const addFU = document.getElementById('btnAddFollowUp');
+  if (addFU){
+    addFU.onclick = ()=>toggleFollowupModal(true);
+  }
+}
 
 /* Buttons that should route to the Upgrade screen */
 const sheet = document.getElementById('upgradeSheet');
@@ -1360,12 +1525,190 @@ document.getElementById('followupUpgradeNow')?.addEventListener('click', ()=>{
   openUpgradeScreen();
 });
 
+/* ===== NEW: Follow-up modal logic (upgraded visuals) ===== */
+const followupModalWrap = document.getElementById('followupModalWrap');
+function toggleFollowupModal(show){ followupModalWrap.classList.toggle('show', !!show); }
+document.getElementById('followupModalClose').addEventListener('click', ()=>toggleFollowupModal(false));
+document.getElementById('fuCreateLink').addEventListener('click', ()=>{
+  const wrap = document.getElementById('fuCreateWrap');
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+});
+/* On-brand steppers */
+document.getElementById('fuMinus').addEventListener('click', ()=>{
+  const inp = document.getElementById('fuInterval');
+  const v = Math.max(1, parseInt(inp.value||'1',10)-1); inp.value = v;
+});
+document.getElementById('fuPlus').addEventListener('click', ()=>{
+  const inp = document.getElementById('fuInterval');
+  const v = Math.max(1, parseInt(inp.value||'1',10)+1); inp.value = v;
+});
+
+/* ===== Touchpoints stack behaviour ===== */
+const followupList = document.getElementById('followupList');
+const addFollowUpBtn = document.getElementById('btnAddFollowUp');
+const addFollowUpRow = document.getElementById('addFollowUpRow');
+const tp0 = document.getElementById('tp0');
+
+function collapseAllExcept(id){
+  document.querySelectorAll('.tp-card').forEach(card=>{
+    if(card.id === id){
+      card.classList.remove('tp-collapsed'); card.classList.add('tp-expanded');
+    }else{
+      card.classList.remove('tp-expanded'); card.classList.add('tp-collapsed');
+    }
+  });
+}
+function attachToggle(card){
+  const btn = card.querySelector('.tp-toggle');
+  if(!btn) return;
+  btn.onclick = ()=>{
+    const isOpen = card.classList.contains('tp-expanded');
+    if(isOpen){
+      card.classList.remove('tp-expanded'); card.classList.add('tp-collapsed');
+    }else{
+      collapseAllExcept(card.id);
+    }
+  };
+}
+/* initial toggle binding */
+attachToggle(tp0);
+
+/* Build a follow-up card DOM */
+let tpCounter = 1;
+function buildFollowupCard({interval, unit, subject, bodyHtml}){
+  const id = `tp${tpCounter++}`;
+  const card = document.createElement('div');
+  card.className = 'card tp-card tp-expanded';
+  card.id = id;
+  card.innerHTML = `
+    <div class="tp-head">
+      <div>
+        <div class="tp-title">Follow-Up Email</div>
+        <div class="tp-meta">Sends after <strong>${interval}</strong> ${unit}</div>
+      </div>
+      <button class="tp-toggle" data-tp-toggle="${id}" title="Collapse/Expand">
+        <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="row wrap">
+      <button class="btn" data-tp-edit title="Edit this email">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        Edit
+      </button>
+      <button class="btn" data-tp-view title="View full preview">
+        <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        View
+      </button>
+      <button class="btn blue" data-tp-send style="margin-left:auto; margin-bottom:6px;">Send Me a Preview</button>
+    </div>
+
+    <div class="tp-content">
+      <div class="mail-frame">
+        <div class="mail-topbar">
+          <div class="subject">${subject || 'Follow-Up'}</div>
+          <div class="actions dots" aria-label="More options">
+            <span class="dotc r"></span><span class="dotc o"></span><span class="dotc g"></span>
+          </div>
+        </div>
+        <div class="mail-from">
+          <div class="from-avatar">P</div>
+          <div class="from-meta">
+            <div class="from-name">Pete Romano</div>
+            <div class="from-details">pete@segwik.com • to katrina@segwik.com</div>
+          </div>
+        </div>
+        <div class="mail-body">${bodyHtml || '<p>Thanks again for connecting! Just checking in…</p>'}${getSignatureHtml()}</div>
+      </div>
+    </div>
+  `;
+  followupList.appendChild(card);
+
+  // Move the Add Another button under the newest card
+  card.after(addFollowUpRow);
+
+  // Bind preview/send/edit buttons for this card
+  const viewBtn = card.querySelector('[data-tp-view]');
+  const editBtn = card.querySelector('[data-tp-edit]');
+  const sendMe  = card.querySelector('[data-tp-send]');
+
+  viewBtn.onclick = ()=>{
+    // show this card in full preview (read-only)
+    const mailFrameFull = document.getElementById('mailFrameFull');
+    const inner = card.querySelector('.mail-frame').innerHTML;
+    document.querySelector('#fullPreview .full-topbar div').textContent = 'Full Preview — Follow-Up';
+    mailFrameFull.innerHTML = inner;
+    mailFrameFull.querySelector('.mail-body')?.setAttribute('contenteditable','false');
+    mailFrameFull.querySelector('.subject')?.setAttribute('contenteditable','false');
+    document.getElementById('richToolbar').classList.remove('show');
+    overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
+    overlay.classList.remove('editing');
+    editModeActive = false;
+  };
+
+  editBtn.onclick = ()=>{
+    // rich edit this follow-up card
+    const mailFrameFull = document.getElementById('mailFrameFull');
+    const inner = card.querySelector('.mail-frame').innerHTML;
+    document.querySelector('#fullPreview .full-topbar div').textContent = 'Edit Email — Follow-Up';
+    mailFrameFull.innerHTML = inner;
+    mailFrameFull.querySelector('.mail-body')?.setAttribute('contenteditable','true');
+    mailFrameFull.querySelector('.subject')?.setAttribute('contenteditable','true');
+    overlay.classList.add('show','editing');
+    overlay.setAttribute('aria-hidden','false');
+    document.getElementById('richToolbar').classList.add('show');
+    // when saving edits, write back into this card
+    pendingWriteBackCard = card;
+    editModeActive = true;
+  };
+
+  if (PREVIEW_DISABLED) { sendMe.disabled = true; sendMe.classList.add('ghost'); }
+  else { sendMe.onclick = ()=>alert('A preview has been sent to your email. (Mock)'); }
+
+  // collapse others, expand this
+  collapseAllExcept(card.id);
+  // enable toggle
+  attachToggle(card);
+}
+
+/* Submit Follow-Up Touchpoint -> build card, collapse first, expand new */
+let pendingWriteBackCard = null; // used by rich editor Save for follow-ups
+document.getElementById('fuSubmit').addEventListener('click', ()=>{
+  const interval = document.getElementById('fuInterval').value || '1';
+  const unit = document.getElementById('fuUnit').value || 'day(s)';
+  const template = document.getElementById('fuTemplate').value;
+  const newSubj = document.getElementById('fuNewSubj').value.trim();
+  const newBody = document.getElementById('fuNewBody').value.trim();
+
+  let subj = 'Follow-Up';
+  let bodyHtml = '';
+  if(newSubj || newBody){
+    subj = newSubj || 'Follow-Up';
+    bodyHtml = newBody ? `<p>${newBody.replace(/\n/g,'</p><p>')}</p>` : '';
+  }else{
+    if(template==='welcome-quick'){
+      subj = 'Just a quick hello';
+      bodyHtml = `<p>Just a quick hello — I’m glad we connected. If I can be a resource, reply anytime.</p>`;
+    }else if(template==='value-drop'){
+      subj = 'A resource you might like';
+      bodyHtml = `<p>Thought this might help: <a href="#">Getting Started Guide</a>. If useful, I can send more.</p>`;
+    }else if(template==='book-call'){
+      subj = 'Want to book a quick intro?';
+      bodyHtml = `<p>Happy to connect for 15 minutes. Here’s my calendar: <a href="#">Pick a time</a>.</p>`;
+    }else{
+      bodyHtml = `<p>Checking in and happy to help with anything you need.</p>`;
+    }
+  }
+
+  // Build and append the new card
+  buildFollowupCard({interval, unit, subject: subj, bodyHtml});
+  toggleFollowupModal(false);
+});
+
 /* Final screen */
 const activateSwitch = document.getElementById('activateSwitch');
 activateSwitch && activateSwitch.addEventListener('click', ()=>activateSwitch.classList.toggle('active'));
-document.getElementById('seeUpgrade')?.addEventListener('click', ()=>{
-  openUpgradeScreen();
-});
+document.getElementById('seeUpgrade')?.addEventListener('click', ()=>{ openUpgradeScreen(); });
 document.getElementById('finishBtn')?.addEventListener('click', ()=>{
   const active = activateSwitch?.classList.contains('active');
   alert(`Saved! (Mock)\nJourney ${active ? 'activated' : 'saved as draft'}.`);
@@ -1383,7 +1726,7 @@ document.getElementById('btnUpgradePro').addEventListener('click', ()=>{
   closeUpgradeScreenWithReturn();
 });
 
-/* Keep company preview live (no-op placeholders kept) */
+/* Keep company preview live */
 ['input','change'].forEach(ev=>{
   document.getElementById('acct_name')?.addEventListener(ev, syncCompanyPreview);
   document.getElementById('acct_site')?.addEventListener(ev, syncCompanyPreview);
@@ -1395,9 +1738,67 @@ window.addEventListener('keydown', (e)=>{
   if(e.key==='ArrowRight') goTo(idx+1);
 });
 
+/* ===== Rich Toolbar actions ===== */
+function exec(cmd, val=null){
+  document.execCommand(cmd, false, val);
+}
+document.querySelectorAll('#richToolbar .rbtn[data-cmd]').forEach(btn=>{
+  btn.addEventListener('click', ()=>exec(btn.getAttribute('data-cmd')));
+});
+document.getElementById('rtH3').addEventListener('click', ()=>{
+  exec('formatBlock', '<h3>');
+});
+document.getElementById('rtBullets').addEventListener('click', ()=>{
+  exec('insertUnorderedList');
+});
+document.getElementById('rtLink').addEventListener('click', ()=>{
+  const url = prompt('Link URL');
+  if(url) exec('createLink', url);
+});
+document.getElementById('rtClear').addEventListener('click', ()=>{
+  exec('removeFormat');
+});
+document.getElementById('rtSave').addEventListener('click', ()=>{
+  // If editing original autoresponder (no pendingWriteBackCard)
+  const full = document.getElementById('mailFrameFull');
+  const subject = full.querySelector('.subject')?.textContent || '';
+  const bodyHTML = full.querySelector('.mail-body')?.innerHTML || '';
+  if(pendingWriteBackCard){
+    // write back into that follow-up card
+    const s = pendingWriteBackCard.querySelector('.subject');
+    const b = pendingWriteBackCard.querySelector('.mail-body');
+    if(s && subject) s.textContent = subject;
+    if(b && bodyHTML) b.innerHTML = bodyHTML;
+  }else{
+    // write back into main (autoresponder)
+    const main = document.getElementById('mailFrame');
+    if(subject) main.querySelector('.subject').textContent = subject;
+    if(bodyHTML) main.querySelector('.mail-body').innerHTML = bodyHTML;
+    renderEmailCTA();
+  }
+  // close editor
+  pendingWriteBackCard = null;
+  overlay.classList.remove('show','editing');
+  overlay.setAttribute('aria-hidden','true');
+  document.getElementById('richToolbar').classList.remove('show');
+  editModeActive = false;
+});
+
 /* ===== Initial renders ===== */
 renderEmail();
 renderEmailCTA();
+
+/* Ensure Add Follow-Up opens sheet (pre-upgrade) */
+document.getElementById('btnAddFollowUp')?.addEventListener('click', ()=>{
+  if(!isUpgraded) toggleFollowupSheet(true);
+});
+
+/* Collapse control for first card when clicking its header arrow */
+document.querySelector('[data-tp-toggle="tp0"]').addEventListener('click', ()=>{
+  const open = tp0.classList.contains('tp-expanded');
+  if(open){ tp0.classList.remove('tp-expanded'); tp0.classList.add('tp-collapsed'); }
+  else { collapseAllExcept('tp0'); }
+});
 </script>
 </body>
 </html>

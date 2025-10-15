@@ -11,7 +11,7 @@
     --accent:#0F2D56; --pill:#eef4ff; --pill-border:#cfe1ff; --ok:#16a34a;
     --phone-w:430px; --phone-h:800px; --footer-h:36px; --status-h:46px;
     --card:#fff; --radius:16px; --shadow:0 14px 38px rgba(0,0,0,.08);
-    --slide-ms:320ms; --pager-gap:156px; /* global default, preview step overrides */
+    --slide-ms:320ms; --pager-gap:96px; /* tightened to reduce empty space */
     --banner:#fff7c2; --banner-ink:#4a3b00; --banner-border:#fde68a;
 
     /* blues for buttons */
@@ -66,7 +66,7 @@
   .btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
   .btn.blue:hover{background:var(--blue-700);border-color:var(--blue-700)}
   .btn.outline-blue{background:#fff;color:var(--blue);border-color:var(--blue-200)}
-  .btn.outline-blue:hover{background:var(--blue-50);border-color:var(--blue)}
+  .btn.outline-blue:hover{background:#eff6ff;border-color:var(--blue)}
 
   /* Carousel (steps after Start) */
   .carousel{height:100%;display:flex;width:100%;touch-action:pan-y;
@@ -83,11 +83,6 @@
   }
   .row{display:flex;gap:10px}
   .row.actions{margin-bottom:16px;}
-  .row.actions .btn{
-    border-width:2px;
-    box-shadow:0 6px 14px rgba(15,45,86,.12), 0 2px 6px rgba(15,45,86,.08);
-    letter-spacing:.2px;
-  }
   .row.wrap{flex-wrap:wrap}
   .col{flex:1}
   .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -95,9 +90,6 @@
     border:1px solid var(--pill-border);background:var(--pill);border-radius:12px;
     padding:10px;cursor:pointer;font-weight:700;display:flex;justify-content:space-between;align-items:center
   }
-  .chip .tick{width:18px;height:18px;border:2px solid #9bbdff;border-radius:50%;background:#fff}
-  .chip.active{outline:2px solid #a8c6ff;background:#f3f7ff}
-  .chip.active .tick{background:#0F2D56;border-color:#0F2D56}
 
   textarea,input[type="text"],input[type="url"],input[type="email"],input[type="file"],select{
     width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;
@@ -110,11 +102,6 @@
   .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px}
 
   /* vCard & email preview (used earlier steps) */
-  .vcard{display:flex;gap:10px;align-items:center;border:1px dashed #dbe7ff;border-radius:12px;padding:10px}
-  .avatar{width:52px;height:52px;border-radius:14px;background:#dfe9ff;display:grid;place-items:center;overflow:hidden}
-  .avatar img{width:100%;height:100%;object-fit:cover;border-radius:14px}
-  .vmeta .name{font-weight:800}
-  .vmeta .role{font-size:12px;color:var(--muted)}
   .preview-mail{border:1px solid #e6ebf2;border-radius:12px;padding:12px;background:#fff}
   .preview-mail .subj{font-weight:800;margin-bottom:6px}
   .preview-mail .body{white-space:pre-wrap}
@@ -141,7 +128,7 @@
   .dot{width:8px;height:8px;border-radius:50%;background:#c9d2e4;opacity:.8}
   .dot.active{background:#0F2D56;opacity:1}
 
-  /* Bottom Sheet (upgrade) */
+  /* Bottom Sheet (upgrade / config) */
   .sheet-wrap{position:absolute;inset:0;display:none;align-items:flex-end;background:rgba(15,45,86,.28);z-index:60}
   .sheet-wrap.show{display:flex}
   .sheet{
@@ -174,15 +161,10 @@
   .after-dl-banner{background:var(--banner); color:var(--banner-ink); border:1px solid var(--banner-border); border-radius:12px; padding:10px 12px; display:flex; gap:10px; align-items:flex-start; font-size:13px; font-weight:700}
   .after-dl-banner .icon{flex:0 0 auto; width:18px; height:18px; border-radius:4px; background:#f59e0b; display:grid; place-items:center; color:#fff; font-size:12px; font-weight:900}
 
-  /* Stretch preview box and keep inner scroll */
-  #step-preview{padding-bottom:calc(var(--footer-h) + 56px);}
-  #step-preview .scroll{
-    display:flex;flex-direction:column;gap:12px;
-    overflow:hidden; margin-bottom:0; padding-bottom:0;
-  }
-  #step-preview .card{
-    display:flex;flex-direction:column; flex:1; min-height:0;
-  }
+  /* Stretch preview box and keep inner scroll (Step 5) */
+  #step-preview{padding-bottom:calc(var(--footer-h) + 48px);}
+  #step-preview .scroll{display:flex;flex-direction:column;gap:12px;overflow:hidden; margin-bottom:0; padding-bottom:0;}
+  #step-preview .card{display:flex;flex-direction:column; flex:1; min-height:0;}
   .mail-frame{
     border:1px solid #e6ebf2; border-radius:16px; overflow:hidden; background:#fff;
     display:flex; flex-direction:column; flex:1; min-height:0;
@@ -190,11 +172,6 @@
   .mail-topbar{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #eef1f6}
   .mail-topbar .subject{font-weight:800; font-size:14px; line-height:1.2; padding-right:8px}
   .mail-topbar .actions{display:flex; gap:8px; align-items:center}
-  .i{width:18px; height:18px; display:inline-block}
-  .i.star{background:linear-gradient(#e5e7eb,#d1d5db)}
-  .i.more{background:linear-gradient(#e5e7eb,#d1d5db)}
-
-  /* three traffic-light dots on right side */
   .actions.dots .dotc{width:10px;height:10px;border-radius:50%;}
   .actions.dots .dotc.r{background:#ef4444}
   .actions.dots .dotc.o{background:#f59e0b}
@@ -206,15 +183,7 @@
   .from-name{font-weight:800; font-size:13px}
   .from-details{font-size:12px; color:#6b7280}
 
-  .mail-body{
-    flex:1; overflow:auto; padding:14px 14px 18px 14px; line-height:1.55;
-    -webkit-overflow-scrolling:touch;
-  }
-  .mail-body::-webkit-scrollbar{width:8px}
-  .mail-body::-webkit-scrollbar-track{background:#f3f4f6;border-radius:8px}
-  .mail-body::-webkit-scrollbar-thumb{background:#c7ced9;border-radius:8px}
-  .mail-body::-webkit-scrollbar-thumb:hover{background:#aeb7c4}
-
+  .mail-body{flex:1; overflow:auto; padding:14px 14px 18px 14px; line-height:1.55; -webkit-overflow-scrolling:touch;}
   .mail-body h3{margin:0 0 6px 0; font-size:15px}
   .mail-body p{margin:0 0 10px 0; font-size:13px; color:#243048}
   .sig{display:flex; gap:12px; margin-top:14px; align-items:flex-start}
@@ -228,25 +197,70 @@
   .mail-logo{max-width:180px; max-height:56px; width:auto; height:auto}
 
   /* Full-screen preview overlay */
-  .full-overlay{
-    position:absolute; inset:0; background:#fff; z-index:70; display:none; flex-direction:column;
-  }
+  .full-overlay{position:absolute; inset:0; background:#fff; z-index:70; display:none; flex-direction:column;}
   .full-overlay.show{display:flex}
-  .full-topbar{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:10px 12px; border-bottom:1px solid #eef1f6;
-    font-weight:800; color:#0F2D56;
+  .full-topbar{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #eef1f6; font-weight:800; color:#0F2D56;}
+  .full-close{appearance:none; background:transparent; border:0; font-size:22px; line-height:1; cursor:pointer; padding:4px 8px;}
+  .full-content{flex:1; display:flex; padding:12px; overflow:hidden;}
+  .full-content .mail-frame{height:100%; width:100%; display:flex; flex-direction:column;}
+
+  /* ---- CTA Insert styles ---- */
+  .cta-insert{
+    border:2px dashed var(--blue); background:var(--blue-50);
+    border-radius:14px; padding:12px; margin:14px 0 4px 0; position:relative;
   }
-  .full-close{
-    appearance:none; background:transparent; border:0; font-size:22px; line-height:1;
-    cursor:pointer; padding:4px 8px;
+  .cta-insert .cta-head{font-weight:900; color:#0F2D56; margin-bottom:8px; font-size:13px; letter-spacing:.2px;}
+  .cta-carousel{overflow:hidden; position:relative;}
+  .cta-track{display:flex; transition:transform .28s ease;}
+  .cta-slide{min-width:100%; padding:4px;}
+  .cta-card{
+    background:#fff; border:1px solid var(--blue-200); border-radius:12px; padding:12px;
+    box-shadow:0 6px 14px rgba(37,99,235,.08);
   }
-  .full-content{
-    flex:1; display:flex; padding:12px; overflow:hidden;  /* keep overlay fixed; inner scroll only */
+  .cta-card h4{margin:0 0 6px 0; font-size:14px; color:#0F2D56}
+  .cta-card p{margin:0 10px 10px 0; font-size:13px; color:#243048}
+
+  /* NEW: arrows instead of dots */
+  .cta-arrows{display:flex; gap:8px; justify-content:space-between; align-items:center; margin-top:8px}
+  .icon-btn{appearance:none; background:#fff; border:1px solid var(--blue-200); border-radius:10px; padding:8px; display:inline-grid; place-items:center; cursor:pointer}
+  .icon-btn:hover{background:#eff6ff; border-color:var(--blue)}
+  .icon-btn svg{width:18px; height:18px}
+  .cta-action-row{display:flex; gap:8px; align-items:center; margin-top:8px}
+
+  /* NEW: applied CTA box */
+  .cta-saved{
+    border:1px solid var(--blue-200); background:#fff; border-radius:12px; padding:12px; margin:14px 0 4px 0; display:flex; gap:8px; align-items:flex-start; box-shadow:0 6px 14px rgba(37,99,235,.06);
   }
-  .full-content .mail-frame{
-    height:100%; width:100%; display:flex; flex-direction:column;  /* ensure inner .mail-body can flex/scroll */
+  .cta-saved .meta{flex:1}
+  .cta-saved h4{margin:0 0 6px 0; font-size:14px; color:#0F2D56}
+  .cta-saved p{margin:0 0 10px 0; font-size:13px}
+  .cta-saved .edit-right{flex:0 0 auto; display:grid; place-items:center; margin-left:6px}
+
+  /* NEW: flash animation when auto-scrolling */
+  @keyframes cta-flash{
+    0%{box-shadow:0 0 0 0 rgba(37,99,235,.0)}
+    40%{box-shadow:0 0 0 6px rgba(37,99,235,.18)}
+    100%{box-shadow:0 0 0 0 rgba(37,99,235,0)}
   }
+  .flash{animation:cta-flash 1.1s ease}
+
+  /* Step 6 layout: stretch preview to use space (fix empty gap) */
+  .slide[data-step="cta"] .scroll{display:flex; flex-direction:column; gap:12px; overflow:hidden; margin-bottom:0; padding-bottom:0;}
+  .slide[data-step="cta"] .card{display:flex; flex-direction:column; flex:1; min-height:0;}
+  .slide[data-step="cta"] .mail-frame{flex:1; min-height:0;}
+
+  /* NEW: Centered CTA editor modal (replaces bottom-sheet style) */
+  .modal-wrap{position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(15,45,86,.28); z-index:80}
+  .modal-wrap.show{display:flex}
+  .modal{
+    width:88%; max-width:380px; background:#fff; border:1px solid var(--pill-border);
+    border-radius:14px; box-shadow:0 18px 40px rgba(15,45,86,.18);
+    padding:14px; position:relative;
+  }
+  .modal .title{font-weight:800; color:#0F2D56; margin-bottom:6px}
+  .modal .text{font-size:13px; color:#667085; line-height:1.5; margin-bottom:12px}
+  .modal .x{position:absolute; top:8px; right:10px; appearance:none; border:0; background:transparent; font-size:20px; cursor:pointer; line-height:1}
+
 </style>
 </head>
 <body>
@@ -262,7 +276,6 @@
           <div class="p">When someone downloads your vCard, Segwik can automatically send an autoresponder, alert you, and guide that person to their next step.</div>
         </div>
         <div class="hero" aria-hidden="true">
-          <!-- simple vCard sharing graphic -->
           <svg viewBox="0 0 360 360">
             <rect x="40" y="60" rx="20" ry="20" width="280" height="180" fill="#eef4ff" stroke="#cfe1ff"/>
             <rect x="68" y="90" width="90" height="90" rx="12" fill="#dfe9ff"/>
@@ -395,91 +408,77 @@
           <section class="slide" id="step-preview">
             <div class="head">
               <div class="h1">Autoresponder Preview</div>
-             
             </div>
             <div class="scroll">
               <div class="after-dl-banner" role="note" aria-label="Sends right after vCard download">
                 <div class="icon">!</div>
-                <div>
-                  <div>Instant Send: This autoresponder goes out <u>immediately after someone downloads your vCard</u>.</div>
-            
-                </div>
+                <div>Instant Send: This autoresponder goes out <u>immediately after someone downloads your vCard</u>.</div>
               </div>
 
               <div class="card">
-                <!-- NEW: toolbar above the email preview -->
                 <div class="row wrap">
-                  <!-- icon-only white buttons on the left -->
                   <button class="btn" id="btnEditTemplate" title="Edit email template">
                     <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
                   </button>
                   <button class="btn" id="btnFullPreview" title="View full preview">
                     <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                   </button>
-                  <!-- blue button on the right (right-aligned + little space below) -->
                   <button class="btn blue" id="btnSendPreview" style="margin-left:auto; margin-bottom:6px;">Send Me a Preview</button>
                 </div>
-<br>
-                <div class="gap12"></div>
 
                 <div class="mail-frame" id="mailFrame">
-                  <!-- top bar / subject + actions -->
                   <div class="mail-topbar">
                     <div class="subject" id="mailSubject">It’s Great to Be Connected!</div>
                     <div class="actions dots" aria-label="More options">
-                      <span class="dotc r" aria-hidden="true"></span>
-                      <span class="dotc o" aria-hidden="true"></span>
-                      <span class="dotc g" aria-hidden="true"></span>
+                      <span class="dotc r"></span><span class="dotc o"></span><span class="dotc g"></span>
                     </div>
                   </div>
-                  <!-- from row -->
                   <div class="mail-from">
-                    <div class="from-avatar" aria-hidden="true">P</div>
+                    <div class="from-avatar">P</div>
                     <div class="from-meta">
                       <div class="from-name" id="fromName">Pete Romano</div>
                       <div class="from-details" id="fromDetails">pete@segwik.com • to katrina@segwik.com</div>
                     </div>
                   </div>
-                  <!-- body (scrollable) -->
-                  <div class="mail-body" id="mailBody">
-                    <!-- dynamic HTML body injected via JS -->
-                  </div>
+                  <div class="mail-body" id="mailBody"></div>
                 </div>
 
-                <div class="gap12"></div>
-<br>
-                <!-- REPLACED: bottom row now only the follow-up button -->
-                <div class="row wrap">
+                <div class="row wrap" style="margin-top:12px">
                   <button class="btn outline-blue" id="btnAddFollowUp" title="Add another follow-up email" style="margin-left:auto;">
-                    <!-- plus icon -->
                     <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
                     Add Another Follow-Up Email
                   </button>
                 </div>
-
-                <div class="gap12"></div>
-      
               </div>
             </div>
           </section>
 
-          <!-- Step 6: Additional CTA (upgrade sheet on Next) -->
-          <section class="slide" data-step="cta">
+          <!-- Step 6: Additional CTA (email preview + CTA editor) -->
+          <section class="slide" data-step="cta" id="step-cta">
             <div class="head">
               <div class="h1">Add an Extra Call-to-Action</div>
               <div class="p">Include an additional button in the autoresponder that nudges contacts toward a next step.</div>
             </div>
             <div class="scroll">
               <div class="card">
-                <div class="label">Choose a CTA</div>
-                <div class="chips" id="ctaChips"></div>
-                <div class="gap12"></div>
-                <div id="ctaFields" style="display:none">
-                  <div class="label" id="ctaLabel">Destination</div>
-                  <input type="url" id="ctaUrl" placeholder="https://your-booking-link.com" />
-                  <div class="gap8"></div>
-                  <div class="label">Button label</div>
-                  <input type="text" id="ctaText" placeholder="Book a Meeting, Download PDF, Click Here" />
+                <!-- SAME email preview as previous screen, but WITHOUT edit/view/send buttons -->
+                <div class="mail-frame" id="mailFrameCTA">
+                  <div class="mail-topbar">
+                    <div class="subject">It’s Great to Be Connected!</div>
+                    <div class="actions dots" aria-label="More options">
+                      <span class="dotc r"></span><span class="dotc o"></span><span class="dotc g"></span>
+                    </div>
+                  </div>
+                  <div class="mail-from">
+                    <div class="from-avatar">P</div>
+                    <div class="from-meta">
+                      <div class="from-name">Pete Romano</div>
+                      <div class="from-details">pete@segwik.com • to katrina@segwik.com</div>
+                    </div>
+                  </div>
+                  <div class="mail-body" id="mailBodyCTA">
+                    <!-- injected via JS: email body + CTA insert/saved + signature -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -501,8 +500,7 @@
                   <option>Cold/General Meeting Request</option>
                   <option>Demo Request</option>
                 </select>
-                <div class="gap12"></div>
-                <div class="mini">You can change this anytime from your automation settings.</div>
+                <div class="mini" style="margin-top:8px">You can change this anytime from your automation settings.</div>
               </div>
             </div>
           </section>
@@ -538,7 +536,7 @@
         <div class="pager" id="pager"></div>
       </div>
 
-      <!-- Upgrade sheet (CTA) -->
+      <!-- Upgrade sheet (kept for future use) -->
       <div id="upgradeSheet" class="sheet-wrap" onclick="if(event.target.id==='upgradeSheet'){toggleSheet(false)}">
         <div class="sheet" onclick="event.stopPropagation()">
           <div class="title">Requires an Upgrade</div>
@@ -550,7 +548,7 @@
         </div>
       </div>
 
-      <!-- NEW: Edit Template sheet -->
+      <!-- Edit Template sheet -->
       <div id="editSheet" class="sheet-wrap" onclick="if(event.target.id==='editSheet'){toggleEditSheet(false)}">
         <div class="sheet" onclick="event.stopPropagation()">
           <div class="title">Requires an Upgrade</div>
@@ -562,7 +560,7 @@
         </div>
       </div>
 
-      <!-- NEW: Follow-Up Emails sheet -->
+      <!-- Follow-Up Emails sheet -->
       <div id="followupSheet" class="sheet-wrap" onclick="if(event.target.id==='followupSheet'){toggleFollowupSheet(false)}">
         <div class="sheet" onclick="event.stopPropagation()">
           <div class="title">Requires an Upgrade</div>
@@ -574,6 +572,26 @@
         </div>
       </div>
 
+      <!-- NEW: CTA Editor MODAL (centered) -->
+      <div id="ctaModalWrap" class="modal-wrap" onclick="if(event.target.id==='ctaModalWrap'){toggleCtaModal(false)}">
+        <div class="modal" onclick="event.stopPropagation()">
+          <button class="x" id="ctaModalClose" aria-label="Close">×</button>
+          <div class="title" id="ctaCfgTitle">Configure CTA</div>
+          <div class="text" id="ctaCfgNote">Set your button label and destination.</div>
+          <div class="label">Button label</div>
+          <input type="text" id="ctaCfgLabel" placeholder="Book a Time" />
+          <div class="gap8"></div>
+          <div id="ctaCfgDestWrap">
+            <div class="label" id="ctaCfgDestLabel">Destination</div>
+            <input type="url" id="ctaCfgDest" placeholder="https://cal.com/your-link" />
+            <div class="mini" id="ctaCfgMini" style="margin-top:6px; display:none"></div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn full" id="ctaCfgSave">Save CTA</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Full-screen email preview overlay -->
       <div id="fullPreview" class="full-overlay" aria-hidden="true">
         <div class="full-topbar">
@@ -581,9 +599,7 @@
           <button class="full-close" id="closeFullPreview" aria-label="Close full preview">×</button>
         </div>
         <div class="full-content">
-          <div class="mail-frame" id="mailFrameFull">
-            <!-- Cloned mail-frame content goes here -->
-          </div>
+          <div class="mail-frame" id="mailFrameFull"></div>
         </div>
       </div>
     </div>
@@ -647,6 +663,12 @@ function goTo(i){
   updateNav();
   syncCompanyPreview();
   renderEmail();
+  const stepEl = slides[idx];
+  renderEmailCTA();
+  // Auto-scroll when entering the CTA screen
+  if(stepEl && stepEl.getAttribute('data-step') === 'cta'){
+    setTimeout(()=>scrollMailBodyToCTA(), 250);
+  }
 }
 function updateNav(){
   document.getElementById('backBtn').style.visibility = idx===0 ? 'hidden' : 'visible';
@@ -654,7 +676,7 @@ function updateNav(){
 }
 renderDots(); updateNav();
 
-/* Touch swipe */
+/* Touch swipe between steps */
 carousel.addEventListener('touchstart', (e)=>{
   startX = e.touches[0].clientX; currentX = startX; isDragging = true; carousel.style.transition='none';
 });
@@ -674,11 +696,6 @@ carousel.addEventListener('touchend', ()=>{
 /* Nav buttons */
 document.getElementById('backBtn').addEventListener('click', ()=>goTo(idx-1));
 document.getElementById('nextBtn').addEventListener('click', ()=>{
-  const stepEl = slides[idx];
-  if(stepEl && stepEl.dataset.step === 'cta' && chosenCTA){
-    toggleSheet(true);
-    return;
-  }
   if(idx<maxIdx) goTo(idx+1); else goTo(maxIdx);
 });
 
@@ -696,7 +713,7 @@ const acct = {
   country:document.getElementById('country'),
 };
 Object.values(acct).forEach(el=>el.addEventListener('input', ()=>{
-  syncCompanyPreview(); renderEmail();
+  syncCompanyPreview(); renderEmail(); renderEmailCTA();
 }));
 function syncCompanyPreview(){
   document.getElementById('prevCompanyName') && (document.getElementById('prevCompanyName').textContent = acct.name.value || '[account_name]');
@@ -707,14 +724,14 @@ function syncCompanyPreview(){
 const logoInput   = document.getElementById('logoInput');
 const logoPreviewEmail = document.getElementById('logoEmailPreview');
 let logoDataUrl = '';
-logoInput.addEventListener('change', ()=>{
+logoInput && logoInput.addEventListener('change', ()=>{
   const f = logoInput.files?.[0];
   if(!f) return;
   const reader = new FileReader();
   reader.onload = (e)=>{
     logoDataUrl = e.target.result;
     logoPreviewEmail.innerHTML = `<img alt="logo" src="${logoDataUrl}" style="max-width:160px;display:block;margin:0 auto 8px;border-radius:10px">`;
-    renderEmail();
+    renderEmail(); renderEmailCTA();
   };
   reader.readAsDataURL(f);
 });
@@ -731,7 +748,7 @@ const personalities = [
 let chosenPersonality = null;
 const chipHost = document.getElementById('personalityChips');
 const tonePreview = document.getElementById('tonePreview');
-personalities.forEach(p=>{
+chipHost && personalities.forEach(p=>{
   const el = document.createElement('label');
   el.className = 'chip';
   el.innerHTML = `<span>${p.label}</span><span class="tick"></span>`;
@@ -752,7 +769,8 @@ const O = {
   diff:     document.getElementById('diffprop'),
 };
 ['overview','mission','values','diffprop'].forEach(id=>{
-  document.getElementById(id).addEventListener('input', renderEmail);
+  const el = document.getElementById(id);
+  el && el.addEventListener('input', ()=>{ renderEmail(); renderEmailCTA(); });
 });
 
 /* Voice + variants */
@@ -760,7 +778,7 @@ function voice(style){
   switch(style){
     case 'bold':
       return {
-        overview: `I help busy professionals move faster by transforming follow-ups into real conversations that actually close deals. My approach cuts the noise and focuses on what drives momentum.`,
+        overview: `I help busy professionals move faster by transforming follow-ups into real conversations that actually win work.`,
         mission: `My mission is to shorten the path from first contact to “yes” by keeping every step direct, purposeful, and results-driven.`,
         values: `I believe in ownership, speed, clarity, and accountability—because progress only happens when we take action with focus.`,
         diff: `I don’t just track your pipeline—I give you a clear feed that shows exactly what to do next, removing all guesswork and hesitation.`
@@ -808,16 +826,10 @@ function variants(style){
   return [
     b,
     {
-      overview: b.overview.replace('follow-ups', 'next steps').replace('close deals','win work'),
+      overview: b.overview + ' I remove busywork so you can focus on conversations that matter.',
       mission:  b.mission + ' Every touch has a clear purpose and outcome.',
-      values:   b.values.replace('and', 'plus'),
-      diff:     b.diff + ' You’ll always know the single highest-leverage action to take.'
-    },
-    {
-      overview: b.overview.split('.').slice(0,1).join('.') + '. I remove busywork so you can focus on conversations that matter.',
-      mission:  b.mission.replace('results-driven','impact-led'),
-      values:   b.values + ' Consistency and courage keep us moving.',
-      diff:     b.diff.replace('shows exactly','surfaces exactly') + ' No more paralysis by analysis.'
+      values:   b.values,
+      diff:     b.diff + ' You’ll always know the highest-leverage action to take.'
     },
     {
       overview: 'Here’s the simple truth: ' + b.overview,
@@ -834,60 +846,31 @@ const aiStatusText = document.getElementById('aiStatusText');
 const btnGenerate = document.getElementById('btnGenerate');
 const btnRegenerate = document.getElementById('btnRegenerate');
 let currentVariantIndex = -1;
-
-function setFields(v){
-  O.overview.value = v.overview;
-  O.mission.value  = v.mission;
-  O.values.value   = v.values;
-  O.diff.value     = v.diff;
-  renderEmail();
-}
-function startLoading(text){
-  aiStatusText.textContent = text || 'Generating your copy…';
-  aiStatus.classList.add('show');
-  btnGenerate.disabled = true; btnRegenerate.disabled = true;
-  btnGenerate.setAttribute('aria-busy','true');
-  btnRegenerate.setAttribute('aria-busy','true');
-}
-function stopLoading(){
-  aiStatus.classList.remove('show');
-  btnGenerate.disabled = false; btnRegenerate.disabled = false;
-  btnGenerate.removeAttribute('aria-busy');
-  btnRegenerate.removeAttribute('aria-busy');
-}
-function doGenerate(useNextVariant=false){
+function setFields(v){ O.overview.value=v.overview; O.mission.value=v.mission; O.values.value=v.values; O.diff.value=v.diff; renderEmail(); renderEmailCTA(); }
+function startLoading(text){ aiStatusText.textContent=text||'Generating your copy…'; aiStatus.classList.add('show'); btnGenerate.disabled=btnRegenerate.disabled=true; }
+function stopLoading(){ aiStatus.classList.remove('show'); btnGenerate.disabled=btnRegenerate.disabled=false; }
+function doGenerate(useNext=false){
   const style = chosenPersonality || 'mentor';
   const v = variants(style);
-  let nextIndex = useNextVariant ? (currentVariantIndex + 1) % v.length : 0;
-  startLoading(useNextVariant ? 'Regenerating alternate version…' : 'Generating your copy…');
-  setTimeout(()=>{
-    setFields(v[nextIndex]);
-    currentVariantIndex = nextIndex;
-    stopLoading();
-  }, 1000);
+  let next = useNext ? (currentVariantIndex+1)%v.length : 0;
+  startLoading(useNext?'Regenerating alternate version…':'Generating your copy…');
+  setTimeout(()=>{ setFields(v[next]); currentVariantIndex=next; stopLoading(); }, 700);
 }
-btnGenerate.addEventListener('click', ()=>doGenerate(false));
-btnRegenerate.addEventListener('click', ()=>doGenerate(true));
+btnGenerate && btnGenerate.addEventListener('click', ()=>doGenerate(false));
+btnRegenerate && btnRegenerate.addEventListener('click', ()=>doGenerate(true));
 
-/* ==== Render the autoresponder preview ==== */
-function renderEmail(){
-  // Subject (fixed)
-  const subjEl = document.getElementById('mailSubject');
-  if(subjEl) subjEl.textContent = 'It’s Great to Be Connected!';
-
-  // Build body with logo above headline (using your URL by default)
-  const headerLogoSrc = (window.logoDataUrl && window.logoDataUrl.length)
+/* ==== Build base email body (shared) ==== */
+function getHeaderLogo(){
+  return (window.logoDataUrl && window.logoDataUrl.length)
     ? window.logoDataUrl
     : 'https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1696179347579.png';
-  const logoHtml = `<p class="mail-logo-wrap"><img class="mail-logo" alt="Segwik logo" src="${headerLogoSrc}"></p>`;
-
-  const bodyHtml = `
+}
+function getEmailIntroHtml(){
+  const logoHtml = `<p class="mail-logo-wrap"><img class="mail-logo" alt="Segwik logo" src="${getHeaderLogo()}"></p>`;
+  return `
     ${logoHtml}
-    <center><h3>It’s Great to Be Connected!</h3></center>
-    <p>Hello Katrina, </p>
-    
-    <p>Thanks for downloading my digital business card — I’m excited we crossed paths. </p>
-    <p>Let me introduce myself a bit more:</p>
+    <h3>It’s Great to Be Connected!</h3>
+    <p>Hello Katrina, Thanks for downloading my digital business card — I’m excited we crossed paths. Let me introduce myself a bit more:</p>
 
     <p><strong>About My Business</strong><br/>Segwik is a human-centered Relationship Operating System (ROS) built for entrepreneurs, solopreneurs, and small teams who want to grow real relationships without the chaos of traditional CRMs. It brings contacts, communication, and workflows together in one intuitive platform with tools for automation, multi-channel communication, and AI-powered insights. Segwik replaces tech clutter with clarity and helps business owners, sales agents, and leaders stay connected and consistent.</p>
 
@@ -896,7 +879,10 @@ function renderEmail(){
     <p><strong>What Makes Us Different</strong><br/>Segwik isn’t just another CRM—it’s a Relationship OS focused on real connection and authentic automation. Its flexible token-based system gives users access to AI, communication tools, and support without rigid pricing. By combining email, text, calendar, forms, and workflows in one place, Segwik keeps business simple and scalable for real people, from solopreneurs to growing teams.</p>
 
     <p><strong>Our Core Values</strong><br/>Segwik values human connection, simplicity, and transparency. We’re built for the underdog, listen first, and grow through action, not perfection. Our automations are made with heart, our tools are scalable by design, and our community grows stronger together through purpose, integrity, and trust.</p>
-
+  `.trim();
+}
+function getSignatureHtml(){
+  return `
     <div class="sig">
       <div class="headshot" aria-hidden="true">Headshot</div>
       <div class="meta">
@@ -907,17 +893,20 @@ function renderEmail(){
       </div>
     </div>
   `.trim();
+}
 
+/* ==== Render the autoresponder preview (Step 5) ==== */
+function renderEmail(){
   const bodyEl = document.getElementById('mailBody');
-  if(bodyEl) bodyEl.innerHTML = bodyHtml;
-
-  // From chrome line replacements
+  if(!bodyEl) return;
+  bodyEl.innerHTML = `${getEmailIntroHtml()}${getSignatureHtml()}`;
+  // From line
   const fromName = document.getElementById('fromName');
-  if(fromName) fromName.textContent = 'Pete Romano';
   const fromDetails = document.getElementById('fromDetails');
+  if(fromName) fromName.textContent = 'Pete Romano';
   if(fromDetails) fromDetails.textContent = 'pete@segwik.com • to katrina@segwik.com';
 
-  // If full overlay is open, mirror content there too
+  // mirror to full overlay if open
   const mailFrame = document.getElementById('mailFrame');
   const mailFrameFull = document.getElementById('mailFrameFull');
   if(mailFrame && mailFrameFull && document.getElementById('fullPreview').classList.contains('show')){
@@ -925,93 +914,294 @@ function renderEmail(){
   }
 }
 
-/* Initial render */
-renderEmail();
+/* ==== Step 6: CTA editor/apply state ==== */
+let ctaIndex = 0;            // which slide is shown (0..2)
+let ctaEditingType = null;   // 'book' | 'free' | 'email'
+let ctaApplied = null;       // { type, label, href, title, desc }
 
-/* ==== Full-screen Preview controls ==== */
+function ctaSlidesHtml(){
+  return `
+    <div class="cta-slide">
+      <div class="cta-card">
+        <h4 data-ctatitle>Let’s Book a Quick Intro</h4>
+        <p data-ctadesc>Let’s schedule a quick 15-minute intro directly on my calendar. Just pick a time that works best for you — no back-and-forth needed.</p>
+        <div class="cta-action-row">
+          <button class="btn blue" data-ctatype="book">Book a Time</button>
+          <button class="icon-btn" data-edit="book" title="Edit CTA">
+            <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="cta-slide">
+      <div class="cta-card">
+        <h4 data-ctatitle>Grab Your Free Resource</h4>
+        <p data-ctadesc>Here’s something that might help you get started — no strings attached. Feel free to download it, explore, and reach out anytime if you’d like to chat further.</p>
+        <div class="cta-action-row">
+          <button class="btn blue" data-ctatype="free">Get the Free Resource</button>
+          <button class="icon-btn" data-edit="free" title="Edit CTA">
+            <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="cta-slide">
+      <div class="cta-card">
+        <h4 data-ctatitle>Let’s Schedule a Quick Intro</h4>
+        <p data-ctadesc>Let’s set up a quick 15-minute intro. Feel free to share your availability (or request mine), and we’ll get it scheduled. In the meantime, if you ever need help, advice, or a trusted referral, I’d be glad to be a resource.</p>
+        <div class="cta-action-row">
+          <button class="btn blue" data-ctatype="email">Share or Request Availability</button>
+          <button class="icon-btn" data-edit="email" title="Edit CTA">
+            <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function ctaArrowsHtml(){
+  return `
+    <div class="cta-arrows">
+      <button class="icon-btn" id="ctaPrev" title="Previous option">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="mini" id="ctaIndexNote">Option ${ctaIndex+1} of 3</div>
+      <button class="icon-btn" id="ctaNext" title="Next option">
+        <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  `;
+}
+function ctaInsertHtml(){
+  return `
+    <div class="cta-insert" id="ctaInsert">
+      <div class="cta-head">Add a Call-to-Action</div>
+      <div class="cta-carousel" id="ctaCarousel">
+        <div class="cta-track" id="ctaTrack">${ctaSlidesHtml()}</div>
+      </div>
+      ${ctaArrowsHtml()}
+    </div>
+  `;
+}
+function ctaSavedHtml(a){
+  const button = `<a class="btn blue" href="${a.href}" target="${a.type==='email' ? '_self' : '_blank'}" rel="noopener">${a.label}</a>`;
+  return `
+    <div class="cta-saved" id="ctaSaved">
+      <div class="meta">
+        <h4>${a.title}</h4>
+        <p>${a.desc}</p>
+        ${button}
+      </div>
+      <div class="edit-right">
+        <button class="icon-btn" id="editApplied" title="Edit CTA">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+/* Render email body + CTA block for Step 6 */
+function renderEmailCTA(){
+  const host = document.getElementById('mailBodyCTA');
+  if(!host) return;
+
+  const intro = getEmailIntroHtml();
+  const sig   = getSignatureHtml();
+
+  if(ctaApplied){
+    host.innerHTML = `${intro}${ctaSavedHtml(ctaApplied)}${sig}`;
+    // pencil on saved CTA -> revert to dashed insert
+    const editApplied = document.getElementById('editApplied');
+    editApplied && editApplied.addEventListener('click', ()=>{
+      ctaApplied = null;
+      renderEmailCTA();
+      setTimeout(()=>scrollMailBodyToCTA(true),50);
+    });
+    return;
+  }
+
+  host.innerHTML = `${intro}${ctaInsertHtml()}${sig}`;
+
+  // Bind CTA buttons (either main button OR pencil both open editor)
+  host.querySelectorAll('[data-ctatype]').forEach(btn=>{
+    btn.addEventListener('click', ()=>openCtaModal(btn.getAttribute('data-ctatype')));
+  });
+  host.querySelectorAll('[data-edit]').forEach(btn=>{
+    btn.addEventListener('click', ()=>openCtaModal(btn.getAttribute('data-edit')));
+  });
+
+  // Swipe handling + arrows for slides
+  const track = document.getElementById('ctaTrack');
+  const idxNote = document.getElementById('ctaIndexNote');
+  let sx = 0, cx = 0, dragging = false;
+
+  function updateTrack(){
+    track.style.transform = `translateX(-${ctaIndex*100}%)`;
+    if(idxNote) idxNote.textContent = `Option ${ctaIndex+1} of 3`;
+  }
+
+  track.addEventListener('touchstart',(e)=>{ dragging=true; sx=e.touches[0].clientX; cx=sx; });
+  track.addEventListener('touchmove',(e)=>{
+    if(!dragging) return; cx=e.touches[0].clientX;
+    const dx = cx - sx;
+    const pct = -ctaIndex*100 + (dx / track.clientWidth) * 100;
+    track.style.transition='none';
+    track.style.transform = `translateX(${pct}%)`;
+  });
+  track.addEventListener('touchend',()=>{
+    if(!dragging) return; dragging=false; track.style.transition='';
+    const dx = cx - sx;
+    if(Math.abs(dx) > 40){ if(dx<0) ctaIndex = Math.min(2, ctaIndex+1); else ctaIndex = Math.max(0, ctaIndex-1); }
+    updateTrack();
+  });
+
+  document.getElementById('ctaPrev').addEventListener('click', ()=>{ ctaIndex = Math.max(0, ctaIndex-1); updateTrack(); });
+  document.getElementById('ctaNext').addEventListener('click', ()=>{ ctaIndex = Math.min(2, ctaIndex+1); updateTrack(); });
+
+  updateTrack();
+}
+
+/* Smoothly scroll the email preview to CTA and flash it */
+function scrollMailBodyToCTA(forceFlash=false){
+  const body = document.getElementById('mailBodyCTA');
+  if(!body) return;
+  const target = body.querySelector('#ctaInsert, #ctaSaved');
+  if(!target) return;
+  body.scrollTo({ top: target.offsetTop - 8, behavior: 'smooth' });
+  if(forceFlash){
+    target.classList.add('flash');
+    setTimeout(()=>target.classList.remove('flash'), 1200);
+  }else{
+    // small delayed flash to draw attention
+    setTimeout(()=>{ target.classList.add('flash'); setTimeout(()=>target.classList.remove('flash'), 1100); }, 320);
+  }
+}
+
+/* ==== CTA Modal logic ==== */
+const ctaModalWrap = document.getElementById('ctaModalWrap');
+const ctaCfgTitle = document.getElementById('ctaCfgTitle');
+const ctaCfgNote  = document.getElementById('ctaCfgNote');
+const ctaCfgLabel = document.getElementById('ctaCfgLabel');
+const ctaCfgDestWrap = document.getElementById('ctaCfgDestWrap');
+const ctaCfgDestLabel = document.getElementById('ctaCfgDestLabel');
+const ctaCfgDest = document.getElementById('ctaCfgDest');
+const ctaCfgMini = document.getElementById('ctaCfgMini');
+
+function toggleCtaModal(show){ ctaModalWrap.classList.toggle('show', !!show); }
+document.getElementById('ctaModalClose').addEventListener('click', ()=>toggleCtaModal(false));
+
+function openCtaModal(type){
+  ctaEditingType = type;
+  ctaCfgMini.style.display = 'none';
+  if(type === 'book'){
+    ctaCfgTitle.textContent = 'Book a time';
+    ctaCfgLabel.value = 'Book a Time';
+    ctaCfgDestLabel.textContent = 'Destination';
+    ctaCfgDest.type = 'url';
+    ctaCfgDest.placeholder = 'https://your-booking-link.com';
+    ctaCfgDest.value = '';
+    ctaCfgNote.textContent = 'Set your calendar link and label.';
+  }else if(type === 'free'){
+    ctaCfgTitle.textContent = 'Get the free resource';
+    ctaCfgLabel.value = 'Get the Free Resource';
+    ctaCfgDestLabel.textContent = 'Destination';
+    ctaCfgDest.type = 'url';
+    ctaCfgDest.placeholder = 'https://your-asset-link.com/guide.pdf';
+    ctaCfgDest.value = '';
+    ctaCfgNote.textContent = 'Set your download URL and label.';
+  }else{
+    ctaCfgTitle.textContent = "Let's schedule a quick intro";
+    ctaCfgLabel.value = 'Share or Request Availability';
+    ctaCfgDestLabel.textContent = 'Email to (mailto)';
+    ctaCfgDest.type = 'email';
+    ctaCfgDest.placeholder = 'you@company.com';
+    ctaCfgDest.value = '';
+    ctaCfgMini.textContent = 'This will use a mailto: link. Enter the recipient email.';
+    ctaCfgMini.style.display = 'block';
+    ctaCfgNote.textContent = 'Set your button label and recipient email.';
+  }
+  toggleCtaModal(true);
+}
+
+/* Save CTA -> apply into email and remove dashed box. Keep pencil to edit */
+document.getElementById('ctaCfgSave').addEventListener('click', ()=>{
+  const label = (ctaCfgLabel.value || '').trim() || 'Learn More';
+  let href = '#';
+  if(ctaEditingType === 'book' || ctaEditingType === 'free'){
+    href = (ctaCfgDest.value || '').trim() || '#';
+  }else{
+    const to = (ctaCfgDest.value || '').trim() || 'you@company.com';
+    href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent('Let’s connect')}`;
+  }
+
+  // Pull the currently visible slide's title/desc to apply matching content
+  const body = document.getElementById('mailBodyCTA');
+  const slides = body.querySelectorAll('.cta-slide');
+  const activeSlide = slides[ctaIndex];
+  const title = activeSlide.querySelector('[data-ctatitle]').textContent.trim();
+  const desc  = activeSlide.querySelector('[data-ctadesc]').textContent.trim();
+
+  ctaApplied = {
+    type: ctaEditingType || 'book',
+    label, href, title, desc
+  };
+  toggleCtaModal(false);
+  renderEmailCTA();
+  setTimeout(()=>scrollMailBodyToCTA(true), 80);
+});
+
+/* Full-screen Preview controls */
 const btnFull = document.getElementById('btnFullPreview');
 const overlay = document.getElementById('fullPreview');
 const closeFull = document.getElementById('closeFullPreview');
-
-btnFull.addEventListener('click', ()=>{
-  // clone current preview into full view
+btnFull && btnFull.addEventListener('click', ()=>{
   const mailFrame = document.getElementById('mailFrame');
   const mailFrameFull = document.getElementById('mailFrameFull');
   mailFrameFull.innerHTML = mailFrame.innerHTML;
   overlay.classList.add('show');
   overlay.setAttribute('aria-hidden','false');
 });
-
-closeFull.addEventListener('click', ()=>{
+closeFull && closeFull.addEventListener('click', ()=>{
   overlay.classList.remove('show');
   overlay.setAttribute('aria-hidden','true');
 });
 
-/* NEW: Send Me a Preview button (mock action) */
-document.getElementById('btnSendPreview').addEventListener('click', ()=>{
-  alert('A preview has been sent to your email. (Mock)');
-});
+/* Send Me a Preview (mock) */
+const sendBtn = document.getElementById('btnSendPreview');
+sendBtn && sendBtn.addEventListener('click', ()=>alert('A preview has been sent to your email. (Mock)'));
 
-/* ==== CTA (upgrade on Next) ==== */
-const ctaOptions = [
-  {key:'book', label:'Book a Meeting', placeholder:'https://cal.com/your-link'},
-  {key:'email', label:'Email Me', placeholder:'you@company.com'},
-  {key:'free', label:'Free Resource', placeholder:'https://your-asset-link.com/guide.pdf'}
-];
-const ctaHost = document.getElementById('ctaChips');
-const ctaFields = document.getElementById('ctaFields');
-const ctaLabel  = document.getElementById('ctaLabel');
-const ctaUrl    = document.getElementById('ctaUrl');
-const ctaText   = document.getElementById('ctaText');
-let chosenCTA = null;
-ctaOptions.forEach(o=>{
-  const el = document.createElement('label');
-  el.className = 'chip';
-  el.innerHTML = `<span>${o.label}</span><span class="tick"></span>`;
-  el.onclick = ()=>{
-    chosenCTA = o.key;
-    document.querySelectorAll('#ctaChips .chip').forEach(c=>c.classList.remove('active'));
-    el.classList.add('active');
-    ctaFields.style.display = 'block';
-    ctaLabel.textContent = o.label.includes('mailto') ? 'Email' : 'Destination';
-    ctaUrl.placeholder = o.placeholder;
-  };
-  ctaHost.appendChild(el);
-});
-
-/* Bottom sheet controls (CTA step) */
+/* Bottom sheet helpers (kept) */
 const sheet = document.getElementById('upgradeSheet');
 function toggleSheet(show){ sheet.classList.toggle('show', !!show); }
-document.getElementById('notNow').addEventListener('click', ()=>{ toggleSheet(false); goTo(idx+1); });
-document.getElementById('upgradeNow').addEventListener('click', ()=>{ toggleSheet(false); alert('Upgrade flow (mock)'); });
+document.getElementById('notNow')?.addEventListener('click', ()=>{ toggleSheet(false); goTo(idx+1); });
+document.getElementById('upgradeNow')?.addEventListener('click', ()=>{ toggleSheet(false); alert('Upgrade flow (mock)'); });
 
-/* Edit Template sheet controls (no nav on Not now) */
 const editSheet = document.getElementById('editSheet');
 function toggleEditSheet(show){ editSheet.classList.toggle('show', !!show); }
-document.getElementById('btnEditTemplate').addEventListener('click', ()=>toggleEditSheet(true));
-document.getElementById('editNotNow').addEventListener('click', ()=>toggleEditSheet(false));
-document.getElementById('editUpgradeNow').addEventListener('click', ()=>{ toggleEditSheet(false); alert('Upgrade flow (mock)'); });
+document.getElementById('btnEditTemplate')?.addEventListener('click', ()=>toggleEditSheet(true));
+document.getElementById('editNotNow')?.addEventListener('click', ()=>toggleEditSheet(false));
+document.getElementById('editUpgradeNow')?.addEventListener('click', ()=>{ toggleEditSheet(false); alert('Upgrade flow (mock)'); });
 
-/* NEW: Follow-Up Emails sheet controls */
 const followupSheet = document.getElementById('followupSheet');
 function toggleFollowupSheet(show){ followupSheet.classList.toggle('show', !!show); }
-document.getElementById('btnAddFollowUp').addEventListener('click', ()=>toggleFollowupSheet(true));
-document.getElementById('followupNotNow').addEventListener('click', ()=>toggleFollowupSheet(false));
-document.getElementById('followupUpgradeNow').addEventListener('click', ()=>{ toggleFollowupSheet(false); alert('Upgrade flow (mock)'); });
+document.getElementById('btnAddFollowUp')?.addEventListener('click', ()=>toggleFollowupSheet(true));
+document.getElementById('followupNotNow')?.addEventListener('click', ()=>toggleFollowupSheet(false));
+document.getElementById('followupUpgradeNow')?.addEventListener('click', ()=>{ toggleFollowupSheet(false); alert('Upgrade flow (mock)'); });
 
 /* Final screen */
 const activateSwitch = document.getElementById('activateSwitch');
 activateSwitch && activateSwitch.addEventListener('click', ()=>activateSwitch.classList.toggle('active'));
-document.getElementById('seeUpgrade').addEventListener('click', ()=>alert('Upgrade options (mock)'));
-document.getElementById('finishBtn').addEventListener('click', ()=>{
+document.getElementById('seeUpgrade')?.addEventListener('click', ()=>alert('Upgrade options (mock)'));
+document.getElementById('finishBtn')?.addEventListener('click', ()=>{
   const active = activateSwitch?.classList.contains('active');
   alert(`Saved! (Mock)\nJourney ${active ? 'activated' : 'saved as draft'}.`);
 });
 
-/* Keep company preview live */
+/* Keep company preview live (no-op placeholders kept) */
 ['input','change'].forEach(ev=>{
-  document.getElementById('acct_name').addEventListener(ev, syncCompanyPreview);
-  document.getElementById('acct_site').addEventListener(ev, syncCompanyPreview);
+  document.getElementById('acct_name')?.addEventListener(ev, syncCompanyPreview);
+  document.getElementById('acct_site')?.addEventListener(ev, syncCompanyPreview);
 });
 
 /* Accessibility: keyboard navigation between steps */
@@ -1019,6 +1209,10 @@ window.addEventListener('keydown', (e)=>{
   if(e.key==='ArrowLeft') goTo(idx-1);
   if(e.key==='ArrowRight') goTo(idx+1);
 });
+
+/* ===== Initial renders ===== */
+renderEmail();
+renderEmailCTA();
 </script>
 </body>
 </html>

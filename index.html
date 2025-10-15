@@ -407,6 +407,21 @@
               </div>
 
               <div class="card">
+                <!-- NEW: toolbar above the email preview -->
+                <div class="row wrap">
+                  <!-- icon-only white buttons on the left -->
+                  <button class="btn" id="btnEditTemplate" title="Edit email template">
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  </button>
+                  <button class="btn" id="btnFullPreview" title="View full preview">
+                    <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                  <!-- blue button on the right (right-aligned + little space below) -->
+                  <button class="btn blue" id="btnSendPreview" style="margin-left:auto; margin-bottom:6px;">Send Me a Preview</button>
+                </div>
+<br>
+                <div class="gap12"></div>
+
                 <div class="mail-frame" id="mailFrame">
                   <!-- top bar / subject + actions -->
                   <div class="mail-topbar">
@@ -433,18 +448,12 @@
 
                 <div class="gap12"></div>
 <br>
-                <!-- New dual buttons row -->
+                <!-- REPLACED: bottom row now only the follow-up button -->
                 <div class="row wrap">
-                  <button class="btn outline-blue" id="btnEditTemplate" title="Edit email template">
-                    <!-- pencil icon -->
-                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                    Edit Email Template
-                  </button>
-
-                  <button class="btn blue" id="btnFullPreview">
-                    <!-- eye icon -->
-                    <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                    View Full Preview
+                  <button class="btn outline-blue" id="btnAddFollowUp" title="Add another follow-up email" style="margin-left:auto;">
+                    <!-- plus icon -->
+                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                    Add Another Follow-Up Email
                   </button>
                 </div>
 
@@ -553,6 +562,18 @@
         </div>
       </div>
 
+      <!-- NEW: Follow-Up Emails sheet -->
+      <div id="followupSheet" class="sheet-wrap" onclick="if(event.target.id==='followupSheet'){toggleFollowupSheet(false)}">
+        <div class="sheet" onclick="event.stopPropagation()">
+          <div class="title">Requires an Upgrade</div>
+          <div class="text">Multiple follow-up emails are available on paid plans.</div>
+          <div class="row">
+            <button class="btn full" id="followupNotNow">Not now</button>
+            <button class="btn primary full" id="followupUpgradeNow">Upgrade now</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Full-screen email preview overlay -->
       <div id="fullPreview" class="full-overlay" aria-hidden="true">
         <div class="full-topbar">
@@ -582,7 +603,7 @@
 function icon(name){
   switch(name){
     case 'mail': return `<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>`;
-    case 'phone': return `<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0  0 1-8.63-3.07 19.5 19.5 0  0 1-6-6 19.79 19.79 0  0 1-3.07-8.67A2 2 0  0 1 4.11 2h3a2 2 0  0 1 2 1.72c.12 .9.3 1.77.57 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0  0 0 6 6l1.47-1.11a2 2 0 0 1 2.11-.45c.84 .27 1.71 .45 2.61 .57A2 2 0  0 1 22 16.92z"/></svg>`;
+    case 'phone': return `<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0  0 1-8.63-3.07 19.5 19.5 0  0  1-6-6 19.79 19.79 0  0 1-3.07-8.67A2 2 0  0 1 4.11 2h3a2 2 0  0 1 2 1.72c.12 .9.3 1.77.57 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0  0 0 6 6l1.47-1.11a2 2 0 0 1 2.11-.45c.84 .27 1.71 .45 2.61 .57A2 2 0  0 1 22 16.92z"/></svg>`;
     case 'chat': return `<svg viewBox="0 0 24 24"><path d="M21 15a4 4 0  0 1-4 4H8l-5 3V7a4 4 0  0 1 4-4h10a4 4 0  0 1 4 4z"/></svg>`;
     case 'calendar': return `<svg viewBox="0 0 24 24"><path d="M3 8h18M5 4h14v16H5z"/><path d="M16 2v4M8 2v4"/></svg>`;
     case 'note': return `<svg viewBox="0 0 24 24"><path d="M4 3h14l2 2v16H4z"/><path d="M9 13h6M9 9h6M9 17h3"/></svg>`;
@@ -862,8 +883,11 @@ function renderEmail(){
 
   const bodyHtml = `
     ${logoHtml}
-    <h3>It’s Great to Be Connected!</h3>
-    <p>Hello Katrina, Thanks for downloading my digital business card — I’m excited we crossed paths. Let me introduce myself a bit more:</p>
+    <center><h3>It’s Great to Be Connected!</h3></center>
+    <p>Hello Katrina, </p>
+    
+    <p>Thanks for downloading my digital business card — I’m excited we crossed paths. </p>
+    <p>Let me introduce myself a bit more:</p>
 
     <p><strong>About My Business</strong><br/>Segwik is a human-centered Relationship Operating System (ROS) built for entrepreneurs, solopreneurs, and small teams who want to grow real relationships without the chaos of traditional CRMs. It brings contacts, communication, and workflows together in one intuitive platform with tools for automation, multi-channel communication, and AI-powered insights. Segwik replaces tech clutter with clarity and helps business owners, sales agents, and leaders stay connected and consistent.</p>
 
@@ -923,6 +947,11 @@ closeFull.addEventListener('click', ()=>{
   overlay.setAttribute('aria-hidden','true');
 });
 
+/* NEW: Send Me a Preview button (mock action) */
+document.getElementById('btnSendPreview').addEventListener('click', ()=>{
+  alert('A preview has been sent to your email. (Mock)');
+});
+
 /* ==== CTA (upgrade on Next) ==== */
 const ctaOptions = [
   {key:'book', label:'Book a Meeting', placeholder:'https://cal.com/your-link'},
@@ -962,6 +991,13 @@ function toggleEditSheet(show){ editSheet.classList.toggle('show', !!show); }
 document.getElementById('btnEditTemplate').addEventListener('click', ()=>toggleEditSheet(true));
 document.getElementById('editNotNow').addEventListener('click', ()=>toggleEditSheet(false));
 document.getElementById('editUpgradeNow').addEventListener('click', ()=>{ toggleEditSheet(false); alert('Upgrade flow (mock)'); });
+
+/* NEW: Follow-Up Emails sheet controls */
+const followupSheet = document.getElementById('followupSheet');
+function toggleFollowupSheet(show){ followupSheet.classList.toggle('show', !!show); }
+document.getElementById('btnAddFollowUp').addEventListener('click', ()=>toggleFollowupSheet(true));
+document.getElementById('followupNotNow').addEventListener('click', ()=>toggleFollowupSheet(false));
+document.getElementById('followupUpgradeNow').addEventListener('click', ()=>{ toggleFollowupSheet(false); alert('Upgrade flow (mock)'); });
 
 /* Final screen */
 const activateSwitch = document.getElementById('activateSwitch');

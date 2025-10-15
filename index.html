@@ -67,6 +67,7 @@
   .btn.blue:hover{background:var(--blue-700);border-color:var(--blue-700)}
   .btn.outline-blue{background:#fff;color:var(--blue);border-color:var(--blue-200)}
   .btn.outline-blue:hover{background:#eff6ff;border-color:var(--blue)}
+  .btn.darkblue{background:var(--blue-700);border-color:var(--blue-700);color:#fff}
 
   /* Carousel (steps after Start) */
   .carousel{height:100%;display:flex;width:100%;touch-action:pan-y;
@@ -263,6 +264,42 @@
 
   /* NEW: CTA step preview bar (initially hidden) */
   #ctaSendPreviewBar{display:none; margin-bottom:8px; align-items:center; gap:8px}
+
+  /* ===== UPGRADE SCREEN ===== */
+  #upgradeScreen{position:absolute; inset:0; background:#fff; display:none; flex-direction:column; z-index:90;}
+  #upgradeTopbar{display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid var(--line);}
+  #upgradeBack{appearance:none; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px; display:grid; place-items:center; cursor:pointer}
+  #upgradeBack svg{width:18px; height:18px}
+  #upgradeTitle{font-weight:800; color:#0F2D56; font-size:14px}
+  #upgradeContent{flex:1; overflow:auto; padding:14px; display:flex; flex-direction:column; gap:12px; background:var(--bg)}
+  .plan{background:#fff; border:2px solid var(--blue-200); border-radius:16px; padding:16px; text-align:center; box-shadow:var(--shadow)}
+  .plan h3{margin:0 0 6px 0; color:#0F2D56}
+  .plan .subtitle{font-size:13px; color:#667085; margin-bottom:10px}
+  .price{font-weight:900; font-size:18px; margin:4px 0 6px 0; color:#0F2D56}
+  .desc{font-size:13px; color:#243048; margin-bottom:12px}
+  .features{list-style:none; padding:0; margin:0 0 12px 0; display:grid; gap:8px}
+  .feature{display:flex; align-items:center; justify-content:center; gap:8px; font-size:13px; color:#243048}
+  .badge{width:18px; height:18px; border-radius:50%; background:var(--blue-50); border:1px solid var(--blue-200); display:grid; place-items:center; color:var(--blue)}
+  .badge svg{width:12px; height:12px}
+  .plans-grid{display:grid; grid-template-columns:1fr; gap:12px}
+  @media (min-width:420px){ .plans-grid{grid-template-columns:1fr} }
+
+  /* Return animation when coming back from Upgrade */
+  @keyframes returnSlide {
+    from { transform:translateX(-8%); opacity:.0 }
+    to   { transform:translateX(0);   opacity:1 }
+  }
+  .return-anim{ animation:returnSlide .35s ease }
+  /* left-align only the features inside each plan */
+.plan .features { 
+  text-align: left;         /* text flows left */
+}
+
+.plan .feature {
+  justify-content: flex-start; /* stop centering the row */
+  align-items: flex-start;     /* (optional) keep multi-line bullets neat */
+}
+
 </style>
 </head>
 <body>
@@ -324,7 +361,7 @@
                 <div class="gap12"></div>
 
                 <div class="label">Company Location</div>
-                <div class="split">
+                <div class="split" style="margin-top:10px">
                   <input type="text" id="addr1" placeholder="Address line 1" />
                   <input type="text" id="addr2" placeholder="Address line 2 (optional)" />
                 </div>
@@ -544,7 +581,7 @@
       </div>
 
       <!-- Upgrade sheet (kept for future use) -->
-      <div id="upgradeSheet" class="sheet-wrap" onclick="if(event.target.id==='upgradeSheet'){toggleSheet(false)}">
+      <div id="upgradeSheet" class="sheet-wrap requires-upgrade" onclick="if(event.target.id==='upgradeSheet'){toggleSheet(false)}">
         <div class="sheet" onclick="event.stopPropagation()">
           <div class="title">Requires an Upgrade</div>
           <div class="text">Adding an extra CTA to the autoresponder is available on paid plans.</div>
@@ -556,7 +593,7 @@
       </div>
 
       <!-- Edit Template sheet -->
-      <div id="editSheet" class="sheet-wrap" onclick="if(event.target.id==='editSheet'){toggleEditSheet(false)}">
+      <div id="editSheet" class="sheet-wrap requires-upgrade" onclick="if(event.target.id==='editSheet'){toggleEditSheet(false)}">
         <div class="sheet" onclick="event.stopPropagation()">
           <div class="title">Requires an Upgrade</div>
           <div class="text">Customizing your email content is available on paid plans.</div>
@@ -568,7 +605,7 @@
       </div>
 
       <!-- Follow-Up Emails sheet -->
-      <div id="followupSheet" class="sheet-wrap" onclick="if(event.target.id==='followupSheet'){toggleFollowupSheet(false)}">
+      <div id="followupSheet" class="sheet-wrap requires-upgrade" onclick="if(event.target.id==='followupSheet'){toggleFollowupSheet(false)}">
         <div class="sheet" onclick="event.stopPropagation()">
           <div class="title">Requires an Upgrade</div>
           <div class="text">Multiple follow-up emails are available on paid plans.</div>
@@ -609,6 +646,57 @@
           <div class="mail-frame" id="mailFrameFull"></div>
         </div>
       </div>
+
+      <!-- ===== NEW: Dedicated Upgrade Screen ===== -->
+      <section id="upgradeScreen">
+        <div id="upgradeTopbar">
+          <button id="upgradeBack" aria-label="Back">
+            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div id="upgradeTitle">Choose Your Plan</div>
+        </div>
+        <div id="upgradeContent">
+          <div class="plans-grid">
+            <!-- Segwik Grow -->
+            <div class="plan" id="planGrow">
+              <h3>Segwik Grow</h3>
+              <div class="subtitle">Everything in Start, plus tools to expand your impact</div>
+              <div class="price">$39 / mo</div>
+              <div class="desc">Add meeting and event tracking, contact analysis, and desktop access to your relationship OS.</div>
+              <ul class="features">
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Everything in Segwik Start</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>+ PLUS</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Unlock Segwik Desktop</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Interactive Meeting Management, with Embedded Video Conferencing</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Availability - Self Service Booking Calendar</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Event Publishing & Registration</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>AI Contact Insights & Tips</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>100 Smart Tokens Included</li>
+              </ul>
+              <button class="btn darkblue full" id="btnUpgradeGrow">Upgrade to Grow</button>
+            </div>
+            <!-- Segwik Pro -->
+            <div class="plan" id="planPro">
+              <h3>Segwik Pro</h3>
+              <div class="subtitle">For leaders and teams ready to scale relationships at speed</div>
+              <div class="price">$79 / mo</div>
+              <div class="desc">Unlock AI-powered copywriting, calling, texting, and powerful outreach automation.</div>
+              <ul class="features">
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Everything in Segwik Grow</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Inbound & Outbound Calling and Texting</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Segwik AI Email and Text Composer</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Email & Text Blasting</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Integrated Payment Processor with Additional Order Tracking Module</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Customer & Client Portal</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Advanced Automation Touchpoints</li>
+                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>250 Smart Tokens Included</li>
+              </ul>
+              <button class="btn darkblue full" id="btnUpgradePro">Go Pro</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- ===== /Upgrade Screen ===== -->
     </div>
 
     <!-- Fixed tray (unchanged) -->
@@ -629,7 +717,7 @@ const PREVIEW_DISABLED = true; // <- turns off all "Send Me a Preview" actions
 function icon(name){
   switch(name){
     case 'mail': return `<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>`;
-    case 'phone': return `<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0  0 1-8.63-3.07 19.5 19.5 0  0  1-6-6 19.79 19.79 0  0 1-3.07-8.67A2 2 0  0 1 4.11 2h3a2 2 0  0 1 2 1.72c.12 .9.3 1.77.57 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0  0 0 6 6l1.47-1.11a2 2 0 0 1 2.11-.45c.84 .27 1.71 .45 2.61 .57A2 2 0  0 1 22 16.92z"/></svg>`;
+    case 'phone': return `<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0  0 1-8.63-3.07 19.5 19.5 0  0  1-6-6 19.79 19.79 0  0 1-3.07-8.67A2 2 0  0 1 4.11 2h3a2 2 0  0 1 2 1.72c.12 .9.3 1.77.57 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0  0 0 6 6l1.47-1.11a2 2 0  0 1 2.11-.45c.84 .27 1.71 .45 2.61 .57A2 2 0  0 1 22 16.92z"/></svg>`;
     case 'chat': return `<svg viewBox="0 0 24 24"><path d="M21 15a4 4 0  0 1-4 4H8l-5 3V7a4 4 0  0 1 4-4h10a4 4 0  0 1 4 4z"/></svg>`;
     case 'calendar': return `<svg viewBox="0 0 24 24"><path d="M3 8h18M5 4h14v16H5z"/><path d="M16 2v4M8 2v4"/></svg>`;
     case 'note': return `<svg viewBox="0 0 24 24"><path d="M4 3h14l2 2v16H4z"/><path d="M9 13h6M9 9h6M9 17h3"/></svg>`;
@@ -1020,18 +1108,17 @@ function renderEmailCTA(){
   const sig   = getSignatureHtml();
 
   // NEW: toggle "Send Me a Preview" bar visibility based on whether CTA is applied
- const ctaBar = document.getElementById('ctaSendPreviewBar');
-if (ctaBar) ctaBar.style.display = ctaApplied ? 'flex' : 'none';
-const ctaBarBtn = document.getElementById('btnSendPreviewCTA');
-if (ctaBarBtn) {
-  if (PREVIEW_DISABLED) {
-    ctaBarBtn.disabled = true;          // visual + keyboard
-    ctaBarBtn.classList.add('ghost');   // optional: make it look inactive
-    // no handler attached
-  } else {
-    ctaBarBtn.addEventListener('click', ()=>alert('A preview has been sent to your email. (Mock)'));
+  const ctaBar = document.getElementById('ctaSendPreviewBar');
+  if (ctaBar) ctaBar.style.display = ctaApplied ? 'flex' : 'none';
+  const ctaBarBtn = document.getElementById('btnSendPreviewCTA');
+  if (ctaBarBtn) {
+    if (PREVIEW_DISABLED) {
+      ctaBarBtn.disabled = true;
+      ctaBarBtn.classList.add('ghost');
+    } else {
+      ctaBarBtn.addEventListener('click', ()=>alert('A preview has been sent to your email. (Mock)'));
+    }
   }
-}
 
   if(ctaApplied){
     host.innerHTML = `${intro}${ctaSavedHtml(ctaApplied)}${sig}`;
@@ -1097,7 +1184,6 @@ function scrollMailBodyToCTA(forceFlash=false){
     target.classList.add('flash');
     setTimeout(()=>target.classList.remove('flash'), 1200);
   }else{
-    // small delayed flash to draw attention
     setTimeout(()=>{ target.classList.add('flash'); setTimeout(()=>target.classList.remove('flash'), 1100); }, 320);
   }
 }
@@ -1195,39 +1281,106 @@ closeFull && closeFull.addEventListener('click', ()=>{
 const sendBtn = document.getElementById('btnSendPreview');
 if (sendBtn) {
   if (PREVIEW_DISABLED) {
-    sendBtn.disabled = true;            // visual + keyboard
-    sendBtn.classList.add('ghost');     // optional: make it look inactive
-    // no handler attached
+    sendBtn.disabled = true;
+    sendBtn.classList.add('ghost');
   } else {
     sendBtn.addEventListener('click', ()=>alert('A preview has been sent to your email. (Mock)'));
   }
 }
 
-/* Bottom sheet helpers (kept) */
+/* ==== Upgrade flow wiring ==== */
+let isUpgraded = false;
+let returnSlideIdx = 0;
+const upgradeScreen = document.getElementById('upgradeScreen');
+const upgradeBack = document.getElementById('upgradeBack');
+
+function openUpgradeScreen(){
+  // Remember where we were
+  returnSlideIdx = idx;
+  // Hide any open sheets first
+  toggleSheet(false); toggleEditSheet(false); toggleFollowupSheet(false);
+  // Show upgrade screen
+  flow.style.display = 'none';
+  intro.style.display = 'none';
+  upgradeScreen.style.display = 'flex';
+}
+function closeUpgradeScreenWithReturn(){
+  upgradeScreen.style.display = 'none';
+  flow.style.display = 'block';
+  // Animate return to prior slide
+  flow.classList.remove('return-anim'); // reset if present
+  void flow.offsetWidth;                // reflow to restart animation
+  flow.classList.add('return-anim');
+  goTo(returnSlideIdx);
+  // remove the class after animation ends
+  setTimeout(()=>flow.classList.remove('return-anim'), 400);
+}
+upgradeBack.addEventListener('click', closeUpgradeScreenWithReturn);
+
+/* Success + apply upgrade UI */
+/* Success + apply upgrade UI */
+function applyUpgradeUI(){
+  isUpgraded = true;
+  // Remove any elements that showed "Requires an Upgrade"
+  document.querySelectorAll('.requires-upgrade').forEach(el=>el.remove());
+  // Also hide "See upgrade options" since we’re upgraded
+  const seeUpgradeBtn = document.getElementById('seeUpgrade');
+  if (seeUpgradeBtn) {
+    const parentCard = seeUpgradeBtn.closest('.card');
+    if (parentCard) parentCard.remove(); // remove the empty box
+    seeUpgradeBtn.remove();
+  }
+}
+
+
+/* Buttons that should route to the Upgrade screen */
 const sheet = document.getElementById('upgradeSheet');
 function toggleSheet(show){ sheet.classList.toggle('show', !!show); }
 document.getElementById('notNow')?.addEventListener('click', ()=>{ toggleSheet(false); goTo(idx+1); });
-document.getElementById('upgradeNow')?.addEventListener('click', ()=>{ toggleSheet(false); alert('Upgrade flow (mock)'); });
+document.getElementById('upgradeNow')?.addEventListener('click', ()=>{
+  toggleSheet(false);
+  openUpgradeScreen();
+});
 
 const editSheet = document.getElementById('editSheet');
 function toggleEditSheet(show){ editSheet.classList.toggle('show', !!show); }
 document.getElementById('btnEditTemplate')?.addEventListener('click', ()=>toggleEditSheet(true));
 document.getElementById('editNotNow')?.addEventListener('click', ()=>toggleEditSheet(false));
-document.getElementById('editUpgradeNow')?.addEventListener('click', ()=>{ toggleEditSheet(false); alert('Upgrade flow (mock)'); });
+document.getElementById('editUpgradeNow')?.addEventListener('click', ()=>{
+  toggleEditSheet(false);
+  openUpgradeScreen();
+});
 
 const followupSheet = document.getElementById('followupSheet');
 function toggleFollowupSheet(show){ followupSheet.classList.toggle('show', !!show); }
 document.getElementById('btnAddFollowUp')?.addEventListener('click', ()=>toggleFollowupSheet(true));
 document.getElementById('followupNotNow')?.addEventListener('click', ()=>toggleFollowupSheet(false));
-document.getElementById('followupUpgradeNow')?.addEventListener('click', ()=>{ toggleFollowupSheet(false); alert('Upgrade flow (mock)'); });
+document.getElementById('followupUpgradeNow')?.addEventListener('click', ()=>{
+  toggleFollowupSheet(false);
+  openUpgradeScreen();
+});
 
 /* Final screen */
 const activateSwitch = document.getElementById('activateSwitch');
 activateSwitch && activateSwitch.addEventListener('click', ()=>activateSwitch.classList.toggle('active'));
-document.getElementById('seeUpgrade')?.addEventListener('click', ()=>alert('Upgrade options (mock)'));
+document.getElementById('seeUpgrade')?.addEventListener('click', ()=>{
+  openUpgradeScreen();
+});
 document.getElementById('finishBtn')?.addEventListener('click', ()=>{
   const active = activateSwitch?.classList.contains('active');
   alert(`Saved! (Mock)\nJourney ${active ? 'activated' : 'saved as draft'}.`);
+});
+
+/* Upgrade plan buttons */
+document.getElementById('btnUpgradeGrow').addEventListener('click', ()=>{
+  alert('Success! You’ve upgraded to Segwik Grow.');
+  applyUpgradeUI();
+  closeUpgradeScreenWithReturn();
+});
+document.getElementById('btnUpgradePro').addEventListener('click', ()=>{
+  alert('Success! You’ve upgraded to Segwik Pro.');
+  applyUpgradeUI();
+  closeUpgradeScreenWithReturn();
 });
 
 /* Keep company preview live (no-op placeholders kept) */

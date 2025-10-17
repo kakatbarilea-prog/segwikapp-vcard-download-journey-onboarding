@@ -1,1816 +1,1651 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Segwik Mobile – vCard Journey Onboarding (Revised)</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Segwik Mobile – vCard → Download Journey Onboarding</title>
 <style>
-  :root {
+  :root{
     --bg:#f6f8fb; --ink:#243048; --muted:#667085; --line:#e6ebf2;
-    --accent:#0F2D56; --pill:#eef4ff; --pill-border:#cfe1ff; --ok:#16a34a;
-    --phone-w:430px; --phone-h:800px; --footer-h:36px; --status-h:46px;
+    --accent:#0F2D56; --blue:#2563eb; --blue-700:#1d4ed8; --blue-50:#eef2ff;
     --card:#fff; --radius:16px; --shadow:0 14px 38px rgba(0,0,0,.08);
-    --slide-ms:320ms; --pager-gap:96px; /* tightened to reduce empty space */
-    --banner:#fff7c2; --banner-ink:#4a3b00; --banner-border:#fde68a;
-
-    /* blues for buttons */
-    --blue:#2563eb;        /* 600 */
-    --blue-700:#1d4ed8;
-    --blue-50:#eff6ff;
-    --blue-200:#bfdbfe;
+    --phone-w:430px; --phone-h:800px; --footer-h:48px; --status-h:46px;
+    --nav-safe: 140px; --green:#22c55e;
   }
   *{box-sizing:border-box}
-  html,body{
-    margin:0;height:100%;background:var(--bg);
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--ink)
-  }
-  .phone{
-    width:var(--phone-w);height:var(--phone-h);background:#fff;border-radius:36px;
-    border:8px solid #111;box-shadow:0 20px 60px rgba(0,0,0,.12),0 8px 16px rgba(0,0,0,.08);
-    position:relative;display:flex;flex-direction:column;overflow:hidden
-  }
-  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);
-    width:180px;height:30px;background:#111;border-radius:20px 20px 28px 28px;z-index:10}
-  .status{
-    height:var(--status-h);display:flex;align-items:center;justify-content:center;
-    border-bottom:1px solid var(--line);font-weight:700;letter-spacing:.4px;color:#0F2D56
-  }
-  .screen{flex:1;background:#f6f8fb;overflow:hidden;position:relative}
-
-  /* Intro (standalone, no dots/nav/swipe) */
-  .intro{
-    position:absolute; inset:0; padding:14px; display:flex; flex-direction:column; gap:12px;
-  }
-  .head{padding:10px 12px 0}
-  .h1{font-size:20px;font-weight:800;color:var(--accent)}
-  .p{font-size:13px;color:#667085;line-height:1.5;margin-top:4px}
-  .hero{
-    background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;
-    box-shadow:var(--shadow);display:grid;place-items:center;min-height:300px
-  }
-  .hero svg{width:220px;height:220px;opacity:.9}
-
-  .btn{
-    appearance:none;border:1px solid var(--line);background:#fff;color:var(--accent);
-    padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px
-  }
-  .btn svg{width:16px;height:16px}
-  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  html,body{height:100%;margin:0;display:grid;place-items:center;background:var(--bg);color:var(--ink);font-family:Segoe UI,system-ui,-apple-system,sans-serif}
+  svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .phone{width:var(--phone-w);height:var(--phone-h);background:#fff;border-radius:36px;border:8px solid #111;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.12),0 8px 16px rgba(0,0,0,.08);position:relative}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:180px;height:30px;background:#111;border-radius:20px 20px 28px 28px;z-index:10}
+  .status{height:var(--status-h);display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);font-weight:800;color:var(--accent)}
+  .screen{flex:1;position:relative;background:var(--bg);height:calc(100% - var(--status-h) - var(--footer-h));overflow:hidden}
+  .tray{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px;border-top:1px solid var(--line);background:#fff}
+  .ibtn{padding:8px;border:1px solid var(--line);border-radius:12px;background:#f8fafc;display:grid;place-items:center}
+  .btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--accent);padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
+  .btn.blue:hover{background:var(--blue-700);border-color:var(--blue-700)}
   .btn.ghost{background:#f8fafc}
   .btn.small{padding:8px 10px;border-radius:10px;font-size:12px}
   .btn.full{width:100%}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-weight:700;cursor:pointer}
+  .chip.active{background:#eff6ff;border-color:#c7d2fe}
 
-  /* new blue styles */
-  .btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
-  .btn.blue:hover{background:var(--blue-700);border-color:var(--blue-700)}
-  .btn.outline-blue{background:#fff;color:var(--blue);border-color:var(--blue-200)}
-  .btn.outline-blue:hover{background:#eff6ff;border-color:var(--blue)}
-  .btn.darkblue{background:var(--blue-700);border-color:var(--blue-700);color:#fff}
-
-  /* Carousel (steps after Start) */
-  .carousel{height:100%;display:flex;width:100%;touch-action:pan-y;
-    transition:transform var(--slide-ms) cubic-bezier(.22,.61,.36,1)}
+  .carousel{height:100%;display:flex;transition:transform .32s cubic-bezier(.22,.61,.36,1);will-change:transform}
   .slide{min-width:100%;height:100%;padding:14px;display:flex;flex-direction:column}
-  .scroll{
-    background:transparent; overflow:auto; padding:12px 0;
-    margin-bottom:var(--pager-gap);
-    display:flex; flex-direction:column; gap:12px;
-  }
-  .card{
-    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    box-shadow:var(--shadow);padding:14px
-  }
-  .row{display:flex;gap:10px}
-  .row.actions{margin-bottom:16px;}
-  .row.wrap{flex-wrap:wrap}
-  .col{flex:1}
-  .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .chip{
-    border:1px solid var(--pill-border);background:var(--pill);border-radius:12px;
-    padding:10px;cursor:pointer;font-weight:700;display:flex;justify-content:space-between;align-items:center
-  }
-
-  textarea,input[type="text"],input[type="url"],input[type="email"],input[type="file"],select{
-    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;
-    background:#f8fafc;font-family:inherit;font-size:13px;outline:none
-  }
+  .head{padding:6px 2px 8px}
+  .h1{font-weight:900;color:var(--accent);font-size:18px}
+  .p{font-size:13px;color:var(--muted);line-height:1.5}
+  .scroll{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:var(--nav-safe)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
+  .label{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:6px}
+  input[type="text"],input[type="email"],input[type="url"],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#f8fafc;font:inherit}
   textarea{min-height:110px;resize:vertical}
   .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .label{font-size:12px;color:#667085;font-weight:700;margin-bottom:6px}
-  .mini{font-size:12px;color:#7a849a}
-  .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px}
 
-  /* vCard & email preview (used earlier steps) */
-  .preview-mail{border:1px solid #e6ebf2;border-radius:12px;padding:12px;background:#fff}
-  .preview-mail .subj{font-weight:800;margin-bottom:6px}
-  .preview-mail .body{white-space:pre-wrap}
+  .nav{position:absolute;left:0;right:0;bottom:var(--footer-h);display:flex;justify-content:space-between;gap:8px;padding:0 14px;z-index:5}
+  .pager{position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 42px);display:flex;justify-content:center;gap:6px;pointer-events:auto;z-index:5}
+  .dot{width:8px;height:8px;border-radius:50%;background:#c9d2e4;opacity:.9;cursor:pointer}
+  .dot.active{background:var(--accent)}
 
-  /* Fake AI loader */
-  .ai-status{
-    display:none;align-items:center;gap:8px;margin-bottom:10px;padding:8px 10px;
-    border:1px dashed var(--pill-border);background:#f8fbff;border-radius:10px;font-size:12px;color:#43506a
-  }
-  .ai-status.show{display:flex}
-  .spinner{width:16px;height:16px;border-radius:50%;
-    border:2px solid #cfe1ff;border-top-color:#0F2D56;animation:spin 1s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
+  /* vCard preview */
+  .vcard{border:1px solid #e6ebf2;border-radius:18px;overflow:hidden}
+  .v-banner{position:relative;height:180px;background:#dbe6ff url('https://images.unsplash.com/photo-1551817958-d33c6c9f24a1?q=80&w=1200&auto=format&fit=crop') center/cover}
+  .v-banner::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,0) 50%)}
+  .v-save{position:absolute;right:14px;bottom:-22px}
+  .v-head{display:flex;gap:12px;align-items:flex-end;padding:28px 14px 12px}
+  .v-photo{width:84px;height:84px;border-radius:50%;border:3px solid #fff;background:#e5edf8;background-size:cover;background-position:center;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+  .v-name{font-weight:900;font-size:20px;margin:6px 0 2px}
+  .v-company{font-weight:700;color:#0b1220}
+  .v-headline{color:#6a768f;margin-top:6px}
+  .v-list{padding:8px 14px 16px;display:grid;gap:12px}
+  .v-row{display:flex;gap:10px;align-items:flex-start}
+  .v-row .ico{width:22px;height:22px;border-radius:999px;display:grid;place-items:center;background:#f1f5f9;border:1px solid #e5e7eb}
+  .v-row a{color:#0F2D56;text-decoration:none}
+  .v-row a:hover{text-decoration:underline}
 
-  /* Pager & nav */
-  .nav{
-    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) - 2px);
-    display:flex;gap:8px;justify-content:space-between;padding:0 14px
-  }
-  .pager{
-    position:absolute;left:0;right:0;bottom:calc(var(--footer-h) - 2px);
-    display:flex;justify-content:center;gap:6px
-  }
-  .dot{width:8px;height:8px;border-radius:50%;background:#c9d2e4;opacity:.8}
-  .dot.active{background:#0F2D56;opacity:1}
+  /* Phone-styled email preview */
+  .phone-modal{ position:absolute; inset:0; background:rgba(0,0,0,.35); display:none; align-items:center; justify-content:center; z-index:3200; }
+  .phone-modal.show{ display:flex; }
+  .phone-frame{ width:360px; max-width:92vw; background:#fff; border:1px solid #e5e7eb; border-radius:18px; box-shadow:0 20px 60px rgba(0,0,0,.18); overflow:hidden; }
+  .phone-titlebar{ display:flex; gap:6px; align-items:center; padding:10px; background:#f9fafb; border-bottom:1px solid #eef1f6; }
+  .dot-r{width:10px;height:10px;border-radius:50%;background:#ef4444}
+  .dot-o{width:10px;height:10px;border-radius:50%;background:#f59e0b}
+  .dot-g{width:10px;height:10px;border-radius:50%;background:#22c55e}
+  .email-preview{ max-height:60vh; overflow:auto; }
+  .mail-frame{border:0;border-radius:0;background:#fff}
+  .mail-topbar{display:flex;justify-content:flex-start;align-items:center;padding:10px 12px;border-bottom:1px solid #eef1f6}
+  .mail-topbar .subject{font-weight:800}
+  .mail-body{padding:14px;line-height:1.55}
+  .mail-body p{margin:0 0 10px 0}
+  .cta{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid #cfe1ff;background:#eef4ff;font-weight:800;color:#0F2D56;text-decoration:none}
+  .cta.blue{background:var(--blue);border-color:var(--blue);color:#fff}
+  .sig{display:flex; gap:12px; align-items:flex-start; margin-top:14px; border-top:1px solid #eef1f6; padding-top:12px;}
+  .sig img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+  .sig .meta{font-size:13px;color:#334155}
+  .sig .meta .name{font-weight:800;color:#111827}
+  .sig .socials{display:flex;gap:8px;margin-top:6px}
 
-  /* Bottom Sheet (upgrade / config) */
-  .sheet-wrap{position:absolute;inset:0;display:none;align-items:flex-end;background:rgba(15,45,86,.28);z-index:60}
-  .sheet-wrap.show{display:flex}
-  .sheet{
-    width:100%;background:#fff;border-top:1px solid var(--pill-border);
-    border-radius:16px 16px 0 0;box-shadow:var(--shadow);padding:14px;transform:translateY(100%);transition:transform .25s ease
-  }
-  .sheet-wrap.show .sheet{transform:translateY(0)}
-  .sheet .title{font-weight:800;color:#0F2D56;margin-bottom:6px}
-  .sheet .text{font-size:13px;color:#667085;line-height:1.5;margin-bottom:12px}
+  /* Upgrade modal */
+  .modal-wrap{ position:absolute; inset:0; background:rgba(0,0,0,.35); display:none; align-items:center; justify-content:center; z-index:3000; }
+  .modal-wrap.show{ display:flex; }
+  .modal{ background:#fff; border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); width:92%; max-width:380px; padding:16px; }
+  .modal h3{ margin:0 0 8px 0; font-size:16px; color:var(--accent); }
+  .modal p{ margin:0 0 12px 0; color:var(--muted); }
+  .modal .row{ display:flex; gap:8px; justify-content:flex-end; }
+
+  .setup-image{ display:block; width:auto; height:360px; margin:0 auto 16px; border-radius:8px; object-fit:contain; }
+
+  .uploader{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .drop{ border:2px dashed #bfd3ff; background:#f5f8ff; color:#0F2D56; padding:14px; border-radius:14px; cursor:pointer; display:flex; gap:12px; align-items:center; transition:.18s ease; position:relative; min-height:74px; }
+  .drop:hover{ background:#eef4ff; border-color:#9ab8ff; }
+  .drop:active{ background:#e5eeff; }
+  .drop .ico{ width:40px; height:40px; border-radius:10px; background:#fff; display:grid; place-items:center; border:1px solid #e6ebf2; }
+  .drop .txt{ font-size:12px; line-height:1.35; }
+  .drop .txt b{ display:block; font-size:13px; }
+  .drop input[type="file"]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .thumb{ position:absolute; right:10px; top:10px; width:48px; height:48px; border-radius:12px; border:1px solid #e6ebf2; background:#fff center/cover no-repeat; box-shadow:0 2px 6px rgba(0,0,0,.06); }
+
+  .social-row{display:grid; grid-template-columns:160px 1fr 36px; gap:8px; align-items:center}
+  .social-row select, .social-row input{padding:10px 12px; border:1px solid var(--line); background:#f8fafc; border-radius:10px; font:inherit}
+  .social-row .remove{appearance:none; border:1px solid var(--line); background:#fff; border-radius:10px; width:36px; height:36px; display:grid; place-items:center; cursor:pointer}
+  .social-add{margin-top:10px}
+  .peek-trigger{display:inline-flex; align-self:flex-end}
+
+  /* AI loader */
+  .ai-overlay{position:absolute; inset:0; background:rgba(255,255,255,.8); display:none; align-items:center; justify-content:center; z-index:2500; font-weight:800; color:#0F2D56;}
+  .ai-overlay.show{display:flex;}
 
   /* Toggle */
-  .toggle{display:flex;align-items:center;gap:10px}
-  .switch{
-    width:44px;height:26px;border-radius:999px;background:#e5eaf4;position:relative;cursor:pointer;border:1px solid var(--line)
-  }
-  .knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s ease}
-  .switch.active{background:#16a34a;border-color:#16a34a}
-  .switch.active .knob{left:22px}
-
-  /* Tray */
-  .tray{
-    display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px;border-top:1px solid var(--line);
-    background:#fff;position:sticky;bottom:0
-  }
-  .ibtn{padding:8px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;display:grid;place-items:center;cursor:pointer}
-  svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;width:17px;height:17px}
-
-  /* --- Autoresponder Preview --- */
-  .after-dl-banner{background:var(--banner); color:var(--banner-ink); border:1px solid var(--banner-border); border-radius:12px; padding:10px 12px; display:flex; gap:10px; align-items:flex-start; font-size:13px; font-weight:700}
-  .after-dl-banner .icon{flex:0 0 auto; width:18px; height:18px; border-radius:4px; background:#f59e0b; display:grid; place-items:center; color:#fff; font-size:12px; font-weight:900}
-
-  /* Stretch preview box and keep inner scroll (Step 5) */
-  #step-preview{padding-bottom:calc(var(--footer-h) + 48px);}
-  /* CHANGED: let the inner touchpoint list own the scrolling */
-  #step-preview .scroll{display:flex;flex-direction:column;gap:12px;overflow:hidden; margin-bottom:0; padding-bottom:0;}
-  /* NEW: dedicated scroll area for touchpoints stack */
-  .tp-list{flex:1; overflow:auto; display:flex; flex-direction:column; gap:12px; padding-right:4px;}
-
-  /* Email frame (shared) */
-  .mail-frame{
-    border:1px solid #e6ebf2; border-radius:16px; overflow:hidden; background:#fff;
-    display:flex; flex-direction:column; flex:1; min-height:0;
-  }
-  .mail-topbar{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #eef1f6}
-  .mail-topbar .subject{font-weight:800; font-size:14px; line-height:1.2; padding-right:8px}
-  .mail-topbar .actions{display:flex; gap:8px; align-items:center}
-  .actions.dots .dotc{width:10px;height:10px;border-radius:50%;}
-  .actions.dots .dotc.r{background:#ef4444}
-  .actions.dots .dotc.o{background:#f59e0b}
-  .actions.dots .dotc.g{background:#22c55e}
-
-  .mail-from{display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid #eef1f6}
-  .from-avatar{width:28px; height:28px; border-radius:50%; background:#dfe9ff; display:grid; place-items:center; font-size:12px; color:#0F2D56; font-weight:800}
-  .from-meta{line-height:1.1}
-  .from-name{font-weight:800; font-size:13px}
-  .from-details{font-size:12px; color:#6b7280}
-
-  .mail-body{flex:1; overflow:auto; padding:14px 14px 18px 14px; line-height:1.55; -webkit-overflow-scrolling:touch;}
-  .mail-body h3{margin:0 0 6px 0; font-size:15px}
-  .mail-body p{margin:0 0 10px 0; font-size:13px; color:#243048}
-  .sig{display:flex; gap:12px; margin-top:14px; align-items:flex-start}
-  .sig .headshot{width:56px; height:56px; border-radius:12px; background:#dfe9ff; display:grid; place-items:center; font-size:11px; color:#667085; flex:0 0 auto}
-  .sig .meta{font-size:13px}
-  .sig .meta a{color:#0F2D56; text-decoration:none}
-  .sig .meta a:hover{text-decoration:underline}
-
-  /* Email header logo */
-  .mail-logo-wrap{margin:6px 0 8px 0; text-align:center}
-  .mail-logo{max-width:180px; max-height:56px; width:auto; height:auto}
-
-  /* Full-screen preview overlay */
-  .full-overlay{position:absolute; inset:0; background:#fff; z-index:70; display:none; flex-direction:column;}
-  .full-overlay.show{display:flex}
-  .full-topbar{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #eef1f6; font-weight:800; color:#0F2D56;}
-  .full-close{appearance:none; background:transparent; border:0; font-size:22px; line-height:1; cursor:pointer; padding:4px 8px;}
-  .full-content{flex:1; display:flex; flex-direction:column; padding:0; overflow:hidden;}
-  .full-content .mail-frame{height:100%; width:100%; display:flex; flex-direction:column;}
-
-  /* Rich editor toolbar (NEW) */
-  .richbar{
-    display:none; gap:8px; align-items:center; padding:8px 10px; border-bottom:1px solid #eef1f6; background:#f8fbff;
-    position:sticky; top:0; z-index:2;
-  }
-  .richbar.show{display:flex}
-  .rbtn{
-    appearance:none; border:1px solid var(--blue-200); background:#fff; border-radius:10px; padding:8px; display:inline-grid; place-items:center; cursor:pointer; 
-  }
-  .rbtn:hover{background:#eff6ff;border-color:#0000}
-  .rsep{width:1px;height:24px;background:#e7edf8;margin:0 4px}
-  .rlabel{font-size:12px;color:#667085;margin-right:6px;font-weight:700}
-  .richSave{margin-left:auto}
-
-  /* ---- CTA Insert styles ---- */
-  .cta-insert{
-    border:2px dashed var(--blue); background:var(--blue-50);
-    border-radius:14px; padding:12px; margin:14px 0 4px 0; position:relative;
-  }
-  .cta-insert .cta-head{font-weight:900; color:#0F2D56; margin-bottom:8px; font-size:13px; letter-spacing:.2px;}
-  .cta-carousel{overflow:hidden; position:relative;}
-  .cta-track{display:flex; transition:transform .28s ease;}
-  .cta-slide{min-width:100%; padding:4px;}
-  .cta-card{
-    background:#fff; border:1px solid var(--blue-200); border-radius:12px; padding:12px;
-    box-shadow:0 6px 14px rgba(37,99,235,.08);
-  }
-  .cta-card h4{margin:0 0 6px 0; font-size:14px; color:#0F2D56}
-  .cta-card p{margin:0 10px 10px 0; font-size:13px; color:#243048}
-
-  /* NEW: arrows instead of dots */
-  .cta-arrows{display:flex; gap:8px; justify-content:space-between; align-items:center; margin-top:8px}
-  .icon-btn{appearance:none; background:#fff; border:1px solid var(--blue-200); border-radius:10px; padding:8px; display:inline-grid; place-items:center; cursor:pointer}
-  .icon-btn:hover{background:#eff6ff; border-color:#0000}
-  .icon-btn svg{width:18px; height:18px}
-  .cta-action-row{display:flex; gap:8px; align-items:center; margin-top:8px}
-
-  /* NEW: applied CTA box */
-  .cta-saved{
-    border:1px solid var(--blue-200); background:#fff; border-radius:12px; padding:12px; margin:14px 0 4px 0; display:flex; gap:8px; align-items:flex-start; box-shadow:0 6px 14px rgba(37,99,235,.06);
-  }
-  .cta-saved .meta{flex:1}
-  .cta-saved h4{margin:0 0 6px 0; font-size:14px; color:#0F2D56}
-  .cta-saved p{margin:0 0 10px 0; font-size:13px}
-  .cta-saved .edit-right{flex:0 0 auto; display:grid; place-items:center; margin-left:6px}
-
-  /* NEW: flash animation when auto-scrolling */
-  @keyframes cta-flash{
-    0%{box-shadow:0 0 0 0 rgba(37,99,235,.0)}
-    40%{box-shadow:0 0 0 6px rgba(37,99,235,.18)}
-    100%{box-shadow:0 0 0 0 rgba(37,99,235,0)}
-  }
-  .flash{animation:cta-flash 1.1s ease}
-
-  /* Step 6 layout: stretch preview to use space */
-  .slide[data-step="cta"] .scroll{display:flex; flex-direction:column; gap:12px; overflow:hidden; margin-bottom:0; padding-bottom:60px;}
-  .slide[data-step="cta"] .card{display:flex; flex-direction:column; flex:1; min-height:0;}
-  .slide[data-step="cta"] .mail-frame{flex:1; min-height:0;}
-
-  /* NEW: Centered CTA editor modal */
-  .modal-wrap{position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(15,45,86,.28); z-index:80}
-  .modal-wrap.show{display:flex}
-  .modal{
-    width:88%; max-width:380px; background:#fff; border:1px solid var(--pill-border);
-    border-radius:14px; box-shadow:0 18px 40px rgba(15,45,86,.18);
-    padding:14px; position:relative;
-  }
-  .modal .title{font-weight:800; color:#0F2D56; margin-bottom:6px}
-  .modal .text{font-size:13px; color:#667085; line-height:1.5; margin-bottom:12px}
-  .modal .x{position:absolute; top:8px; right:10px; appearance:none; border:0; background:transparent; font-size:20px; cursor:pointer; line-height:1}
-  .modal .divider{height:1px;background:#eef1f6;margin:10px 0}
-
-  /* NEW: CTA step preview bar */
-  #ctaSendPreviewBar{display:none; margin-bottom:8px; align-items:center; gap:8px}
-
-  /* ===== UPGRADE SCREEN ===== */
-  #upgradeScreen{position:absolute; inset:0; background:#fff; display:none; flex-direction:column; z-index:90;}
-  #upgradeTopbar{display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid var(--line);}
-  #upgradeBack{appearance:none; background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px; display:grid; place-items:center; cursor:pointer}
-  #upgradeBack svg{width:18px; height:18px}
-  #upgradeTitle{font-weight:800; color:#0F2D56; font-size:14px}
-  #upgradeContent{flex:1; overflow:auto; padding:14px; display:flex; flex-direction:column; gap:12px; background:var(--bg)}
-  .plan{background:#fff; border:2px solid var(--blue-200); border-radius:16px; padding:16px; text-align:center; box-shadow:var(--shadow)}
-  .plan h3{margin:0 0 6px 0; color:#0F2D56}
-  .plan .subtitle{font-size:13px; color:#667085; margin-bottom:10px}
-  .price{font-weight:900; font-size:18px; margin:4px 0 6px 0; color:#0F2D56}
-  .desc{font-size:13px; color:#243048; margin-bottom:12px}
-  .features{list-style:none; padding:0; margin:0 0 12px 0; display:grid; gap:8px}
-  .feature{display:flex; align-items:center; justify-content:flex-start; gap:8px; font-size:13px; color:#243048}
-  .badge{width:18px; height:18px; border-radius:50%; background:#blue-50; border:1px solid var(--blue-200); display:grid; place-items:center;}
-  .badge svg{width:12px; height:12px}
-  .plans-grid{display:grid; grid-template-columns:1fr; gap:12px}
-  @media (min-width:420px){ .plans-grid{grid-template-columns:1fr} }
-
-  /* Return animation when coming back from Upgrade */
-  @keyframes returnSlide {
-    from { transform:translateX(-8%); opacity:.0 }
-    to   { transform:translateX(0);   opacity:1 }
-  }
-  .return-anim{ animation:returnSlide .35s ease }
-
-  /* ===== NEW: Follow-up modal extras ===== */
-  .btn.orange{background:#f59e0b;border-color:#f59e0b;color:#fff}
-  .btn.orange:hover{background:#d97706;border-color:#d97706}
-  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .inline-note{font-size:12px;color:#7a849a;margin-top:6px}
-  .linklike{color:#2563eb;cursor:pointer;text-decoration:underline;font-weight:700}
-  .right{display:flex;justify-content:flex-end;gap:8px}
-
-  /* NEW: subtle cue when editing in full preview */
-  .editing .mail-body[contenteditable="true"]{outline:2px dashed #bfdbfe; outline-offset:6px}
-  .editing .mail-topbar .subject[contenteditable="true"]{outline:2px dashed #bfdbfe; outline-offset:4px}
-
-  /* ===== NEW: Touchpoints stack (collapsible cards) ===== */
-  .tp-card{position:relative}
-  .tp-head{
-    display:flex; align-items:center; gap:8px; justify-content:space-between;
-    padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:#f8fafc; margin-bottom:10px;
-  }
-  .tp-title{font-weight:800; font-size:13px; color:#0F2D56}
-  .tp-meta{font-size:12px; color:#667085}
-  .tp-toggle{appearance:none; background:#fff; border:1px solid var(--line); border-radius:10px; padding:6px; display:grid; place-items:center; cursor:pointer}
-  .tp-content{transition:max-height .25s ease, opacity .25s ease; overflow:hidden}
-  .tp-collapsed .tp-content{max-height:0; opacity:.0; pointer-events:none}
-  .tp-expanded .tp-content{max-height:1200px; opacity:1}
-
-  /* ===== NEW: On-brand number field for Schedule Interval ===== */
-  .numfield{
-    display:flex; align-items:center; background:#fff; border:1px solid var(--blue-200); border-radius:12px; overflow:hidden;
-  }
-  .numfield input{
-    border:0; background:#fff; padding:10px 8px; width:100%; text-align:center; font-weight:800; color:#0F2D56;
-  }
-  .numbtn{
-    appearance:none; border:0; background:#eff6ff; padding:10px; display:grid; place-items:center; cursor:pointer;
-  }
-  .numbtn:active{transform:scale(.98)}
-  .numbtn svg{width:16px; height:16px}
+  .switch{position:relative;width:56px;height:30px;background:#e5e7eb;border-radius:999px;cursor:pointer;transition:.18s ease;border:1px solid #d1d5db}
+  .switch.on{background:var(--green);border-color:var(--green)}
+  .knob{position:absolute;top:3px;left:3px;width:24px;height:24px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.18s ease}
+  .switch.on .knob{left:29px}
 </style>
 </head>
 <body>
   <div class="phone">
     <div class="notch"></div>
-    <div class="status">SEGWiK</div>
+    <div class="status"></div>
 
     <div class="screen">
-      <!-- INTRO (no dots/nav/swipe) -->
-      <section id="intro" class="intro">
-        <div class="head">
-          <div class="h1">Set-Up Your vCard Download Journey</div>
-          <div class="p">When someone downloads your vCard, Segwik can automatically send an autoresponder, alert you, and guide that person to their next step.</div>
-        </div>
-        <div class="hero" aria-hidden="true">
-          <svg viewBox="0 0 360 360">
-            <rect x="40" y="60" rx="20" ry="20" width="280" height="180" fill="#eef4ff" stroke="#cfe1ff"/>
-            <rect x="68" y="90" width="90" height="90" rx="12" fill="#dfe9ff"/>
-            <rect x="168" y="90" width="132" height="16" rx="8" fill="#cfe1ff"/>
-            <rect x="168" y="114" width="120" height="10" rx="6" fill="#d7e6ff"/>
-            <rect x="168" y="134" width="140" height="10" rx="6" fill="#e3edff"/>
-            <rect x="168" y="156" width="110" height="10" rx="6" fill="#e3edff"/>
-            <circle cx="260" cy="270" r="38" fill="none" stroke="#a9c6ff" stroke-width="10"/>
-            <path d="M240 270h40" stroke="#0F2D56" stroke-width="10" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <button class="btn primary full" id="startBtn">Start</button>
-      </section>
+      <div id="carousel" class="carousel">
 
-      <!-- STEPS CAROUSEL (appears after Start) -->
-      <div id="flow" style="display:none; height:100%; position:relative;">
-        <div id="carousel" class="carousel">
-          <!-- Step 1: Company Details -->
-          <section class="slide">
-            <div class="head">
-              <div class="h1">Review Company Details</div>
-              <div class="p">These details populate your email headers/footers and help personalize your autoresponder.</div>
-            </div>
-            <div class="scroll">
-              <div class="card">
-                <div class="label">Company Name</div>
-                <input type="text" id="acct_name" />
-                <div class="gap12"></div>
-
-                <div class="split">
-                  <div>
-                    <div class="label">Company Phone</div>
-                    <input type="text" id="acct_phone" />
-                  </div>
-                  <div>
-                    <div class="label">Company Email</div>
-                    <input type="email" id="acct_email" />
-                  </div>
-                </div>
-                <div class="gap12"></div>
-
-                <div class="label">Company Website</div>
-                <input type="url" id="acct_site" />
-                <div class="gap12"></div>
-
-                <div class="label">Company Location</div>
-                <div class="split" style="margin-top:10px">
-                  <input type="text" id="addr1" placeholder="Address line 1" />
-                  <input type="text" id="addr2" placeholder="Address line 2 (optional)" />
-                </div>
-                <div class="split" style="margin-top:10px">
-                  <input type="text" id="city" placeholder="City" />
-                  <input type="text" id="state" placeholder="State" />
-                </div>
-                <div class="split" style="margin-top:10px">
-                  <input type="text" id="zip" placeholder="ZIP" />
-                  <input type="text" id="country" placeholder="Country" />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Step 2: Upload Logo -->
-          <section class="slide">
-            <div class="head">
-              <div class="h1">Add Your Company Logo</div>
-              <div class="p">We’ll use this in your autoresponder and previews.</div>
-            </div>
-            <div class="scroll">
-              <div class="card">
-                <input type="file" id="logoInput" accept="image/*" />
-                <div class="gap12"></div>
-                <div class="label">Preview (Email Header)</div>
-                <div class="preview-mail">
-                  <div class="body" id="logoEmailPreview" style="text-align:center;">
-                    <!-- centered logo image goes here -->
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Step 3: Brand Personality -->
-          <section class="slide">
-            <div class="head">
-              <div class="h1">Pick Your Brand Personality</div>
-              <div class="p">This guides AI when composing your overview, mission, values, and differentiator.</div>
-            </div>
-            <div class="scroll">
-              <div class="card">
-                <div class="chips" id="personalityChips"></div>
-              </div>
-              <div class="card">
-                <div class="label">Tone preview</div>
-                <div id="tonePreview" class="p">Select a personality to preview tone.</div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Step 4: AI Compose -->
-          <section class="slide">
-            <div class="head">
-              <div class="h1">Tell Your Story</div>
-              <div class="p">I’ll introduce your brand in a clear, human voice. You can edit anything before sending.</div>
-            </div>
-            <div class="scroll">
-              <div class="card">
-                <div id="aiStatus" class="ai-status"><div class="spinner"></div><div id="aiStatusText">Generating your copy…</div></div>
-
-                <div class="row actions">
-                  <button class="btn primary" id="btnGenerate">Generate with AI</button>
-                  <button class="btn ghost" id="btnRegenerate">Regenerate</button>
-                </div>
-                <div class="label">Company Overview</div>
-                <textarea id="overview" placeholder="Here’s who we serve, what we do, and the outcomes we deliver."></textarea>
-                <div class="gap12"></div>
-                <div class="label">Mission Statement</div>
-                <textarea id="mission" placeholder="Here’s the promise that guides our work every day."></textarea>
-                <div class="gap12"></div>
-                <div class="label">Organization Values</div>
-                <textarea id="values" placeholder="Here are the principles we live by (comma or line-separated)."></textarea>
-                <div class="gap12"></div>
-                <div class="label">Differentiating Proposition</div>
-                <textarea id="diffprop" placeholder="Here’s what makes us meaningfully different."></textarea>
-              </div>
-            </div>
-          </section>
-
-          <!-- Step 5: Preview – Autoresponder -->
-          <section class="slide" id="step-preview">
-            <div class="head">
-              <div class="h1">Autoresponder Preview</div>
-            </div>
-            <div class="scroll">
-
-              <div class="after-dl-banner" role="note" aria-label="Sends right after vCard download">
-                <div class="icon">!</div>
-                <div>Instant Send: This autoresponder goes out <u>immediately after someone downloads your vCard</u>.</div>
-              </div>
-
-              <!-- NEW: Scrollable touchpoints list wrapper -->
-              <div class="tp-list" id="tpList">
-
-                <!-- FIRST TOUCHPOINT (Autoresponder) as a collapsible tp-card -->
-                <div class="card tp-card tp-expanded" id="tp0">
-                  <div class="tp-head">
-                    <div>
-                      <div class="tp-title">Autoresponder (Immediate)</div>
-                      <div class="tp-meta">Sends right away after download</div>
-                    </div>
-                    <button class="tp-toggle" data-tp-toggle="tp0" title="Collapse/Expand">
-                      <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-                    </button>
-                  </div>
-
-                  <div class="row wrap">
-                    <button class="btn" id="btnEditTemplate" title="Edit email template">
-                      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                      
-                    </button>
-                    <button class="btn" id="btnFullPreview" title="View full preview">
-                      <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                      
-                    </button>
-                    <button class="btn blue" id="btnSendPreview" style="margin-left:auto; margin-bottom:6px;">Send Me a Preview</button>
-                  </div>
-
-                  <div class="tp-content">
-                    <div class="mail-frame" id="mailFrame">
-                      <div class="mail-topbar">
-                        <div class="subject" id="mailSubject">It’s Great to Be Connected!</div>
-                        <div class="actions dots" aria-label="More options">
-                          <span class="dotc r"></span><span class="dotc o"></span><span class="dotc g"></span>
-                        </div>
-                      </div>
-                      <div class="mail-from">
-                        <div class="from-avatar">P</div>
-                        <div class="from-meta">
-                          <div class="from-name" id="fromName">Pete Romano</div>
-                          <div class="from-details" id="fromDetails">pete@segwik.com • to katrina@segwik.com</div>
-                        </div>
-                      </div>
-                      <div class="mail-body" id="mailBody"></div>
-                    </div>
-                  </div>
-
-                  <!-- This button will be moved under the latest card dynamically -->
-                  <div class="row wrap" id="addFollowUpRow" style="margin-top:12px">
-                    <button class="btn outline-blue" id="btnAddFollowUp" title="Add another follow-up email" style="margin-left:auto;">
-                      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                      Add Another Follow-Up Email
-                    </button>
-                  </div>
-                </div>
-
-                <!-- FOLLOW-UP CARDS WILL APPEND HERE -->
-                <div id="followupList"></div>
-
-              </div><!-- /tp-list -->
-
-            </div>
-          </section>
-
-          <!-- Step 6: Additional CTA (email preview + CTA editor) -->
-          <section class="slide" data-step="cta" id="step-cta">
-            <div class="head">
-              <div class="h1">Add an Extra Call-to-Action</div>
-              <div class="p">Include an additional button in the autoresponder that nudges contacts toward a next step.</div>
-            </div>
-            <div class="scroll">
-              <div class="card">
-                <!-- NEW: Send preview bar (shows ONLY after Save CTA) -->
-                <div class="row wrap" id="ctaSendPreviewBar">
-                  <button class="btn blue" id="btnSendPreviewCTA" style="margin-left:auto;">Send Me a Preview</button>
-                </div>
-
-                <!-- SAME email preview as previous screen, but WITHOUT edit/view/send buttons initially -->
-                <div class="mail-frame" id="mailFrameCTA">
-                  <div class="mail-topbar">
-                    <div class="subject">It’s Great to Be Connected!</div>
-                    <div class="actions dots" aria-label="More options">
-                      <span class="dotc r"></span><span class="dotc o"></span><span class="dotc g"></span>
-                    </div>
-                  </div>
-                  <div class="mail-from">
-                    <div class="from-avatar">P</div>
-                    <div class="from-meta">
-                      <div class="from-name">Pete Romano</div>
-                      <div class="from-details">pete@segwik.com • to katrina@segwik.com</div>
-                    </div>
-                  </div>
-                  <div class="mail-body" id="mailBodyCTA">
-                    <!-- injected via JS -->
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Step 7: Auto-add to Journey -->
-          <section class="slide">
-            <div class="head">
-              <div class="h1">Auto-Add to a Journey</div>
-              <div class="p">Automatically place new contacts into a journey when they download your vCard.</div>
-            </div>
-            <div class="scroll">
-              <div class="card">
-                <div class="label">Select a journey</div>
-                <select id="journeySelect">
-                  <option value="">— Choose a journey —</option>
-                  <option>Event New Contact Follow-Up</option>
-                  <option>Warm Reconnect</option>
-                  <option>Cold/General Meeting Request</option>
-                  <option>Demo Request</option>
-                </select>
-                <div class="mini" style="margin-top:8px">You can change this anytime from your automation settings.</div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Step 8: You're All Set (final) -->
-          <section class="slide">
-            <div class="head">
-              <div class="h1">You’re All Set!</div>
-              <div class="p">You can further personalize your automation by attaching more emails to the sequence or creating custom journeys.</div>
-            </div>
-            <div class="scroll">
-              <div class="card">
-                <div class="row">
-                  <button class="btn ghost full" id="seeUpgrade">See upgrade options</button>
-                </div>
-              </div>
-              <div class="card">
-                <div class="toggle">
-                  <div class="switch" id="activateSwitch"><div class="knob"></div></div>
-                  <div class="label">Activate this journey</div>
-                </div>
-              </div>
-              <button class="btn primary full" id="finishBtn">Finish & Save Automation</button>
-            </div>
-          </section>
-        </div>
-
-        <!-- pager & nav for steps only -->
-        <div class="nav">
-          <button class="btn small ghost" id="backBtn">Back</button>
-          <button class="btn small" id="nextBtn">Next</button>
-        </div>
-        <div class="pager" id="pager"></div>
-      </div>
-
-      <!-- Upgrade sheet (kept for future use) -->
-      <div id="upgradeSheet" class="sheet-wrap requires-upgrade" onclick="if(event.target.id==='upgradeSheet'){toggleSheet(false)}">
-        <div class="sheet" onclick="event.stopPropagation()">
-          <div class="title">Requires an Upgrade</div>
-          <div class="text">Adding an extra CTA to the autoresponder is available on paid plans.</div>
-          <div class="row">
-            <button class="btn full" id="notNow">Not now</button>
-            <button class="btn primary full" id="upgradeNow">Upgrade now</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Edit Template sheet -->
-      <div id="editSheet" class="sheet-wrap requires-upgrade" onclick="if(event.target.id==='editSheet'){toggleEditSheet(false)}">
-        <div class="sheet" onclick="event.stopPropagation()">
-          <div class="title">Requires an Upgrade</div>
-          <div class="text">Customizing your email content is available on paid plans.</div>
-          <div class="row">
-            <button class="btn full" id="editNotNow">Not now</button>
-            <button class="btn primary full" id="editUpgradeNow">Upgrade now</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Follow-Up Emails sheet -->
-      <div id="followupSheet" class="sheet-wrap requires-upgrade" onclick="if(event.target.id==='followupSheet'){toggleFollowupSheet(false)}">
-        <div class="sheet" onclick="event.stopPropagation()">
-          <div class="title">Requires an Upgrade</div>
-          <div class="text">Multiple follow-up emails are available on paid plans.</div>
-          <div class="row">
-            <button class="btn full" id="followupNotNow">Not now</button>
-            <button class="btn primary full" id="followupUpgradeNow">Upgrade now</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- NEW: CTA Editor MODAL (centered) -->
-      <div id="ctaModalWrap" class="modal-wrap" onclick="if(event.target.id==='ctaModalWrap'){toggleCtaModal(false)}">
-        <div class="modal" onclick="event.stopPropagation()">
-          <button class="x" id="ctaModalClose" aria-label="Close">×</button>
-          <div class="title" id="ctaCfgTitle">Configure CTA</div>
-          <div class="text" id="ctaCfgNote">Set your button label and destination.</div>
-          <div class="label">Button label</div>
-          <input type="text" id="ctaCfgLabel" placeholder="Book a Time" />
-          <div class="gap8"></div>
-          <div id="ctaCfgDestWrap">
-            <div class="label" id="ctaCfgDestLabel">Destination</div>
-            <input type="url" id="ctaCfgDest" placeholder="https://cal.com/your-link" />
-            <div class="mini" id="ctaCfgMini" style="margin-top:6px; display:none"></div>
-          </div>
-          <div class="row" style="margin-top:12px">
-            <button class="btn full" id="ctaCfgSave">Save CTA</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- NEW: Follow-up Email MODAL (upgraded state) -->
-      <div id="followupModalWrap" class="modal-wrap" onclick="if(event.target.id==='followupModalWrap'){toggleFollowupModal(false)}">
-        <div class="modal" onclick="event.stopPropagation()">
-          <button class="x" id="followupModalClose" aria-label="Close">×</button>
-          <div class="title">Add Follow-Up Email</div>
-          <div class="text">Configure when to send it and which content to use.</div>
-
-          <div class="label">Schedule Interval</div>
-          <div class="two-col">
-            <!-- NEW on-brand number with steppers -->
-            <div class="numfield">
-              <button class="numbtn" id="fuMinus" aria-label="Decrease interval">
-                <svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
-              </button>
-              <input type="number" id="fuInterval" min="1" value="1" />
-              <button class="numbtn" id="fuPlus" aria-label="Increase interval">
-                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-              </button>
-            </div>
-            <select id="fuUnit">
-              <option>minute(s)</option>
-              <option>hour(s)</option>
-              <option selected>day(s)</option>
-              <option>week(s)</option>
-              <option>month(s)</option>
-            </select>
+        <!-- Step 0: Welcome -->
+        <section class="slide">
+          <div class="head">
+            <div class="h1">Let’s set up your first journey</div>
+            <div class="p">This journey starts when you meet a lead or prospect and want to share your information, or collect their information.</div>
           </div>
 
-          <div class="gap8"></div>
-          <div class="label">Choose Email</div>
-          <select id="fuTemplate">
-            <option value="">— Select a template —</option>
-            <option value="welcome-quick">Welcome – Quick Check-in</option>
-            <option value="value-drop">Share a Helpful Resource</option>
-            <option value="book-call">Book a Quick Intro Call</option>
-          </select>
-
-          <div class="inline-note" style="margin-top:8px;">
-            <span id="fuCreateLink" class="linklike">+ Create New Email</span>
+          <div class="scroll">
+            <div class="card">
+              <img src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1760653455734.png" alt="vCard setup preview" class="setup-image"/>
+              <div class="p" style="margin-bottom:12px">
+                First, let’s set up your digital card so that you look great and show up great when you meet important people.
+              </div>
+              <div class="row">
+                <button id="seeExamples" class="btn">See examples</button>
+                <button id="startCard" class="btn blue" style="margin-left:auto">Start Building Journey</button>
+              </div>
+            </div>
           </div>
+        </section>
 
-          <div id="fuCreateWrap" style="display:none; margin-top:10px;">
-            <div class="label">Subject Line</div>
-            <input type="text" id="fuNewSubj" placeholder="Subject line" />
-            <div class="gap8"></div>
-            <div class="label">Email Body</div>
-            <textarea id="fuNewBody" placeholder="Write your follow-up email…"></textarea>
+        <!-- Step 1: vCard — Profile -->
+        <section class="slide">
+          <div class="head">
+            <div class="h1">Your Digital Card — Profile</div>
+            <div class="p">We’ll use this info on your public vCard.</div>
           </div>
+          <div class="scroll">
+            <div class="card">
+              <div class="split">
+                <div>
+                  <div class="label">First Name</div>
+                  <input id="firstName" type="text" placeholder="Pete">
+                </div>
+                <div>
+                  <div class="label">Last Name</div>
+                  <input id="lastName" type="text" placeholder="Romano">
+                </div>
+              </div>
+              <div class="split" style="margin-top:10px">
+                <div>
+                  <div class="label">Title / Role</div>
+                  <input id="title" type="text" placeholder="Founder">
+                </div>
+                <div>
+                  <div class="label">Company Name</div>
+                  <input id="company" type="text" placeholder="Segwik">
+                </div>
+              </div>
+              <div style="margin-top:10px">
+                <div class="label">Headline</div>
+                <input id="headline" type="text" placeholder="Freeing Businesses of Mundane and Repetitive Tasks">
+              </div>
+            </div>
 
-          <div class="divider"></div>
-          <div class="right">
-            <button class="btn orange" id="fuSubmit">Submit Email Touchpoint</button>
+            <div class="card">
+              <div class="label">Upload Images</div>
+              <div class="uploader">
+                <label class="drop" id="photoDrop">
+                  <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <span class="txt"><b>Upload Headshot</b>PNG or JPG, square works best</span>
+                  <input id="photo" type="file" accept="image/*">
+                  <span class="thumb" id="photoThumb" aria-hidden="true" style="display:none"></span>
+                </label>
+                <label class="drop" id="bannerDrop">
+                  <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <span class="txt"><b>Upload Background</b>Wide cover image looks great</span>
+                  <input id="banner" type="file" accept="image/*">
+                  <span class="thumb" id="bannerThumb" aria-hidden="true" style="display:none"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Restored & bottom-placed -->
+            <button class="btn peek-trigger" data-peek>👁 Where will this appear?</button>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <!-- Full-screen email preview overlay -->
-      <div id="fullPreview" class="full-overlay" aria-hidden="true">
-        <div class="full-topbar">
-          <div>Full Preview</div>
-          <button class="full-close" id="closeFullPreview" aria-label="Close full preview">×</button>
-        </div>
+        <!-- Step 2: vCard — Contact & Social -->
+        <section class="slide">
+          <div class="head">
+            <div class="h1">Contact & Social</div>
+            <div class="p">Tap-to-call, tap-to-email, and quick links.</div>
+          </div>
+          <div class="scroll">
 
-        <!-- NEW: Rich editor toolbar -->
-        <div class="richbar" id="richToolbar">
-          <span class="rlabel">Editing</span>
-          <button class="rbtn" data-cmd="bold" title="Bold"><svg viewBox="0 0 24 24"><path d="M13 12A5 5 0 0 0 8 7H6v10h8a4 4 0 0 0 0-8h-1Z"/></svg></button>
-          <button class="rbtn" data-cmd="italic" title="Italic"><svg viewBox="0 0 24 24"><path d="M19 4h-9"/><path d="M14 20H5"/><path d="M15 4L9 20"/></svg></button>
-          <button class="rbtn" data-cmd="underline" title="Underline"><svg viewBox="0 0 24 24"><path d="M6 4v6a6 6 0 0 0 12 0V4"/><path d="M4 20h16"/></svg></button>
-          <div class="rsep"></div>
-          <button class="rbtn" id="rtH3" title="Heading"><svg viewBox="0 0 24 24"><path d="M4 6v12M4 12h8M12 6v12M18 6v12"/></svg></button>
-          <button class="rbtn" id="rtBullets" title="Bullets"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
-          <button class="rbtn" id="rtLink" title="Link"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 1 7 0l1 1a5 5 0 0 1-7 7l-1-1"/><path d="M14 11a5 5 0 0 1-7 0l-1-1a5 5 0 0 1 7-7l1 1"/></svg></button>
-          <div class="rsep"></div>
-          <button class="rbtn" data-cmd="undo" title="Undo"><svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 1 0 3-7"/></svg></button>
-          <button class="rbtn" data-cmd="redo" title="Redo"><svg viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M21 13A9 9 0 1 1 18 6"/></svg></button>
-          <button class="rbtn" id="rtClear" title="Clear formatting"><svg viewBox="0 0 24 24"><path d="M6 7h11"/><path d="M6 7l6-3 6 3"/><path d="M6 7v10"/><path d="M18 7v4"/></svg></button>
-          <button class="btn blue small richSave" id="rtSave">Save</button>
-        </div>
+            <div class="card">
+              <div class="label">Phones</div>
+              <div class="split">
+                <div><input id="phoneBiz" type="text" placeholder="Business (555) 123-4567"></div>
+                <div><input id="phonePersonal" type="text" placeholder="Personal (555) 987-6543"></div>
+              </div>
+              <div class="label" style="margin-top:10px">Emails</div>
+              <div class="split">
+                <div><input id="emailBiz" type="email" placeholder="business@company.com"></div>
+                <div><input id="emailPersonal" type="email" placeholder="personal@email.com"></div>
+              </div>
+              <div style="margin-top:10px">
+                <div class="label">Website</div>
+                <input id="website" type="url" placeholder="https://www.segwik.com">
+              </div>
+            </div>
 
-        <div class="full-content">
-          <div class="mail-frame" id="mailFrameFull"></div>
-        </div>
-      </div>
+            <div class="card">
+              <div class="label">Social Links</div>
+              <div id="socialList"></div>
+              <button id="addSocial" class="btn social-add">+ Add social link</button>
+              <div class="p" style="margin-top:6px">Choose one or more platforms, then paste the URL.</div>
+            </div>
 
-      <!-- ===== Dedicated Upgrade Screen ===== -->
-      <section id="upgradeScreen">
-        <div id="upgradeTopbar">
-          <button id="upgradeBack" aria-label="Back">
-            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <div id="upgradeTitle">Choose Your Plan</div>
-        </div>
-        <div id="upgradeContent">
-          <div class="plans-grid">
-            <!-- Segwik Grow -->
-            <div class="plan" id="planGrow">
-              <h3>Segwik Grow</h3>
-              <div class="subtitle">Everything in Start, plus tools to expand your impact</div>
-              <div class="price">$39 / mo</div>
-              <div class="desc">Add meeting and event tracking, contact analysis, and desktop access to your relationship OS.</div>
-              <ul class="features">
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Everything in Segwik Start</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>+ PLUS</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Unlock Segwik Desktop</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Interactive Meeting Management, with Embedded Video Conferencing</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Availability - Self Service Booking Calendar</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Event Publishing & Registration</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>AI Contact Insights & Tips</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>100 Smart Tokens Included</li>
+            <!-- Restored & bottom-placed -->
+            <button class="btn peek-trigger" data-peek>👁 Where will this appear?</button>
+          </div>
+        </section>
+
+        <!-- Step 3: vCard — Live Preview -->
+        <section class="slide">
+          <div class="head">
+            <div class="h1">Preview Your Digital Card</div>
+            <div class="p">This is what people will see when you share your link or QR code.</div>
+          </div>
+          <div class="scroll">
+            <div class="card vcard" id="vcardPreview"></div>
+            <div class="card">
+              <div id="cardStatus" class="p"></div>
+              <div class="row" style="margin-top:8px">
+                <button id="btnPreviewCard" class="btn">Open vCard Link</button>
+                <button id="btnFillInfo" class="btn blue" style="margin-left:auto">Fill In Information</button>
+              </div>
+            </div>
+            <!-- Bottom placement preserved -->
+            <button class="btn peek-trigger" data-peek>👁 Where will this appear?</button>
+          </div>
+        </section>
+
+        <!-- Step 4: Journey — Choose actions -->
+        <section class="slide">
+          <div class="head">
+            <div class="h1">Phase 2: After you meet a prospect, what should happen?</div>
+            <div class="p">Select all actions you want Segwik to automate.</div>
+          </div>
+          <div class="scroll">
+            <div class="card">
+              <div class="chips" id="actionChips"></div>
+              <div class="right" style="margin-top:12px">
+                <button id="toEmailCfg" class="btn blue">Continue</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 5: Email — Single CTA -->
+        <section class="slide">
+          <div class="head">
+            <div class="h1">When someone receives your email, what should they do?</div>
+            <div class="p">Choose <strong>one</strong> action for your autoresponder.</div>
+          </div>
+          <div class="scroll">
+            <div class="card" id="ctaBuilder"></div>
+            <div class="card">
+              <div class="right">
+                <button id="toPersonality" class="btn blue">Continue</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 6: Brand Personality -->
+        <section class="slide">
+          <div class="head">
+            <div class="h1">Pick a Brand Personality</div>
+            <div class="p">Your AI-written autoresponder will match this tone. The content you provide next will be used when someone downloads your card.</div>
+          </div>
+          <div class="scroll">
+            <div class="card" id="personaPicker"></div>
+            <div class="right" style="margin-top:12px">
+              <button id="toContent" class="btn blue">Continue</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 7: Content + AI generate -->
+        <section class="slide">
+          <div class="head">
+            <div class="h1">Tell us about your brand</div>
+            <div class="p">You can write your own or let AI draft and then edit.</div>
+          </div>
+          <div class="scroll" style="position:relative">
+            <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
+
+            <div class="card">
+              <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+                <button id="genAI" class="btn">Generate with AI</button>
+                <button id="regenAI" class="btn ghost">Regenerate</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="label">Company Overview</div>
+              <textarea id="coOverview" placeholder="Describe what your company does…"></textarea>
+            </div>
+            <div class="card">
+              <div class="label">Mission Statement</div>
+              <textarea id="coMission" placeholder="State your mission…"></textarea>
+            </div>
+            <div class="card">
+              <div class="label">Organization Values</div>
+              <textarea id="coValues" placeholder="List a few core values…"></textarea>
+            </div>
+            <div class="card">
+              <div class="label">Differentiating Propositions</div>
+              <textarea id="coDiff" placeholder="What makes you different…"></textarea>
+            </div>
+
+            <!-- Bottom-placed email peek -->
+            <button id="peekEmail1" class="btn">👁 Where will this appear?</button>
+
+            <div class="right">
+              <button id="toLogo" class="btn blue">Continue</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 8: Subject + Logo upload -->
+        <section class="slide">
+          <div class="head">
+            <div class="h1">Subject & Logo</div>
+            <div class="p">We’ll include your logo at the top of the autoresponder.</div>
+          </div>
+          <div class="scroll">
+            <div class="card">
+              <div class="label">Subject Line</div>
+              <input id="subjectLine" type="text" value="It’s great to be connected!">
+            </div>
+
+            <div class="card">
+              <div class="uploader" style="grid-template-columns:1fr">
+                <label class="drop" id="logoDrop">
+                  <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <span class="txt"><b>Upload Logo</b>PNG with transparent background works best</span>
+                  <input id="logo" type="file" accept="image/*">
+                  <span class="thumb" id="logoThumb" aria-hidden="true" style="display:none"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Bottom-placed email peek -->
+            <button id="peekEmail2" class="btn">👁 Where will this appear?</button>
+
+            <div class="right">
+              <button id="finish" class="btn blue">Continue</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 9: Summary with toggle -->
+        <section class="slide">
+          <div class="head">
+            <div class="h1">Your vCard Download Journey is ready</div>
+            <div class="p">Share your card link or QR, and we’ll handle the follow-up.</div>
+          </div>
+          <div class="scroll">
+            <div class="card">
+              <ul style="margin:0;padding-left:18px;line-height:1.8">
+                <li><span id="sumCard" class="ok">Digital card complete</span></li>
+                <li><span class="ok">Instant autoresponder configured</span></li>
+                <li><span id="sumCtas" class="ok">CTA added</span></li>
               </ul>
-              <button class="btn darkblue full" id="btnUpgradeGrow">Upgrade to Grow</button>
-            </div>
-            <!-- Segwik Pro -->
-            <div class="plan" id="planPro">
-              <h3>Segwik Pro</h3>
-              <div class="subtitle">For leaders and teams ready to scale relationships at speed</div>
-              <div class="price">$79 / mo</div>
-              <div class="desc">Unlock AI-powered copywriting, calling, texting, and powerful outreach automation.</div>
-              <ul class="features">
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Everything in Segwik Grow</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Inbound & Outbound Calling and Texting</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Segwik AI Email and Text Composer</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Email & Text Blasting</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Integrated Payment Processor with Additional Order Tracking Module</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Customer & Client Portal</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>Advanced Automation Touchpoints</li>
-                <li class="feature"><span class="badge"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>250 Smart Tokens Included</li>
-              </ul>
-              <button class="btn darkblue full" id="btnUpgradePro">Go Pro</button>
+              <div class="row" style="margin-top:12px;align-items:center;gap:12px">
+                <div style="font-weight:800">Activate Journey</div>
+                <div id="toggle" class="switch" role="switch" aria-checked="false"><span class="knob"></span></div>
+              </div>
             </div>
           </div>
+        </section>
+      </div>
+
+      <!-- Back/Next + pager -->
+      <div class="nav">
+        <button id="backBtn" class="btn small ghost">Back</button>
+        <button id="nextBtn" class="btn small">Next</button>
+      </div>
+      <div id="pager" class="pager"></div>
+
+      <!-- Upgrade modal -->
+      <div id="upgradeModal" class="modal-wrap" role="dialog" aria-modal="true" aria-labelledby="upgTitle">
+        <div class="modal">
+          <h3 id="upgTitle">Unlock more automations</h3>
+          <p>Upgrade to <strong>Segwik Grow</strong> to enable additional CTAs and more automations.</p>
+          <div class="row">
+            <button class="btn ghost" id="upgClose">Not now</button>
+            <button class="btn blue" id="upgGo">See plans</button>
+          </div>
         </div>
-      </section>
-      <!-- ===== /Upgrade Screen ===== -->
+      </div>
+
+      <!-- vCard peek sheet (steps 1–3) -->
+      <div id="peekProfileSheet" class="peeksheet-wrap" aria-hidden="true" onclick="if(event.target.id==='peekProfileSheet'){togglePeek(false)}">
+        <div class="peeksheet" role="dialog" aria-modal="true" aria-label="vCard field preview" onclick="event.stopPropagation()">
+          <div class="peeksheet-top">
+            <div class="peeksheet-title">Where this info appears on your vCard</div>
+            <button id="peekProfileClose" class="peeksheet-close" aria-label="Close">×</button>
+          </div>
+          <div class="peeksheet-body">
+            <div class="vcard-demo">
+              <div class="v-demo-banner" id="peekDemoBanner"></div>
+              <div class="v-demo-headrow">
+                <div class="v-demo-photo" id="peekDemoPhoto">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+                </div>
+                <button class="v-demo-save">Save Contact</button>
+              </div>
+              <div class="v-demo-id">
+                <div class="v-demo-name" id="peekName">Your Name</div>
+                <div class="v-demo-company" id="peekCompany">Your Company</div>
+                <div class="v-demo-title" id="peekTitle">Your Title</div>
+                <div class="v-demo-headline" id="peekHeadline">Your Headline</div>
+              </div>
+              <div class="v-demo-list" id="peekList"></div>
+            </div>
+            <div class="peeksheet-hint">Edits update live. Add multiple phones/emails/socials — we’ll show them all.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone-styled email preview -->
+      <div id="phonePreview" class="phone-modal" aria-hidden="true" onclick="if(event.target.id==='phonePreview'){togglePhone(false)}">
+        <div class="phone-frame" onclick="event.stopPropagation()">
+          <div class="phone-titlebar">
+            <div class="dot-r"></div><div class="dot-o"></div><div class="dot-g"></div>
+            <div id="phoneTitle" style="margin-left:8px;font-weight:800;color:#0F2D56">It’s great to be connected!</div>
+            <button id="phoneClose" class="btn small ghost" style="margin-left:auto">Close</button>
+          </div>
+          <div class="email-preview">
+            <div class="mail-frame" id="mailPreview"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Fixed tray (unchanged) -->
+    <!-- Bottom icon tray -->
     <div class="tray" id="footer-tray">
-      <div class="ibtn" data-icon="phone"></div>
+      <div class="ibtn" data-icon="home"></div>
+      <div class="ibtn" data-icon="card"></div>
+      <div class="ibtn" data-icon="flow"></div>
       <div class="ibtn" data-icon="mail"></div>
-      <div class="ibtn" data-icon="chat"></div>
-      <div class="ibtn" data-icon="calendar"></div>
-      <div class="ibtn" data-icon="note"></div>
+      <div class="ibtn" data-icon="user"></div>
     </div>
   </div>
 
 <script>
-  /* ===== Feature flags ===== */
-const PREVIEW_DISABLED = true; // <- turns off all "Send Me a Preview" actions
-
-/* ==== Footer icons (unchanged) ==== */
-function icon(name){
-  switch(name){
-    case 'mail': return `<svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>`;
-    case 'phone': return `<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0  0  1-8.63-3.07 19.5 19.5 0  0  1-6-6 19.79 19.79 0  0 1-3.07-8.67A2 2 0  0 1 4.11 2h3a2 2 0  0 1 2 1.72c.12 .9.3 1.77.57 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0  0 0 6 6l1.47-1.11a2 2 0  0 1 2.11-.45c.84 .27 1.71 .45 2.61 .57A2 2 0  0 1 22 16.92z"/></svg>`;
-    case 'chat': return `<svg viewBox="0 0 24 24"><path d="M21 15a4 4 0  0  1-4 4H8l-5 3V7a4 4 0  0  1 4-4h10a4 4 0  0  1 4 4z"/></svg>`;
-    case 'calendar': return `<svg viewBox="0 0 24 24"><path d="M3 8h18M5 4h14v16H5z"/><path d="M16 2v4M8 2v4"/></svg>`;
-    case 'note': return `<svg viewBox="0 0 24 24"><path d="M4 3h14l2 2v16H4z"/><path d="M9 13h6M9 9h6M9 17h3"/></svg>`;
-  }
-}
-document.querySelectorAll('#footer-tray [data-icon]').forEach(el=>{
-  el.innerHTML = icon(el.getAttribute('data-icon')) || '';
-});
-
-/* ==== Intro -> Steps reveal ==== */
-const intro = document.getElementById('intro');
-const flow = document.getElementById('flow');
-document.getElementById('startBtn').addEventListener('click', ()=>{
-  intro.style.display = 'none';
-  flow.style.display = 'block';
-  goTo(0);
-});
-
-/* ==== Carousel core ==== */
+/* ---- Carousel / pager ---- */
 const carousel = document.getElementById('carousel');
 const slides = Array.from(carousel.children);
-const pager = document.getElementById('pager');
 let idx = 0;
-const maxIdx = slides.length - 1;
-let startX = 0, currentX = 0, isDragging = false;
-
-function renderDots(){
-  pager.innerHTML = '';
-  for(let i=0;i<slides.length;i++){
-    const d = document.createElement('div');
-    d.className = 'dot' + (i===idx?' active':'');
-    d.dataset.i = i;
-    d.onclick = ()=>goTo(i);
-    pager.appendChild(d);
-  }
-}
 function goTo(i){
-  idx = Math.max(0, Math.min(maxIdx, i));
+  idx = Math.max(0, Math.min(slides.length-1, i));
   carousel.style.transform = `translateX(-${idx*100}%)`;
-  renderDots();
-  updateNav();
-  syncCompanyPreview();
-  renderEmail();
-  const stepEl = slides[idx];
-  renderEmailCTA();
-  if(stepEl && stepEl.getAttribute('data-step') === 'cta'){
-    setTimeout(()=>scrollMailBodyToCTA(), 250);
-  }
+  renderDots(); updateNav();
+  if(idx===2) renderVcard();
+}
+function renderDots(){
+  const pager = document.getElementById('pager');
+  if(!pager) return;
+  pager.innerHTML='';
+  slides.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='dot'+(i===idx?' active':'');
+    d.onclick=()=>goTo(i);
+    pager.appendChild(d);
+  });
 }
 function updateNav(){
-  document.getElementById('backBtn').style.visibility = idx===0 ? 'hidden' : 'visible';
-  document.getElementById('nextBtn').textContent = idx===maxIdx ? 'Done' : 'Next';
+  const back = document.getElementById('backBtn');
+  const next = document.getElementById('nextBtn');
+  if(!back || !next) return;
+  back.classList.toggle('ghost', idx===0);
+  next.textContent = idx===slides.length-1 ? 'Done' : 'Next';
 }
+document.getElementById('backBtn')?.addEventListener('click', ()=>goTo(idx-1));
+document.getElementById('nextBtn')?.addEventListener('click', ()=>goTo(idx+1));
 renderDots(); updateNav();
 
-/* Touch swipe between steps */
-carousel.addEventListener('touchstart', (e)=>{
-  startX = e.touches[0].clientX; currentX = startX; isDragging = true; carousel.style.transition='none';
-});
-carousel.addEventListener('touchmove', (e)=>{
-  if(!isDragging) return;
-  currentX = e.touches[0].clientX;
-  const dx = currentX - startX;
-  const pct = -idx*100 + (dx / carousel.clientWidth) * 100;
-  carousel.style.transform = `translateX(${pct}%)`;
-});
-carousel.addEventListener('touchend', ()=>{
-  if(!isDragging) return; isDragging=false; carousel.style.transition='';
-  const dx = currentX - startX;
-  if(Math.abs(dx)>60){ if(dx<0) goTo(idx+1); else goTo(idx-1); } else { goTo(idx); }
-});
+/* convenience nav buttons */
+document.getElementById('startCard').addEventListener('click', ()=>goTo(1));
 
-/* Nav buttons */
-document.getElementById('backBtn').addEventListener('click', ()=>goTo(idx-1));
-document.getElementById('nextBtn').addEventListener('click', ()=>{
-  if(idx<maxIdx) goTo(idx+1); else goTo(maxIdx);
-});
-
-/* ==== Company details -> live into previews ==== */
-const acct = {
-  name:   document.getElementById('acct_name'),
-  phone:  document.getElementById('acct_phone'),
-  email:  document.getElementById('acct_email'),
-  site:   document.getElementById('acct_site'),
-  addr1:  document.getElementById('addr1'),
-  addr2:  document.getElementById('addr2'),
-  city:   document.getElementById('city'),
-  state:  document.getElementById('state'),
-  zip:    document.getElementById('zip'),
-  country:document.getElementById('country'),
+/* ---- Global inputs/state ---- */
+const S = {
+  firstName: document.getElementById('firstName'),
+  lastName : document.getElementById('lastName'),
+  title    : document.getElementById('title'),
+  company  : document.getElementById('company'),
+  headline : document.getElementById('headline'),
+  photo    : document.getElementById('photo'),
+  banner   : document.getElementById('banner'),
+  phoneBiz : document.getElementById('phoneBiz'),
+  phonePersonal: document.getElementById('phonePersonal'),
+  emailBiz : document.getElementById('emailBiz'),
+  emailPersonal: document.getElementById('emailPersonal'),
+  website  : document.getElementById('website'),
+  subject  : document.getElementById('subjectLine')
 };
-Object.values(acct).forEach(el=>el.addEventListener('input', ()=>{
-  syncCompanyPreview(); renderEmail(); renderEmailCTA();
-}));
-function syncCompanyPreview(){
-  document.getElementById('prevCompanyName') && (document.getElementById('prevCompanyName').textContent = acct.name.value || '[account_name]');
-  document.getElementById('prevCompanySite') && (document.getElementById('prevCompanySite').textContent = acct.site.value || '[account_website]');
-}
+Object.values(S).forEach(el=>{ if(el) el.addEventListener('input', ()=>{renderVcard(); if(phoneModalOpen) renderMail();}); });
 
-/* ==== Logo upload ==== */
-const logoInput   = document.getElementById('logoInput');
-const logoPreviewEmail = document.getElementById('logoEmailPreview');
-let logoDataUrl = '';
-logoInput && logoInput.addEventListener('change', ()=>{
-  const f = logoInput.files?.[0];
-  if(!f) return;
-  const reader = new FileReader();
-  reader.onload = (e)=>{
-    logoDataUrl = e.target.result;
-    logoPreviewEmail.innerHTML = `<img alt="logo" src="${logoDataUrl}" style="max-width:160px;display:block;margin:0 auto 8px;border-radius:10px">`;
-    renderEmail(); renderEmailCTA();
-  };
-  reader.readAsDataURL(f);
-});
-
-/* ==== Personality & AI compose ==== */
-const personalities = [
-  {key:'bold', label:'Bold & Direct', preview:'I’ll get to the point and focus on outcomes.'},
-  {key:'warm', label:'Warm & Approachable', preview:'I’ll sound friendly, helpful, and human.'},
-  {key:'analytical', label:'Analytical & Precise', preview:'I’ll be clear, concise, and data-driven.'},
-  {key:'playful', label:'Playful & Energetic', preview:'I’ll keep the tone upbeat and engaging.'},
-  {key:'luxury', label:'Refined & Premium', preview:'I’ll write with polish and restraint.'},
-  {key:'mentor', label:'Mentor & Advisory', preview:'I’ll guide with pragmatism and clarity.'}
+/* ---- Social builder ---- */
+const socialOptions = [
+  {key:'linkedin_personal', label:'LinkedIn (Personal)'},
+  {key:'linkedin_business', label:'LinkedIn (Business)'},
+  {key:'facebook', label:'Facebook'},
+  {key:'instagram', label:'Instagram'},
+  {key:'pinterest', label:'Pinterest'},
+  {key:'x', label:'X (Twitter)'},
+  {key:'google', label:'Google'},
+  {key:'youtube', label:'YouTube'},
+  {key:'tiktok', label:'TikTok'}
 ];
-let chosenPersonality = null;
-const chipHost = document.getElementById('personalityChips');
-const tonePreview = document.getElementById('tonePreview');
-chipHost && personalities.forEach(p=>{
-  const el = document.createElement('label');
-  el.className = 'chip';
-  el.innerHTML = `<span>${p.label}</span><span class="tick"></span>`;
-  el.onclick = ()=>{
-    chosenPersonality = p.key;
-    document.querySelectorAll('#personalityChips .chip').forEach(c=>c.classList.remove('active'));
-    el.classList.add('active');
-    tonePreview.textContent = p.preview;
-    currentVariantIndex = -1;
-  };
-  chipHost.appendChild(el);
+const socials = [];
+const socialList = document.getElementById('socialList');
+document.getElementById('addSocial').addEventListener('click', ()=>{
+  socials.push({platform:'linkedin_business', url:''});
+  renderSocialRows(); renderVcard(); if(phoneModalOpen) renderMail();
 });
-
-const O = {
-  overview: document.getElementById('overview'),
-  mission:  document.getElementById('mission'),
-  values:   document.getElementById('values'),
-  diff:     document.getElementById('diffprop'),
-};
-['overview','mission','values','diffprop'].forEach(id=>{
-  const el = document.getElementById(id);
-  el && el.addEventListener('input', ()=>{ renderEmail(); renderEmailCTA(); });
-});
-
-/* Voice + variants */
-function voice(style){
-  switch(style){
-    case 'bold':
-      return {
-        overview: `I help busy professionals move faster by transforming follow-ups into real conversations that actually win work.`,
-        mission: `My mission is to shorten the path from first contact to “yes” by keeping every step direct, purposeful, and results-driven.`,
-        values: `I believe in ownership, speed, clarity, and accountability—because progress only happens when we take action with focus.`,
-        diff: `I don’t just track your pipeline—I give you a clear feed that shows exactly what to do next, removing all guesswork and hesitation.`
-      };
-    case 'warm':
-      return {
-        overview: `I support small teams with simple, human tools that make every relationship feel close and cared for, even as you grow.`,
-        mission: `I want every client and partner to feel seen, supported, and remembered—never just another name on a list.`,
-        values: `I value empathy, reliability, transparency, and care. These principles shape how I build and maintain lasting connections.`,
-        diff: `I design automations that sound like you and speak from the heart—so your messages feel real, not robotic.`
-      };
-    case 'analytical':
-      return {
-        overview: `I streamline your entire pipeline with data-backed workflows that reduce cycle time, remove friction, and raise conversion.`,
-        mission: `My mission is to operationalize your best practices through measurable systems that constantly improve through iteration.`,
-        values: `I believe in rigor, precision, iteration, and results—because consistent improvement starts with clear measurement.`,
-        diff: `I focus on actionable insights, milestone tracking, and metrics you can quantify, so progress is always visible and provable.`
-      };
-    case 'playful':
-      return {
-        overview: `I turn follow-ups into quick, feel-good wins with swipe-friendly tasks that keep your energy high and your conversations moving.`,
-        mission: `I make staying in touch feel easy, light, and even fun—because progress doesn’t have to feel like work.`,
-        values: `I bring energy, curiosity, creativity, and momentum to everything I do.`,
-        diff: `I create small, clever nudges that inspire action and spark replies without pressure or pushiness.`
-      };
-    case 'luxury':
-      return {
-        overview: `I design refined client journeys that feel elegant, seamless, and deeply personal from the very first interaction.`,
-        mission: `My mission is to elevate every touchpoint with clarity, care, and quiet confidence—creating experiences that build lasting trust.`,
-        values: `I uphold excellence, discretion, trust, and consistency in every detail.`,
-        diff: `I craft white-glove automations tailored for premium brands that want to deliver a high-touch experience at every stage.`
-      };
-    case 'mentor':
-    default:
-      return {
-        overview: `I help teams build repeatable, healthy relationship habits that strengthen trust and grow long-term revenue.`,
-        mission: `I guide leaders to stay consistent and thoughtful, blending structure with the personal touch that relationships deserve.`,
-        values: `I believe in integrity, service, stewardship, and continuous learning as the foundation for sustainable growth.`,
-        diff: `I provide an advisory-led setup with adaptable templates that evolve as your business and team grow.`
-      };
-  }
-}
-function variants(style){
-  const b = voice(style);
-  return [
-    b,
-    {
-      overview: b.overview + ' I remove busywork so you can focus on conversations that matter.',
-      mission:  b.mission + ' Every touch has a clear purpose and outcome.',
-      values:   b.values,
-      diff:     b.diff + ' You’ll always know the highest-leverage action to take.'
-    },
-    {
-      overview: 'Here’s the simple truth: ' + b.overview,
-      mission:  'In short: ' + b.mission,
-      values:   'Core values: ' + b.values,
-      diff:     'Practically speaking, ' + b.diff
-    }
-  ];
-}
-
-/* Fake AI loader + variant cycling */
-const aiStatus = document.getElementById('aiStatus');
-const aiStatusText = document.getElementById('aiStatusText');
-const btnGenerate = document.getElementById('btnGenerate');
-const btnRegenerate = document.getElementById('btnRegenerate');
-let currentVariantIndex = -1;
-function setFields(v){ O.overview.value=v.overview; O.mission.value=v.mission; O.values.value=v.values; O.diff.value=v.diff; renderEmail(); renderEmailCTA(); }
-function startLoading(text){ aiStatusText.textContent=text||'Generating your copy…'; aiStatus.classList.add('show'); btnGenerate.disabled=btnRegenerate.disabled=true; }
-function stopLoading(){ aiStatus.classList.remove('show'); btnGenerate.disabled=btnRegenerate.disabled=false; }
-function doGenerate(useNext=false){
-  const style = chosenPersonality || 'mentor';
-  const v = variants(style);
-  let next = useNext ? (currentVariantIndex+1)%v.length : 0;
-  startLoading(useNext?'Regenerating alternate version…':'Generating your copy…');
-  setTimeout(()=>{ setFields(v[next]); currentVariantIndex=next; stopLoading(); }, 700);
-}
-btnGenerate && btnGenerate.addEventListener('click', ()=>doGenerate(false));
-btnRegenerate && btnRegenerate.addEventListener('click', ()=>doGenerate(true));
-
-/* ==== Build base email body (shared) ==== */
-function getHeaderLogo(){
-  return (window.logoDataUrl && window.logoDataUrl.length)
-    ? window.logoDataUrl
-    : 'https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1696179347579.png';
-}
-function getEmailIntroHtml(){
-  const logoHtml = `<p class="mail-logo-wrap"><img class="mail-logo" alt="Segwik logo" src="${getHeaderLogo()}"></p>`;
-  return `
-    ${logoHtml}
-    <h3>It’s Great to Be Connected!</h3>
-    <p>Hello Katrina, Thanks for downloading my digital business card — I’m excited we crossed paths. Let me introduce myself a bit more:</p>
-
-    <p><strong>About My Business</strong><br/>Segwik is a human-centered Relationship Operating System (ROS) built for entrepreneurs, solopreneurs, and small teams who want to grow real relationships without the chaos of traditional CRMs. It brings contacts, communication, and workflows together in one intuitive platform with tools for automation, multi-channel communication, and AI-powered insights. Segwik replaces tech clutter with clarity and helps business owners, sales agents, and leaders stay connected and consistent.</p>
-
-    <p><strong>What Drives Us</strong><br/>Segwik exists to help small businesses and individuals build meaningful relationships at scale—without the bloat or burnout of complex software. We make it easy for entrepreneurs and teams to show up, follow up, and grow in ways that feel simple, human, and sustainable.</p>
-
-    <p><strong>What Makes Us Different</strong><br/>Segwik isn’t just another CRM—it’s a Relationship OS focused on real connection and authentic automation. Its flexible token-based system gives users access to AI, communication tools, and support without rigid pricing. By combining email, text, calendar, forms, and workflows in one place, Segwik keeps business simple and scalable for real people, from solopreneurs to growing teams.</p>
-
-    <p><strong>Our Core Values</strong><br/>Segwik values human connection, simplicity, and transparency. We’re built for the underdog, listen first, and grow through action, not perfection. Our automations are made with heart, our tools are scalable by design, and our community grows stronger together through purpose, integrity, and trust.</p>
-  `.trim();
-}
-function getSignatureHtml(){
-  return `
-    <div class="sig">
-      <div class="headshot" aria-hidden="true">Headshot</div>
-      <div class="meta">
-        <div style="font-weight:700; margin-bottom:2px;">Pete Romano</div>
-        <div><a href="https://www.segwik.com" target="_blank" rel="noopener">Segwik</a></div>
-        <div>pete@segwik.com</div>
-        <div>914-715-2058</div>
-      </div>
-    </div>
-  `.trim();
-}
-
-/* ==== Render the autoresponder preview (Step 5) ==== */
-function renderEmail(){
-  const bodyEl = document.getElementById('mailBody');
-  if(!bodyEl) return;
-  bodyEl.innerHTML = `${getEmailIntroHtml()}${getSignatureHtml()}`;
-  // From line
-  const fromName = document.getElementById('fromName');
-  const fromDetails = document.getElementById('fromDetails');
-  if(fromName) fromName.textContent = 'Pete Romano';
-  if(fromDetails) fromDetails.textContent = 'pete@segwik.com • to katrina@segwik.com';
-
-  // mirror to full overlay if open
-  const mailFrame = document.getElementById('mailFrame');
-  const mailFrameFull = document.getElementById('mailFrameFull');
-  if(mailFrame && mailFrameFull && document.getElementById('fullPreview').classList.contains('show')){
-    mailFrameFull.innerHTML = mailFrame.innerHTML;
-  }
-}
-
-/* ==== Step 6: CTA editor/apply state ==== */
-let ctaIndex = 0;            // which slide is shown (0..2)
-let ctaEditingType = null;   // 'book' | 'free' | 'email'
-let ctaApplied = null;       // { type, label, href, title, desc }
-
-function ctaSlidesHtml(){
-  return `
-    <div class="cta-slide">
-      <div class="cta-card">
-        <h4 data-ctatitle>Let’s Book a Quick Intro</h4>
-        <p data-ctadesc>Let’s schedule a quick 15-minute intro directly on my calendar. Just pick a time that works best for you — no back-and-forth needed.</p>
-        <div class="cta-action-row">
-          <button class="btn blue" data-ctatype="book">Book a Time</button>
-          <button class="icon-btn" data-edit="book" title="Edit CTA">
-            <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="cta-slide">
-      <div class="cta-card">
-        <h4 data-ctatitle>Grab Your Free Resource</h4>
-        <p data-ctadesc>Here’s something that might help you get started — no strings attached. Feel free to download it, explore, and reach out anytime if you’d like to chat further.</p>
-        <div class="cta-action-row">
-          <button class="btn blue" data-ctatype="free">Get the Free Resource</button>
-          <button class="icon-btn" data-edit="free" title="Edit CTA">
-            <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="cta-slide">
-      <div class="cta-card">
-        <h4 data-ctatitle>Let’s Schedule a Quick Intro</h4>
-        <p data-ctadesc>Let’s set up a quick 15-minute intro. Feel free to share your availability (or request mine), and we’ll get it scheduled. In the meantime, if you ever need help, advice, or a trusted referral, I’d be glad to be a resource.</p>
-        <div class="cta-action-row">
-          <button class="btn blue" data-ctatype="email">Send me an Email</button>
-          <button class="icon-btn" data-edit="email" title="Edit CTA">
-            <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-function ctaArrowsHtml(){
-  return `
-    <div class="cta-arrows">
-      <button class="icon-btn" id="ctaPrev" title="Previous option">
-        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <div class="mini" id="ctaIndexNote">Option ${ctaIndex+1} of 3</div>
-      <button class="icon-btn" id="ctaNext" title="Next option">
-        <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
-      </button>
-    </div>
-  `;
-}
-function ctaInsertHtml(){
-  return `
-    <div class="cta-insert" id="ctaInsert">
-      <div class="cta-head">Add a Call-to-Action</div>
-      <div class="cta-carousel" id="ctaCarousel">
-        <div class="cta-track" id="ctaTrack">${ctaSlidesHtml()}</div>
-      </div>
-      ${ctaArrowsHtml()}
-    </div>
-  `;
-}
-function ctaSavedHtml(a){
-  const button = `<a class="btn blue" href="${a.href}" target="${a.type==='email' ? '_self' : '_blank'}" rel="noopener">${a.label}</a>`;
-  return `
-    <div class="cta-saved" id="ctaSaved">
-      <div class="meta">
-        <h4>${a.title}</h4>
-        <p>${a.desc}</p>
-        ${button}
-      </div>
-      <div class="edit-right">
-        <button class="icon-btn" id="editApplied" title="Edit CTA">
-          <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-/* Render email body + CTA block for Step 6 */
-function renderEmailCTA(){
-  const host = document.getElementById('mailBodyCTA');
-  if(!host) return;
-
-  const intro = getEmailIntroHtml();
-  const sig   = getSignatureHtml();
-
-  const ctaBar = document.getElementById('ctaSendPreviewBar');
-  if (ctaBar) ctaBar.style.display = ctaApplied ? 'flex' : 'none';
-  const ctaBarBtn = document.getElementById('btnSendPreviewCTA');
-  if (ctaBarBtn) {
-    if (PREVIEW_DISABLED) {
-      ctaBarBtn.disabled = true;
-      ctaBarBtn.classList.add('ghost');
-    } else {
-      ctaBarBtn.onclick = ()=>alert('A preview has been sent to your email. (Mock)');
-    }
-  }
-
-  if(ctaApplied){
-    host.innerHTML = `${intro}${ctaSavedHtml(ctaApplied)}${sig}`;
-    const editApplied = document.getElementById('editApplied');
-    editApplied && editApplied.addEventListener('click', ()=>{
-      ctaApplied = null;
-      renderEmailCTA();
-      setTimeout(()=>scrollMailBodyToCTA(true),50);
-    });
-    return;
-  }
-
-  host.innerHTML = `${intro}${ctaInsertHtml()}${sig}`;
-
-  host.querySelectorAll('[data-ctatype]').forEach(btn=>{
-    btn.addEventListener('click', ()=>openCtaModal(btn.getAttribute('data-ctatype')));
-  });
-  host.querySelectorAll('[data-edit]').forEach(btn=>{
-    btn.addEventListener('click', ()=>openCtaModal(btn.getAttribute('data-edit')));
-  });
-
-  const track = document.getElementById('ctaTrack');
-  const idxNote = document.getElementById('ctaIndexNote');
-  let sx = 0, cx = 0, dragging = false;
-
-  function updateTrack(){
-    track.style.transform = `translateX(-${ctaIndex*100}%)`;
-    if(idxNote) idxNote.textContent = `Option ${ctaIndex+1} of 3`;
-  }
-
-  track.addEventListener('touchstart',(e)=>{ dragging=true; sx=e.touches[0].clientX; cx=sx; });
-  track.addEventListener('touchmove',(e)=>{
-    if(!dragging) return; cx=e.touches[0].clientX;
-    const dx = cx - sx;
-    const pct = -ctaIndex*100 + (dx / track.clientWidth) * 100;
-    track.style.transition='none';
-    track.style.transform = `translateX(${pct}%)`;
-  });
-  track.addEventListener('touchend',()=>{
-    if(!dragging) return; dragging=false; track.style.transition='';
-    const dx = cx - sx;
-    if(Math.abs(dx) > 40){ if(dx<0) ctaIndex = Math.min(2, ctaIndex+1); else ctaIndex = Math.max(0, ctaIndex-1); }
-    updateTrack();
-  });
-
-  document.getElementById('ctaPrev').addEventListener('click', ()=>{ ctaIndex = Math.max(0, ctaIndex-1); updateTrack(); });
-  document.getElementById('ctaNext').addEventListener('click', ()=>{ ctaIndex = Math.min(2, ctaIndex+1); updateTrack(); });
-
-  updateTrack();
-}
-
-/* Smoothly scroll the email preview to CTA and flash it */
-function scrollMailBodyToCTA(forceFlash=false){
-  const body = document.getElementById('mailBodyCTA');
-  if(!body) return;
-  const target = body.querySelector('#ctaInsert, #ctaSaved');
-  if(!target) return;
-  body.scrollTo({ top: target.offsetTop - 8, behavior: 'smooth' });
-  if(forceFlash){
-    target.classList.add('flash');
-    setTimeout(()=>target.classList.remove('flash'), 1200);
-  }else{
-    setTimeout(()=>{ target.classList.add('flash'); setTimeout(()=>target.classList.remove('flash'), 1100); }, 320);
-  }
-}
-
-/* ==== CTA Modal logic ==== */
-const ctaModalWrap = document.getElementById('ctaModalWrap');
-const ctaCfgTitle = document.getElementById('ctaCfgTitle');
-const ctaCfgNote  = document.getElementById('ctaCfgNote');
-const ctaCfgLabel = document.getElementById('ctaCfgLabel');
-const ctaCfgDestWrap = document.getElementById('ctaCfgDestWrap');
-const ctaCfgDestLabel = document.getElementById('ctaCfgDestLabel');
-const ctaCfgDest = document.getElementById('ctaCfgDest');
-const ctaCfgMini = document.getElementById('ctaCfgMini');
-
-function toggleCtaModal(show){ ctaModalWrap.classList.toggle('show', !!show); }
-document.getElementById('ctaModalClose').addEventListener('click', ()=>toggleCtaModal(false));
-
-function openCtaModal(type){
-  ctaEditingType = type;
-  ctaCfgMini.style.display = 'none';
-  if(type === 'book'){
-    ctaCfgTitle.textContent = 'Book a time';
-    ctaCfgLabel.value = 'Book a Time';
-    ctaCfgDestLabel.textContent = 'Destination';
-    ctaCfgDest.type = 'url';
-    ctaCfgDest.placeholder = 'https://your-booking-link.com';
-    ctaCfgDest.value = '';
-    ctaCfgNote.textContent = 'Set your calendar link and label.';
-  }else if(type === 'free'){
-    ctaCfgTitle.textContent = 'Get the free resource';
-    ctaCfgLabel.value = 'Get the Free Resource';
-    ctaCfgDestLabel.textContent = 'Destination';
-    ctaCfgDest.type = 'url';
-    ctaCfgDest.placeholder = 'https://your-asset-link.com/guide.pdf';
-    ctaCfgDest.value = '';
-    ctaCfgNote.textContent = 'Set your download URL and label.';
-  }else{
-    ctaCfgTitle.textContent = "Let's schedule a quick intro";
-    ctaCfgLabel.value = 'Send me an Email';
-    ctaCfgDestLabel.textContent = 'Email to (mailto)';
-    ctaCfgDest.type = 'email';
-    ctaCfgDest.placeholder = 'you@company.com';
-    ctaCfgDest.value = '';
-    ctaCfgMini.textContent = 'Enter the email address where you’d like the contact to reach you';
-    ctaCfgMini.style.display = 'block';
-    ctaCfgNote.textContent = 'Set your button label and recipient email.';
-  }
-  toggleCtaModal(true);
-}
-
-/* Save CTA -> apply into email and remove dashed box. */
-document.getElementById('ctaCfgSave').addEventListener('click', ()=>{
-  const label = (ctaCfgLabel.value || '').trim() || 'Learn More';
-  let href = '#';
-  if(ctaEditingType === 'book' || ctaEditingType === 'free'){
-    href = (ctaCfgDest.value || '').trim() || '#';
-  }else{
-    const to = (ctaCfgDest.value || '').trim() || 'you@company.com';
-    href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent('Let’s connect')}`;
-  }
-
-  // Pull the visible slide's title/desc
-  const body = document.getElementById('mailBodyCTA');
-  const slides = body.querySelectorAll('.cta-slide');
-  const activeSlide = slides[ctaIndex];
-  const title = activeSlide.querySelector('[data-ctatitle]').textContent.trim();
-  const desc  = activeSlide.querySelector('[data-ctadesc]').textContent.trim();
-
-  ctaApplied = { type: ctaEditingType || 'book', label, href, title, desc };
-  toggleCtaModal(false);
-  renderEmailCTA();
-  setTimeout(()=>scrollMailBodyToCTA(true), 80);
-});
-
-/* Full-screen Preview controls + Rich editor mode */
-const btnFull = document.getElementById('btnFullPreview');
-const overlay = document.getElementById('fullPreview');
-const closeFull = document.getElementById('closeFullPreview');
-let editModeActive = false;
-
-btnFull && btnFull.addEventListener('click', ()=>{
-  const mailFrame = document.getElementById('mailFrame');
-  const mailFrameFull = document.getElementById('mailFrameFull');
-  mailFrameFull.innerHTML = mailFrame.innerHTML;
-  overlay.classList.add('show');
-  overlay.setAttribute('aria-hidden','false');
-  overlay.classList.remove('editing');
-  mailFrameFull.querySelector('.mail-body')?.setAttribute('contenteditable','false');
-  mailFrameFull.querySelector('.subject')?.setAttribute('contenteditable','false');
-  document.getElementById('richToolbar').classList.remove('show');
-  editModeActive = false;
-});
-closeFull && closeFull.addEventListener('click', ()=>{
-  // If editing, sync edits back
-  if(editModeActive){
-    const full = document.getElementById('mailFrameFull');
-    const main = document.getElementById('mailFrame');
-    const editedSubject = full.querySelector('.subject')?.textContent || '';
-    const editedBodyHTML = full.querySelector('.mail-body')?.innerHTML || '';
-    if(editedSubject) main.querySelector('.subject').textContent = editedSubject;
-    if(editedBodyHTML) main.querySelector('.mail-body').innerHTML = editedBodyHTML;
-    // keep step 6 in sync
-    renderEmailCTA();
-  }
-  overlay.classList.remove('show');
-  overlay.setAttribute('aria-hidden','true');
-  overlay.classList.remove('editing');
-  document.getElementById('richToolbar').classList.remove('show');
-  editModeActive = false;
-});
-
-/* Send Me a Preview (mock) */
-const sendBtn = document.getElementById('btnSendPreview');
-if (sendBtn) {
-  if (PREVIEW_DISABLED) {
-    sendBtn.disabled = true;
-    sendBtn.classList.add('ghost');
-  } else {
-    sendBtn.addEventListener('click', ()=>alert('A preview has been sent to your email. (Mock)'));
-  }
-}
-
-/* ===== Upgrade flow wiring ===== */
-let isUpgraded = false;
-let returnSlideIdx = 0;
-const upgradeScreen = document.getElementById('upgradeScreen');
-const upgradeBack = document.getElementById('upgradeBack');
-
-function openUpgradeScreen(){
-  returnSlideIdx = idx;
-  toggleSheet(false); toggleEditSheet(false); toggleFollowupSheet(false);
-  flow.style.display = 'none';
-  intro.style.display = 'none';
-  upgradeScreen.style.display = 'flex';
-}
-function closeUpgradeScreenWithReturn(){
-  upgradeScreen.style.display = 'none';
-  flow.style.display = 'block';
-  flow.classList.remove('return-anim'); void flow.offsetWidth; flow.classList.add('return-anim');
-  goTo(returnSlideIdx);
-  setTimeout(()=>flow.classList.remove('return-anim'), 400);
-}
-upgradeBack.addEventListener('click', closeUpgradeScreenWithReturn);
-
-/* ===== NEW: Apply upgraded state ===== */
-function applyUpgradeUI(){
-  isUpgraded = true;
-  document.querySelectorAll('.requires-upgrade').forEach(el=>el.remove());
-  const seeUpgradeBtn = document.getElementById('seeUpgrade');
-  if (seeUpgradeBtn) {
-    const parentCard = seeUpgradeBtn.closest('.card'); if (parentCard) parentCard.remove();
-    seeUpgradeBtn.remove();
-  }
-
-  /* 1) Edit email template -> open full preview in EDIT MODE with rich toolbar */
-  const editBtn = document.getElementById('btnEditTemplate');
-  if (editBtn){
-    editBtn.onclick = ()=>{
-      const mailFrame = document.getElementById('mailFrame');
-      const mailFrameFull = document.getElementById('mailFrameFull');
-      mailFrameFull.innerHTML = mailFrame.innerHTML;
-      const subj = mailFrameFull.querySelector('.subject');
-      const body = mailFrameFull.querySelector('.mail-body');
-      subj && subj.setAttribute('contenteditable','true');
-      body && body.setAttribute('contenteditable','true');
-      overlay.classList.add('show','editing');
-      overlay.setAttribute('aria-hidden','false');
-      document.getElementById('richToolbar').classList.add('show');
-      editModeActive = true;
-    };
-  }
-
-  /* 2) Add Another Follow-Up Email -> open our upgraded modal */
-  const addFU = document.getElementById('btnAddFollowUp');
-  if (addFU){
-    addFU.onclick = ()=>toggleFollowupModal(true);
-  }
-}
-
-/* Buttons that should route to the Upgrade screen */
-const sheet = document.getElementById('upgradeSheet');
-function toggleSheet(show){ sheet.classList.toggle('show', !!show); }
-document.getElementById('notNow')?.addEventListener('click', ()=>{ toggleSheet(false); goTo(idx+1); });
-document.getElementById('upgradeNow')?.addEventListener('click', ()=>{
-  toggleSheet(false);
-  openUpgradeScreen();
-});
-
-const editSheet = document.getElementById('editSheet');
-function toggleEditSheet(show){ editSheet.classList.toggle('show', !!show); }
-document.getElementById('btnEditTemplate')?.addEventListener('click', ()=>toggleEditSheet(true));
-document.getElementById('editNotNow')?.addEventListener('click', ()=>toggleEditSheet(false));
-document.getElementById('editUpgradeNow')?.addEventListener('click', ()=>{
-  toggleEditSheet(false);
-  openUpgradeScreen();
-});
-
-const followupSheet = document.getElementById('followupSheet');
-function toggleFollowupSheet(show){ followupSheet.classList.toggle('show', !!show); }
-document.getElementById('btnAddFollowUp')?.addEventListener('click', ()=>toggleFollowupSheet(true));
-document.getElementById('followupNotNow')?.addEventListener('click', ()=>toggleFollowupSheet(false));
-document.getElementById('followupUpgradeNow')?.addEventListener('click', ()=>{
-  toggleFollowupSheet(false);
-  openUpgradeScreen();
-});
-
-/* ===== NEW: Follow-up modal logic (upgraded visuals) ===== */
-const followupModalWrap = document.getElementById('followupModalWrap');
-function toggleFollowupModal(show){ followupModalWrap.classList.toggle('show', !!show); }
-document.getElementById('followupModalClose').addEventListener('click', ()=>toggleFollowupModal(false));
-document.getElementById('fuCreateLink').addEventListener('click', ()=>{
-  const wrap = document.getElementById('fuCreateWrap');
-  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
-});
-/* On-brand steppers */
-document.getElementById('fuMinus').addEventListener('click', ()=>{
-  const inp = document.getElementById('fuInterval');
-  const v = Math.max(1, parseInt(inp.value||'1',10)-1); inp.value = v;
-});
-document.getElementById('fuPlus').addEventListener('click', ()=>{
-  const inp = document.getElementById('fuInterval');
-  const v = Math.max(1, parseInt(inp.value||'1',10)+1); inp.value = v;
-});
-
-/* ===== Touchpoints stack behaviour ===== */
-const followupList = document.getElementById('followupList');
-const addFollowUpBtn = document.getElementById('btnAddFollowUp');
-const addFollowUpRow = document.getElementById('addFollowUpRow');
-const tp0 = document.getElementById('tp0');
-
-function collapseAllExcept(id){
-  document.querySelectorAll('.tp-card').forEach(card=>{
-    if(card.id === id){
-      card.classList.remove('tp-collapsed'); card.classList.add('tp-expanded');
-    }else{
-      card.classList.remove('tp-expanded'); card.classList.add('tp-collapsed');
-    }
+function renderSocialRows(){
+  socialList.innerHTML = '';
+  socials.forEach((row, idx)=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'social-row';
+    wrap.innerHTML = `
+      <select aria-label="Social platform">
+        ${socialOptions.map(opt=>`<option value="${opt.key}" ${opt.key===row.platform?'selected':''}>${opt.label}</option>`).join('')}
+      </select>
+      <input type="url" placeholder="https://..." value="${row.url || ''}">
+      <button class="remove" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    `;
+    const sel = wrap.querySelector('select');
+    const input = wrap.querySelector('input');
+    const btn = wrap.querySelector('button.remove');
+    sel.addEventListener('change', (e)=>{ socials[idx].platform = e.target.value; if(phoneModalOpen) renderMail(); });
+    input.addEventListener('input', (e)=>{ socials[idx].url = e.target.value.trim(); if(phoneModalOpen) renderMail(); });
+    btn.addEventListener('click', ()=>{ socials.splice(idx,1); renderSocialRows(); if(phoneModalOpen) renderMail(); });
+    socialList.appendChild(wrap);
   });
 }
-function attachToggle(card){
-  const btn = card.querySelector('.tp-toggle');
-  if(!btn) return;
-  btn.onclick = ()=>{
-    const isOpen = card.classList.contains('tp-expanded');
-    if(isOpen){
-      card.classList.remove('tp-expanded'); card.classList.add('tp-collapsed');
-    }else{
-      collapseAllExcept(card.id);
-    }
-  };
-}
-/* initial toggle binding */
-attachToggle(tp0);
 
-/* Remove banner once another touchpoint is added */
-function removeAfterDlBanner(){
-  const b = document.querySelector('#step-preview .after-dl-banner');
-  if(b) b.remove();
+/* ---- Image uploads → data URLs ---- */
+window.photoUrl = ''; window.bannerUrl = ''; window.logoUrl = '';
+const photoThumb = document.getElementById('photoThumb');
+const bannerThumb = document.getElementById('bannerThumb');
+const logoThumb  = document.getElementById('logoThumb');
+function readToDataURL(file, cb){ const r=new FileReader(); r.onload = e => cb(e.target.result); r.readAsDataURL(file); }
+S.photo.addEventListener('change', ()=>{
+  const f=S.photo.files?.[0]; if(!f) return;
+  readToDataURL(f, url=>{ window.photoUrl = url; photoThumb.style.display='block'; photoThumb.style.backgroundImage = `url('${url}')`; renderVcard(); if(phoneModalOpen) renderMail(); });
+});
+S.banner.addEventListener('change', ()=>{
+  const f=S.banner.files?.[0]; if(!f) return;
+  readToDataURL(f, url=>{ window.bannerUrl = url; bannerThumb.style.display='block'; bannerThumb.style.backgroundImage = `url('${url}')`; renderVcard(); });
+});
+document.getElementById('logo')?.addEventListener('change', ()=>{
+  const f=document.getElementById('logo').files?.[0]; if(!f) return;
+  readToDataURL(f, url=>{ window.logoUrl = url; logoThumb.style.display='block'; logoThumb.style.backgroundImage = `url('${url}')`; if(phoneModalOpen) renderMail(); });
+});
+
+/* ---- Icons ---- */
+function i16(name){
+  switch(name){
+    case 'phone': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2 4.1 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.12.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.1a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6A2 2 0 0 1 22 16.9z"/></svg>`;
+    case 'mail': return `<svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>`;
+    case 'link': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l1-1a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0 7 0l1-1"/></svg>`;
+    case 'linkedin': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 4h4v16H4z"/><circle cx="6" cy="3" r="1"/><path d="M10 8h4v2a4 4 0 0 1 8 0v10h-4V12a2 2 0 0 0-4 0v8h-4z"/></svg>`;
+    case 'youtube': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M22 12s0-3-0.4-4.5A3 3 0 0 0 19.5 5C17.3 4.8 12 4.8 12 4.8s-5.3 0-7.5.2A3 3 0 0 0 2.4 7.5C2 9 2 12 2 12s0 3 .4 4.5A3 3 0 0 0 4.5 19c2.2.2 7.5.2 7.5.2s5.3 0 7.5-.2a3 3 0 0 0 2.1-2.5C22 15 22 12 22 12z"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg>`;
+    case 'x': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg>`;
+    case 'instagram': return `<svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1"/></svg>`;
+    case 'facebook': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M18 2h-3a4 4 0 0 0-4 4v3H8v4h3v9h4v-9h3l1-4h-4V6a1 1 0 0 1 1-1h3z"/></svg>`;
+    case 'pinterest': return `<svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 20c.5-4 2-7 2-9s-1.5-3-3-3-3 1.2-3 3c0 1.2.6 2.3 1.8 2.6"/></svg>`;
+    case 'google': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M21 12h-9M3 12a9 9 0 1 0 0 0"/></svg>`;
+    case 'tiktok': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M9 7v9a4 4 0 1 0 4-4"/></svg>`;
+  }
+}
+function socialIconKey(platform){
+  if(platform.startsWith('linkedin')) return 'linkedin';
+  return { facebook:'facebook', instagram:'instagram', pinterest:'pinterest', x:'x', google:'google', youtube:'youtube', tiktok:'tiktok' }[platform] || 'link';
 }
 
-/* Build a follow-up card DOM */
-let tpCounter = 1;
-function buildFollowupCard({interval, unit, subject, bodyHtml}){
-  const id = `tp${tpCounter++}`;
-  const card = document.createElement('div');
-  card.className = 'card tp-card tp-expanded';
-  card.id = id;
-  card.innerHTML = `
-    <div class="tp-head">
+/* ---- Helpers ---- */
+function safe(v,fallback=''){ return (v||'').trim()||fallback; }
+function vRow(iconHtml, text, href){
+  if(!text) return '';
+  const content = href ? `<a href="${href}" target="_blank" rel="noopener">${text}</a>` : text;
+  return `<div class="v-row"><div class="ico">${iconHtml}</div><div>${content}</div></div>`;
+}
+function oxfordList(arr){
+  if(arr.length<=1) return arr.join('');
+  if(arr.length===2) return `${arr[0]} and ${arr[1]}`;
+  return `${arr.slice(0,-1).join(', ')}, and ${arr[arr.length-1]}`;
+}
+
+/* ---- vCard Preview ---- */
+function renderVcard(){
+  const host = document.getElementById('vcardPreview');
+  const name = `${safe(S.firstName.value,'[First]')} ${safe(S.lastName.value,'[Last]')}`.trim();
+  const title = safe(S.title.value,'[Title]');
+  const company = safe(S.company.value,'[Company]');
+  const headline = safe(S.headline.value,'');
+  const banner = window.bannerUrl || 'https://images.unsplash.com/photo-1551817958-d33c6c9f24a1?q=80&w=1200&auto=format&fit=crop';
+  const hasPhoto  = !!window.photoUrl;
+  const phone1 = safe(S.phoneBiz.value,''), phone2 = safe(S.phonePersonal.value,'');
+  const email1 = safe(S.emailBiz.value,''), email2 = safe(S.emailPersonal.value,'');
+  const website = safe(S.website.value,'');
+  const socialValid = socials.filter(s=>s.url);
+
+  host.innerHTML = `
+    <div class="v-banner" style="background-image:url('${banner}')">
+      <div class="v-save"><button class="btn blue">Save Contact</button></div>
+    </div>
+    <div class="v-head">
+      ${hasPhoto ? `<div class="v-photo" style="background-image:url('${window.photoUrl}')"></div>` : ``}
       <div>
-        <div class="tp-title">Follow-Up Email</div>
-        <div class="tp-meta">Sends after <strong>${interval}</strong> ${unit}</div>
+        <div class="v-name">${name}</div>
+        <div class="v-company">${company}</div>
+        <div class="v-headline"><strong>${title}</strong>${headline?` — ${headline}`:''}</div>
       </div>
-      <button class="tp-toggle" data-tp-toggle="${id}" title="Collapse/Expand">
-        <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
     </div>
+    <div class="v-list">
+      ${vRow(i16('phone'), phone1, phone1?`tel:${phone1.replace(/[^+\d]/g,'')}`:null)}
+      ${vRow(i16('phone'), phone2, phone2?`tel:${phone2.replace(/[^+\d]/g,'')}`:null)}
+      ${vRow(i16('mail'), email1, email
 
-    <div class="row wrap">
-      <button class="btn" data-tp-edit title="Edit this email">
-        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-        
-      </button>
-      <button class="btn" data-tp-view title="View full preview">
-        <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-        
-      </button>
-      <button class="btn blue" data-tp-send style="margin-left:auto; margin-bottom:6px;">Send Me a Preview</button>
+
+<script>
+/* ---- Carousel / pager ---- */
+const carousel = document.getElementById('carousel');
+const slides = Array.from(carousel.children);
+let idx = 0;
+function goTo(i){
+  idx = Math.max(0, Math.min(slides.length-1, i));
+  carousel.style.transform = `translateX(-${idx*100}%)`;
+  renderDots(); updateNav();
+  if(idx===2) renderVcard();
+  if(idx===5) { renderCtaBuilder(); renderMail(); }
+}
+function renderDots(){
+  const pager = document.getElementById('pager');
+  if(!pager) return;
+  pager.innerHTML='';
+  slides.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='dot'+(i===idx?' active':'');
+    d.onclick=()=>goTo(i);
+    pager.appendChild(d);
+  });
+}
+function updateNav(){
+  const back = document.getElementById('backBtn');
+  const next = document.getElementById('nextBtn');
+  if(!back || !next) return;
+  back.classList.toggle('ghost', idx===0);
+  next.textContent = idx===slides.length-1 ? 'Done' : 'Next';
+}
+document.getElementById('backBtn')?.addEventListener('click', ()=>goTo(idx-1));
+document.getElementById('nextBtn')?.addEventListener('click', ()=>goTo(idx+1));
+renderDots(); updateNav();
+
+/* convenience nav buttons */
+document.getElementById('startCard').addEventListener('click', ()=>goTo(1));
+
+/* ---- Global inputs/state ---- */
+const S = {
+  firstName: document.getElementById('firstName'),
+  lastName : document.getElementById('lastName'),
+  title    : document.getElementById('title'),
+  company  : document.getElementById('company'),
+  headline : document.getElementById('headline'),
+  photo    : document.getElementById('photo'),
+  banner   : document.getElementById('banner'),
+  phoneBiz : document.getElementById('phoneBiz'),
+  phonePersonal: document.getElementById('phonePersonal'),
+  emailBiz : document.getElementById('emailBiz'),
+  emailPersonal: document.getElementById('emailPersonal'),
+  website  : document.getElementById('website'),
+};
+Object.values(S).forEach(el=>{ if(el) el.addEventListener('input', ()=>updatePreviews()); });
+
+/* ---- Social builder ---- */
+const socialOptions = [
+  {key:'linkedin_personal', label:'LinkedIn (Personal)'},
+  {key:'linkedin_business', label:'LinkedIn (Business)'},
+  {key:'facebook', label:'Facebook'},
+  {key:'instagram', label:'Instagram'},
+  {key:'pinterest', label:'Pinterest'},
+  {key:'x', label:'X (Twitter)'},
+  {key:'google', label:'Google'},
+  {key:'youtube', label:'YouTube'},
+  {key:'tiktok', label:'TikTok'}
+];
+const socials = [];
+const socialList = document.getElementById('socialList');
+document.getElementById('addSocial').addEventListener('click', ()=>{
+  socials.push({platform:'linkedin_business', url:''});
+  renderSocialRows(); updatePreviews();
+});
+function renderSocialRows(){
+  socialList.innerHTML = '';
+  socials.forEach((row, idx)=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'social-row';
+    wrap.innerHTML = `
+      <select aria-label="Social platform">
+        ${socialOptions.map(opt=>`<option value="${opt.key}" ${opt.key===row.platform?'selected':''}>${opt.label}</option>`).join('')}
+      </select>
+      <input type="url" placeholder="https://..." value="${row.url || ''}">
+      <button class="remove" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    `;
+    const sel = wrap.querySelector('select');
+    const input = wrap.querySelector('input');
+    const btn = wrap.querySelector('button.remove');
+    sel.addEventListener('change', (e)=>{ socials[idx].platform = e.target.value; updatePreviews(); });
+    input.addEventListener('input', (e)=>{ socials[idx].url = e.target.value.trim(); updatePreviews(); });
+    btn.addEventListener('click', ()=>{ socials.splice(idx,1); renderSocialRows(); updatePreviews(); });
+    socialList.appendChild(wrap);
+  });
+}
+
+/* ---- Image uploads → data URLs ---- */
+window.photoUrl = ''; window.bannerUrl = '';
+const photoThumb = document.getElementById('photoThumb');
+const bannerThumb = document.getElementById('bannerThumb');
+function readToDataURL(file, cb){ const r=new FileReader(); r.onload = e => cb(e.target.result); r.readAsDataURL(file); }
+S.photo.addEventListener('change', ()=>{
+  const f=S.photo.files?.[0]; if(!f) return;
+  readToDataURL(f, url=>{ window.photoUrl = url; photoThumb.style.display='block'; photoThumb.style.backgroundImage = `url('${url}')`; updatePreviews(); });
+});
+S.banner.addEventListener('change', ()=>{
+  const f=S.banner.files?.[0]; if(!f) return;
+  readToDataURL(f, url=>{ window.bannerUrl = url; bannerThumb.style.display='block'; bannerThumb.style.backgroundImage = `url('${url}')`; updatePreviews(); });
+});
+
+/* ---- Icons ---- */
+function i16(name){
+  switch(name){
+    case 'phone': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2 4.1 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.12.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.1a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6A2 2 0 0 1 22 16.9z"/></svg>`;
+    case 'mail': return `<svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>`;
+    case 'link': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l1-1a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-1 1a5 5 0 0 0 7 7l1-1"/></svg>`;
+    case 'linkedin': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 4h4v16H4z"/><circle cx="6" cy="3" r="1"/><path d="M10 8h4v2a4 4 0 0 1 8 0v10h-4V12a2 2 0 0 0-4 0v8h-4z"/></svg>`;
+    case 'youtube': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M22 12s0-3-0.4-4.5A3 3 0 0 0 19.5 5C17.3 4.8 12 4.8 12 4.8s-5.3 0-7.5.2A3 3 0 0 0 2.4 7.5C2 9 2 12 2 12s0 3 .4 4.5A3 3 0 0 0 4.5 19c2.2.2 7.5.2 7.5.2s5.3 0 7.5-.2a3 3 0 0 0 2.1-2.5C22 15 22 12 22 12z"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg>`;
+    case 'x': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg>`;
+    case 'instagram': return `<svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1"/></svg>`;
+    case 'facebook': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M18 2h-3a4 4 0 0 0-4 4v3H8v4h3v9h4v-9h3l1-4h-4V6a1 1 0 0 1 1-1h3z"/></svg>`;
+    case 'pinterest': return `<svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 20c.5-4 2-7 2-9s-1.5-3-3-3-3 1.2-3 3c0 1.2.6 2.3 1.8 2.6"/></svg>`;
+    case 'google': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M21 12h-9M3 12a9 9 0 1 0 0 0"/></svg>`;
+    case 'tiktok': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M9 7v9a4 4 0 1 0 4-4"/></svg>`;
+  }
+}
+function socialIconKey(platform){
+  if(platform.startsWith('linkedin')) return 'linkedin';
+  return { facebook:'facebook', instagram:'instagram', pinterest:'pinterest', x:'x', google:'google', youtube:'youtube', tiktok:'tiktok' }[platform] || 'link';
+}
+
+/* ---- Helpers ---- */
+function safe(v,fallback=''){ return (v||'').trim()||fallback; }
+function vRow(iconHtml, text, href){
+  if(!text) return '';
+  const content = href ? `<a href="${href}" target="_blank" rel="noopener">${text}</a>` : text;
+  return `<div class="v-row"><div class="ico">${iconHtml}</div><div>${content}</div></div>`;
+}
+function oxfordList(arr){
+  if(arr.length<=1) return arr.join('');
+  if(arr.length===2) return `${arr[0]} and ${arr[1]}`;
+  return `${arr.slice(0,-1).join(', ')}, and ${arr[arr.length-1]}`;
+}
+
+/* ---- vCard Preview (accurate missing list + hide Fill button when complete) ---- */
+function renderVcard(){
+  const host = document.getElementById('vcardPreview');
+  const name = `${safe(S.firstName.value,'[First]')} ${safe(S.lastName.value,'[Last]')}`.trim();
+  const title = safe(S.title.value,'[Title]');
+  const company = safe(S.company.value,'[Company]');
+  const headline = safe(S.headline.value,'');
+  const banner = window.bannerUrl || 'https://images.unsplash.com/photo-1551817958-d33c6c9f24a1?q=80&w=1200&auto=format&fit=crop';
+  const hasPhoto  = !!window.photoUrl;
+  const phone1 = safe(S.phoneBiz.value,''), phone2 = safe(S.phonePersonal.value,'');
+  const email1 = safe(S.emailBiz.value,''), email2 = safe(S.emailPersonal.value,'');
+  const website = safe(S.website.value,'');
+  const socialValid = socials.filter(s=>s.url);
+
+  host.innerHTML = `
+    <div class="v-banner" style="background-image:url('${banner}')">
+      <div class="v-save"><button class="btn blue">Save Contact</button></div>
     </div>
-
-    <div class="tp-content">
-      <div class="mail-frame">
-        <div class="mail-topbar">
-          <div class="subject">${subject || 'Follow-Up'}</div>
-          <div class="actions dots" aria-label="More options">
-            <span class="dotc r"></span><span class="dotc o"></span><span class="dotc g"></span>
-          </div>
-        </div>
-        <div class="mail-from">
-          <div class="from-avatar">P</div>
-          <div class="from-meta">
-            <div class="from-name">Pete Romano</div>
-            <div class="from-details">pete@segwik.com • to katrina@segwik.com</div>
-          </div>
-        </div>
-        <div class="mail-body">${bodyHtml || '<p>Thanks again for connecting! Just checking in…</p>'}${getSignatureHtml()}</div>
+    <div class="v-head">
+      ${hasPhoto ? `<div class="v-photo" style="background-image:url('${window.photoUrl}')"></div>` : ``}
+      <div>
+        <div class="v-name">${name}</div>
+        <div class="v-company">${company}</div>
+        <div class="v-headline"><strong>${title}</strong>${headline?` — ${headline}`:''}</div>
       </div>
+    </div>
+    <div class="v-list">
+      ${vRow(i16('phone'), phone1, phone1?`tel:${phone1.replace(/[^+\d]/g,'')}`:null)}
+      ${vRow(i16('phone'), phone2, phone2?`tel:${phone2.replace(/[^+\d]/g,'')}`:null)}
+      ${vRow(i16('mail'), email1, email1?`mailto:${email1}`:null)}
+      ${vRow(i16('mail'), email2, email2?`mailto:${email2}`:null)}
+      ${vRow(i16('link'), website, website||null)}
+      ${socialValid.map(s=>vRow(i16(socialIconKey(s.platform)), s.url, s.url)).join('')}
     </div>
   `;
-  followupList.appendChild(card);
 
-  // Move the Add Another button under the newest card
-  card.after(addFollowUpRow);
+  // completion rules
+  const haveName = !!(S.firstName.value && S.lastName.value);
+  const haveOneEmail = !!(S.emailBiz.value || S.emailPersonal.value);
+  const haveOnePhone = !!(S.phoneBiz.value || S.phonePersonal.value);
+  const haveImages = !!(window.photoUrl && window.bannerUrl);
+  const haveHeadline = !!S.headline.value;
+  const haveTitle = !!S.title.value;
+  const haveOneLink = !!(S.website.value || socialValid.length>0);
 
-  // Hide the Instant Send banner now that there is another touchpoint
-  removeAfterDlBanner();
+  const missing = [];
+  if(!haveName) missing.push('first & last name');
+  if(!haveOnePhone) missing.push('at least one phone');
+  if(!haveOneEmail) missing.push('at least one email');
+  if(!window.photoUrl) missing.push('headshot');
+  if(!window.bannerUrl) missing.push('background image');
+  if(!haveTitle) missing.push('title/role');
+  if(!haveHeadline) missing.push('headline');
+  if(!haveOneLink) missing.push('website or at least one social link');
 
-  // Bind preview/send/edit buttons for this card
-  const viewBtn = card.querySelector('[data-tp-view]');
-  const editBtn = card.querySelector('[data-tp-edit]');
-  const sendMe  = card.querySelector('[data-tp-send]');
+  const complete = !(missing.length);
 
-  viewBtn.onclick = ()=>{
-    // show this card in full preview (read-only)
-    const mailFrameFull = document.getElementById('mailFrameFull');
-    const inner = card.querySelector('.mail-frame').innerHTML;
-    document.querySelector('#fullPreview .full-topbar div').textContent = 'Full Preview — Follow-Up';
-    mailFrameFull.innerHTML = inner;
-    mailFrameFull.querySelector('.mail-body')?.setAttribute('contenteditable','false');
-    mailFrameFull.querySelector('.subject')?.setAttribute('contenteditable','false');
-    document.getElementById('richToolbar').classList.remove('show');
-    overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
-    overlay.classList.remove('editing');
-    editModeActive = false;
-  };
+  const status = complete
+    ? `✅ <span class="ok">Your digital card is complete</span>`
+    : `⚠️ <span class="warn">Your digital card isn’t complete yet</span> — please add ${oxfordList(missing)}.`;
+  document.getElementById('cardStatus').innerHTML = status;
 
-  editBtn.onclick = ()=>{
-    // rich edit this follow-up card
-    const mailFrameFull = document.getElementById('mailFrameFull');
-    const inner = card.querySelector('.mail-frame').innerHTML;
-    document.querySelector('#fullPreview .full-topbar div').textContent = 'Edit Email — Follow-Up';
-    mailFrameFull.innerHTML = inner;
-    mailFrameFull.querySelector('.mail-body')?.setAttribute('contenteditable','true');
-    mailFrameFull.querySelector('.subject')?.setAttribute('contenteditable','true');
-    overlay.classList.add('show','editing');
-    overlay.setAttribute('aria-hidden','false');
-    document.getElementById('richToolbar').classList.add('show');
-    // when saving edits, write back into this card
-    pendingWriteBackCard = card;
-    editModeActive = true;
-  };
+  // Hide/show "Fill In Information" button based on completeness
+  const fillBtn = document.getElementById('btnFillInfo');
+  if(fillBtn) fillBtn.style.display = complete ? 'none' : 'inline-flex';
 
-  if (PREVIEW_DISABLED) { sendMe.disabled = true; sendMe.classList.add('ghost'); }
-  else { sendMe.onclick = ()=>alert('A preview has been sent to your email. (Mock)'); }
-
-  // collapse others, expand this
-  collapseAllExcept(card.id);
-  // enable toggle
-  attachToggle(card);
+  const sum = document.getElementById('sumCard');
+  if(sum) sum.textContent = complete ? 'Digital card complete' : 'Digital card incomplete';
 }
 
-/* Submit Follow-Up Touchpoint -> build card, collapse first, expand new */
-let pendingWriteBackCard = null; // used by rich editor Save for follow-ups
-document.getElementById('fuSubmit').addEventListener('click', ()=>{
-  const interval = document.getElementById('fuInterval').value || '1';
-  const unit = document.getElementById('fuUnit').value || 'day(s)';
-  const template = document.getElementById('fuTemplate').value;
-  const newSubj = document.getElementById('fuNewSubj').value.trim();
-  const newBody = document.getElementById('fuNewBody').value.trim();
-
-  let subj = 'Follow-Up';
-  let bodyHtml = '';
-  if(newSubj || newBody){
-    subj = newSubj || 'Follow-Up';
-    bodyHtml = newBody ? `<p>${newBody.replace(/\n/g,'</p><p>')}</p>` : '';
-  }else{
-    if(template==='welcome-quick'){
-      subj = 'Just a quick hello';
-      bodyHtml = `<p>Just a quick hello — I’m glad we connected. If I can be a resource, reply anytime.</p>`;
-    }else if(template==='value-drop'){
-      subj = 'A resource you might like';
-      bodyHtml = `<p>Thought this might help: <a href="#">Getting Started Guide</a>. If useful, I can send more.</p>`;
-    }else if(template==='book-call'){
-      subj = 'Want to book a quick intro?';
-      bodyHtml = `<p>Happy to connect for 15 minutes. Here’s my calendar: <a href="#">Pick a time</a>.</p>`;
-    }else{
-      bodyHtml = `<p>Checking in and happy to help with anything you need.</p>`;
-    }
-  }
-
-  // Build and append the new card
-  buildFollowupCard({interval, unit, subject: subj, bodyHtml});
-  toggleFollowupModal(false);
+/* ---- CTA Builder (Step 5) ---- */
+const ctaOptions = [
+  {key:'book', label:'Book a Time', type:'link', labelDefault:'Book a Meeting', placeholder:'https://cal.com/yourname', preDefault:'Grab a spot on my calendar:'},
+  {key:'email', label:'Send an Email', type:'email', labelDefault:'Email Me', placeholder:'you@company.com', preDefault:'Prefer email?'},
+  {key:'call', label:'Call You', type:'phone', labelDefault:'Call Me', placeholder:'+1 (555) 123-4567', preDefault:'Or reach me directly:'},
+  {key:'resources', label:'View Free Resources', type:'link', labelDefault:'See Free Resources', placeholder:'https://yourdomain.com/resources', preDefault:'Here are a few free resources:'}
+];
+const ctaState = {};
+ctaOptions.forEach(o=>{
+  ctaState[o.key] = { on:false, btnLabel:o.labelDefault, dest:'', pre:o.preDefault };
 });
 
-/* Final screen */
-const activateSwitch = document.getElementById('activateSwitch');
-activateSwitch && activateSwitch.addEventListener('click', ()=>activateSwitch.classList.toggle('active'));
-document.getElementById('seeUpgrade')?.addEventListener('click', ()=>{ openUpgradeScreen(); });
-document.getElementById('finishBtn')?.addEventListener('click', ()=>{
-  const active = activateSwitch?.classList.contains('active');
-  alert(`Saved! (Mock)
-Journey ${active ? 'activated' : 'saved as draft'}.`);
-});
+function renderCtaBuilder(){
+  const host = document.getElementById('ctaBuilder');
+  host.innerHTML = `
+    <div class="label">Choose your call-to-action buttons</div>
+    <div style="display:grid;gap:10px">
+      ${ctaOptions.map(o=>{
+        const st = ctaState[o.key];
+        return `
+        <div class="card" style="border-style:${st.on?'solid':'dashed'}">
+          <div style="display:flex;align-items:center;gap:10px;justify-content:space-between">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" data-cta="${o.key}" ${st.on?'checked':''}/>
+              <strong>${o.label}</strong>
+            </label>
+          </div>
+          <div style="display:grid;gap:8px;margin-top:10px;opacity:${st.on?1:.6}">
+            <div class="split">
+              <div>
+                <div class="label">Button label</div>
+                <input type="text" data-cta-label="${o.key}" value="${st.btnLabel}">
+              </div>
+              <div>
+                <div class="label">Destination (${o.type==='email'?'email':o.type==='phone'?'phone or tel:': 'URL'})</div>
+                <input type="${o.type==='email'?'email':o.type==='phone'?'text':'url'}" placeholder="${o.placeholder}" data-cta-dest="${o.key}" value="${st.dest}">
+              </div>
+            </div>
+            <div>
+              <div class="label">Short text (appears above buttons)</div>
+              <textarea data-cta-pre="${o.key}" placeholder="${o.preDefault}">${st.pre||''}</textarea>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
 
-/* Upgrade plan buttons */
-document.getElementById('btnUpgradeGrow').addEventListener('click', ()=>{
-  alert('Success! You’ve upgraded to Segwik Grow.');
-  applyUpgradeUI();
-  closeUpgradeScreenWithReturn();
-});
-document.getElementById('btnUpgradePro').addEventListener('click', ()=>{
-  alert('Success! You’ve upgraded to Segwik Pro.');
-  applyUpgradeUI();
-  closeUpgradeScreenWithReturn();
-});
-
-/* Keep company preview live */
-['input','change'].forEach(ev=>{
-  document.getElementById('acct_name')?.addEventListener(ev, syncCompanyPreview);
-  document.getElementById('acct_site')?.addEventListener(ev, syncCompanyPreview);
-});
-
-/* Accessibility: keyboard navigation between steps */
-window.addEventListener('keydown', (e)=>{
-  if(e.key==='ArrowLeft') goTo(idx-1);
-  if(e.key==='ArrowRight') goTo(idx+1);
-});
-
-/* ===== Rich Toolbar actions ===== */
-function exec(cmd, val=null){
-  document.execCommand(cmd, false, val);
+  // Wire up inputs
+  host.querySelectorAll('input[type="checkbox"][data-cta]').forEach(cb=>{
+    cb.addEventListener('change', e=>{
+      const k = e.target.getAttribute('data-cta');
+      ctaState[k].on = e.target.checked;
+      renderCtaBuilder(); // re-render to reflect styles
+      renderMail();
+    });
+  });
+  host.querySelectorAll('input[data-cta-label]').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      const k = e.target.getAttribute('data-cta-label');
+      ctaState[k].btnLabel = e.target.value;
+      renderMail();
+    });
+  });
+  host.querySelectorAll('input[data-cta-dest]').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      const k = e.target.getAttribute('data-cta-dest');
+      ctaState[k].dest = e.target.value.trim();
+      renderMail();
+    });
+  });
+  host.querySelectorAll('textarea[data-cta-pre]').forEach(ta=>{
+    ta.addEventListener('input', e=>{
+      const k = e.target.getAttribute('data-cta-pre');
+      ctaState[k].pre = e.target.value;
+      renderMail();
+    });
+  });
 }
-document.querySelectorAll('#richToolbar .rbtn[data-cmd]').forEach(btn=>{
-  btn.addEventListener('click', ()=>exec(btn.getAttribute('data-cmd')));
+
+/* ---- Email Preview uses CTA builder ---- */
+function renderMail(){
+  const host = document.getElementById('mailPreview');
+  const name = `${safe(S.firstName.value,'[First]')} ${safe(S.lastName.value,'[Last]')}`.trim();
+  const subj = `It’s great to connect, ${safe(S.firstName.value,'there')}!`;
+
+  // Combine pre-texts from active CTAs (unique / filtered)
+  const active = Object.entries(ctaState).filter(([k,v])=>v.on && v.btnLabel && v.dest).map(([k,v])=>({key:k,...v, ...ctaOptions.find(o=>o.key===k)}));
+  const preParagraphs = active.map(a=>a.pre).filter(t=>t&&t.trim()).map(t=>`<p>${t.trim()}</p>`).join('');
+
+  // Build CTA buttons
+  const buttons = active.map(a=>{
+    let href = '#';
+    if(a.type==='link') href = a.dest;
+    if(a.type==='email') href = `mailto:${a.dest}`;
+    if(a.type==='phone') href = `tel:${a.dest.replace(/[^+\d]/g,'')}`;
+    const cls = a.key==='book' ? 'cta blue' : 'cta';
+    return `<a class="${cls}" href="${href}" target="${a.type==='link'?'_blank':'_self'}" rel="noopener">${a.btnLabel}</a>`;
+  }).join('');
+
+  const intro = `
+    <p>Hello ${safe(S.firstName.value,'friend')}, thanks for downloading my vCard — I’m glad we crossed paths.</p>
+    <p><strong>About us:</strong> ${safe(S.company.value,'[Company]')} helps teams simplify operations so they can focus on relationships and growth.</p>
+  `;
+
+  host.innerHTML = `
+    <div class="mail-topbar">
+      <div class="subject">${subj}</div>
+      <div class="row"><span class="p" style="color:#6b7280">from ${safe(S.company.value,'[Company]')}</span></div>
+    </div>
+    <div class="mail-body">
+      ${intro}
+      ${preParagraphs || ''}
+      <p style="margin:12px 0 8px 0"><strong>Next step:</strong></p>
+      <div class="row" style="flex-wrap:wrap;gap:8px">${buttons}</div>
+      <p style="margin-top:14px">— ${name}</p>
+    </div>
+  `;
+}
+
+/* ---- Peek sheet (only steps 1–2) ---- */
+const sheet = document.getElementById('peekProfileSheet');
+const btnClose = document.getElementById('peekProfileClose');
+function togglePeek(show){
+  sheet.classList.toggle('show', !!show);
+  sheet.setAttribute('aria-hidden', show ? 'false' : 'true');
+  if(show) fillPeekFromInputs();
+}
+btnClose.addEventListener('click', ()=>togglePeek(false));
+window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && sheet.classList.contains('show')) togglePeek(false); });
+document.querySelectorAll('[data-peek]').forEach(b=> b.addEventListener('click', ()=>togglePeek(true)));
+
+function peekRow(iconName, text){
+  if(!text) return '';
+  return `<div class="v-demo-row"><span class="icon-pill" aria-hidden="true">${i16(iconName)}</span><span>${text}</span></div>`;
+}
+function fillPeekFromInputs(){
+  const name = `${safe(S.firstName.value,'Your')} ${safe(S.lastName.value,'Name')}`.trim();
+  document.getElementById('peekName').textContent     = name || 'Your Name';
+  document.getElementById('peekCompany').textContent  = safe(S.company.value,'Your Company');
+  document.getElementById('peekTitle').textContent    = safe(S.title.value,'Your Title');
+  document.getElementById('peekHeadline').textContent = safe(S.headline.value,'Your Headline');
+  const bannerDiv = document.getElementById('peekDemoBanner');
+  const photoDiv  = document.getElementById('peekDemoPhoto');
+  if (window.bannerUrl) bannerDiv.style.backgroundImage = `url('${window.bannerUrl}')`; else bannerDiv.style.backgroundImage = '';
+  if (window.photoUrl) { photoDiv.style.backgroundImage = `url('${window.photoUrl}')`; photoDiv.innerHTML = ''; }
+  else { photoDiv.style.backgroundImage = ''; if (!photoDiv.querySelector('svg')) photoDiv.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>'; }
+
+  const peekList = document.getElementById('peekList');
+  const phoneA = safe(S.phoneBiz.value,''), phoneB = safe(S.phonePersonal.value,'');
+  const emailA = safe(S.emailBiz.value,''), emailB = safe(S.emailPersonal.value,'');
+  const website = safe(S.website.value,'');
+  const socialRows = socials.filter(s=>s.url).map(s => peekRow(socialIconKey(s.platform), s.url)).join('');
+  peekList.innerHTML = `
+    ${peekRow('phone', phoneA)}
+    ${peekRow('phone', phoneB)}
+    ${peekRow('mail', emailA)}
+    ${peekRow('mail', emailB)}
+    ${peekRow('link', website)}
+    ${socialRows}
+  `;
+}
+
+/* ---- Live updates ---- */
+function updatePreviews(){
+  renderVcard();
+  if(sheet.classList.contains('show')) fillPeekFromInputs();
+  if(idx===5) renderMail();
+}
+document.addEventListener('input', (e)=>{ if(e.target.closest('.screen')) updatePreviews(); });
+
+/* ---- Actions & upgrade modal ---- */
+const actionDefs = [
+  {key:'email', label:'Send the Contact an Email', locked:false},
+  {key:'text', label:'Send the Contact a Text Message', locked:true},
+  {key:'task', label:'Assign a Task to Me', locked:true},
+  {key:'journey', label:'Add to a Journey', locked:true},
+];
+const chosenActions = new Set(['email']);
+const chipsHost = document.getElementById('actionChips');
+const upg = document.getElementById('upgradeModal');
+document.getElementById('upgClose').addEventListener('click', ()=>upg.classList.remove('show'));
+document.getElementById('upgGo').addEventListener('click', ()=>{ upg.classList.remove('show'); alert('Navigate to pricing'); });
+
+actionDefs.forEach(a=>{
+  const chip = document.createElement('button');
+  chip.className='chip'+(chosenActions.has(a.key)?' active':'');
+  chip.textContent = a.label + (a.locked?' 🔒':'');
+  chip.onclick = ()=>{
+    if(a.locked){ upg.classList.add('show'); return; }
+    if(chosenActions.has(a.key)) chosenActions.delete(a.key); else chosenActions.add(a.key);
+    chip.classList.toggle('active');
+  };
+  chipsHost.appendChild(chip);
 });
-document.getElementById('rtH3').addEventListener('click', ()=>{
-  exec('formatBlock', '<h3>');
-});
-document.getElementById('rtBullets').addEventListener('click', ()=>{
-  exec('insertUnorderedList');
-});
-document.getElementById('rtLink').addEventListener('click', ()=>{
-  const url = prompt('Link URL');
-  if(url) exec('createLink', url);
-});
-document.getElementById('rtClear').addEventListener('click', ()=>{
-  exec('removeFormat');
-});
-document.getElementById('rtSave').addEventListener('click', ()=>{
-  // If editing original autoresponder (no pendingWriteBackCard)
-  const full = document.getElementById('mailFrameFull');
-  const subject = full.querySelector('.subject')?.textContent || '';
-  const bodyHTML = full.querySelector('.mail-body')?.innerHTML || '';
-  if(pendingWriteBackCard){
-    // write back into that follow-up card
-    const s = pendingWriteBackCard.querySelector('.subject');
-    const b = pendingWriteBackCard.querySelector('.mail-body');
-    if(s && subject) s.textContent = subject;
-    if(b && bodyHTML) b.innerHTML = bodyHTML;
-  }else{
-    // write back into main (autoresponder)
-    const main = document.getElementById('mailFrame');
-    if(subject) main.querySelector('.subject').textContent = subject;
-    if(bodyHTML) main.querySelector('.mail-body').innerHTML = bodyHTML;
-    renderEmailCTA();
-  }
-  // close editor
-  pendingWriteBackCard = null;
-  overlay.classList.remove('show','editing');
-  overlay.setAttribute('aria-hidden','true');
-  document.getElementById('richToolbar').classList.remove('show');
-  editModeActive = false;
+document.getElementById('toEmailCfg').addEventListener('click', ()=>{
+  if(!chosenActions.has('email')) { alert('Select Email to continue.'); return; }
+  goTo(5);
 });
 
-/* ===== Initial renders ===== */
-renderEmail();
-renderEmailCTA();
-
-/* Ensure Add Follow-Up opens sheet (pre-upgrade) */
-document.getElementById('btnAddFollowUp')?.addEventListener('click', ()=>{
-  if(!isUpgraded) toggleFollowupSheet(true);
+/* ---- CTA navigation ---- */
+document.getElementById('toEmailPreview')?.addEventListener('click', ()=>{
+  const hasAny = Object.values(ctaState).some(v=>v.on && v.btnLabel && v.dest);
+  if(!hasAny){ alert('Choose at least one CTA and complete its fields.'); return; }
+  goTo(6);
 });
 
-/* NOTE: removed duplicate, conflicting click listener for tp0 toggle.
-   attachToggle(tp0) above is the single source of truth for collapse/expand. */
+/* ---- Misc mocks ---- */
+document.getElementById('changeFrom').addEventListener('click', ()=>alert('Upgrade modal'));
+document.getElementById('sendTest').addEventListener('click', ()=>alert('Mock: Test email sent to your address'));
+document.getElementById('finish').addEventListener('click', ()=>goTo(7));
+document.getElementById('btnPreviewCard').addEventListener('click', ()=>alert('Mock: Opening public vCard link'));
+document.getElementById('btnFillInfo').addEventListener('click', ()=>goTo(1));
+document.getElementById('seeExamples').addEventListener('click', ()=>{ alert('Mock: shows a gallery of sample vCards.'); });
+
+/* initial renders */
+goTo(0);
+renderSocialRows();
+renderCtaBuilder();
+updatePreviews();
 </script>
 </body>
 </html>
+<script>
+/* ========== Carousel / Pager ========== */
+const carousel = document.getElementById('carousel');
+const slides   = Array.from(carousel.children);
+let idx = 0;
+
+function goTo(i){
+  idx = Math.max(0, Math.min(slides.length-1, i));
+  carousel.style.transform = `translateX(-${idx*100}%)`;
+  renderDots(); updateNav();
+  if(idx===2) renderVcard();            // vCard preview step
+  if(phoneModalOpen) renderMail();      // keep phone preview live if open
+}
+function renderDots(){
+  const pager = document.getElementById('pager');
+  pager.innerHTML='';
+  slides.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='dot'+(i===idx?' active':'');
+    d.onclick=()=>goTo(i);
+    pager.appendChild(d);
+  });
+}
+function updateNav(){
+  const back = document.getElementById('backBtn');
+  const next = document.getElementById('nextBtn');
+  back.classList.toggle('ghost', idx===0);
+  next.textContent = idx===slides.length-1 ? 'Done' : 'Next';
+}
+document.getElementById('backBtn').addEventListener('click', ()=>goTo(idx-1));
+document.getElementById('nextBtn').addEventListener('click', ()=>goTo(idx+1));
+document.getElementById('startCard').addEventListener('click', ()=>goTo(1));
+renderDots(); updateNav();
+
+/* ========== Global inputs/state ========== */
+const S = {
+  firstName: document.getElementById('firstName'),
+  lastName : document.getElementById('lastName'),
+  title    : document.getElementById('title'),
+  company  : document.getElementById('company'),
+  headline : document.getElementById('headline'),
+  photo    : document.getElementById('photo'),
+  banner   : document.getElementById('banner'),
+  phoneBiz : document.getElementById('phoneBiz'),
+  phonePersonal: document.getElementById('phonePersonal'),
+  emailBiz : document.getElementById('emailBiz'),
+  emailPersonal: document.getElementById('emailPersonal'),
+  website  : document.getElementById('website'),
+  subject  : document.getElementById('subjectLine'),
+  logo     : document.getElementById('logo'),
+};
+Object.values(S).forEach(el=>{
+  if(!el) return;
+  const ev = (el.tagName==='TEXTAREA' || el.type==='text' || el.type==='email' || el.type==='url') ? 'input' : 'change';
+  el.addEventListener(ev, ()=>{
+    renderVcard();
+    if(el===S.subject) syncPhoneTitle();
+    if(phoneModalOpen) renderMail();
+  });
+});
+
+/* ========== Social builder ========== */
+const socialOptions = [
+  {key:'linkedin_personal', label:'LinkedIn (Personal)'},
+  {key:'linkedin_business', label:'LinkedIn (Business)'},
+  {key:'facebook', label:'Facebook'},
+  {key:'instagram', label:'Instagram'},
+  {key:'pinterest', label:'Pinterest'},
+  {key:'x', label:'X (Twitter)'},
+  {key:'google', label:'Google'},
+  {key:'youtube', label:'YouTube'},
+  {key:'tiktok', label:'TikTok'}
+];
+const socials = [];
+const socialList = document.getElementById('socialList');
+document.getElementById('addSocial').addEventListener('click', ()=>{
+  socials.push({platform:'linkedin_business', url:''});
+  renderSocialRows(); renderVcard(); if(phoneModalOpen) renderMail();
+});
+function renderSocialRows(){
+  socialList.innerHTML='';
+  socials.forEach((row, i)=>{
+    const wrap = document.createElement('div');
+    wrap.className='social-row';
+    wrap.innerHTML = `
+      <select aria-label="Social platform">
+        ${socialOptions.map(o=>`<option value="${o.key}" ${o.key===row.platform?'selected':''}>${o.label}</option>`).join('')}
+      </select>
+      <input type="url" placeholder="https://..." value="${row.url||''}">
+      <button class="remove" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    `;
+    const sel = wrap.querySelector('select');
+    const inp = wrap.querySelector('input');
+    const rm  = wrap.querySelector('button.remove');
+    sel.addEventListener('change', e=>{ socials[i].platform = e.target.value; if(phoneModalOpen) renderMail();});
+    inp.addEventListener('input', e=>{ socials[i].url = e.target.value.trim(); renderVcard(); if(phoneModalOpen) renderMail();});
+    rm.addEventListener('click', ()=>{ socials.splice(i,1); renderSocialRows(); renderVcard(); if(phoneModalOpen) renderMail();});
+    socialList.appendChild(wrap);
+  });
+}
+
+/* ========== Image uploads → data URLs ========== */
+let photoUrl='', bannerUrl='', logoUrl='';
+const photoThumb  = document.getElementById('photoThumb');
+const bannerThumb = document.getElementById('bannerThumb');
+const logoThumb   = document.getElementById('logoThumb');
+
+function readToDataURL(file, cb){ const r=new FileReader(); r.onload=e=>cb(e.target.result); r.readAsDataURL(file); }
+
+S.photo.addEventListener('change', ()=>{
+  const f=S.photo.files?.[0]; if(!f) return;
+  readToDataURL(f, url=>{ photoUrl=url; photoThumb.style.display='block'; photoThumb.style.backgroundImage=`url('${url}')`; renderVcard(); if(phoneModalOpen) renderMail();});
+});
+S.banner.addEventListener('change', ()=>{
+  const f=S.banner.files?.[0]; if(!f) return;
+  readToDataURL(f, url=>{ bannerUrl=url; bannerThumb.style.display='block'; bannerThumb.style.backgroundImage=`url('${url}')`; renderVcard();});
+});
+S.logo?.addEventListener('change', ()=>{
+  const f=S.logo.files?.[0]; if(!f) return;
+  readToDataURL(f, url=>{ logoUrl=url; logoThumb.style.display='block'; logoThumb.style.backgroundImage=`url('${url}')`; if(phoneModalOpen) renderMail();});
+});
+
+/* ========== Icons & helpers ========== */
+function i16(name){
+  switch(name){
+    case 'phone': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2 4.1 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.12.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.5-1.1a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6A2 2 0 0 1 22 16.9z"/></svg>`;
+    case 'mail':  return `<svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>`;
+    case 'link':  return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l1-1a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-1 1"/></svg>`;
+    case 'linkedin': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 4h4v16H4z"/><circle cx="6" cy="3" r="1"/><path d="M10 8h4v2a4 4 0 0 1 8 0v10h-4V12a2 2 0 0 0-4 0v8h-4z"/></svg>`;
+    case 'youtube':  return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M22 12s0-3-0.4-4.5A3 3 0 0 0 19.5 5C17.3 4.8 12 4.8 12 4.8s-5.3 0-7.5.2A3 3 0 0 0 2.4 7.5C2 9 2 12 2 12s0 3 .4 4.5A3 3 0 0 0 4.5 19c2.2.2 7.5.2 7.5.2s5.3 0 7.5-.2a3 3 0 0 0 2.1-2.5C22 15 22 12 22 12z"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg>`;
+    case 'x':        return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg>`;
+    case 'instagram':return `<svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1"/></svg>`;
+    case 'facebook': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M18 2h-3a4 4 0 0 0-4 4v3H8v4h3v9h4v-9h3l1-4h-4V6a1 1 0 0 1 1-1h3z"/></svg>`;
+    case 'pinterest':return `<svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 20c.5-4 2-7 2-9s-1.5-3-3-3-3 1.2-3 3c0 1.2.6 2.3 1.8 2.6"/></svg>`;
+    case 'google':   return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M21 12h-9M3 12a9 9 0 1 0 0 0"/></svg>`;
+    case 'tiktok':   return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M9 7v9a4 4 0 1 0 4-4"/></svg>`;
+  }
+}
+function socialIconKey(p){ if(p.startsWith('linkedin')) return 'linkedin'; return ({facebook:'facebook',instagram:'instagram',pinterest:'pinterest',x:'x',google:'google',youtube:'youtube',tiktok:'tiktok'})[p]||'link'; }
+function safe(v,fallback=''){ return (v||'').trim()||fallback; }
+function vRow(iconHtml, text, href){
+  if(!text) return '';
+  const content = href ? `<a href="${href}" target="_blank" rel="noopener">${text}</a>` : text;
+  return `<div class="v-row"><div class="ico">${iconHtml}</div><div>${content}</div></div>`;
+}
+function oxfordList(arr){
+  if(arr.length<=1) return arr.join('');
+  if(arr.length===2) return `${arr[0]} and ${arr[1]}`;
+  return `${arr.slice(0,-1).join(', ')}, and ${arr[arr.length-1]}`;
+}
+
+/* ========== vCard Preview (steps 2–3) ========== */
+function renderVcard(){
+  const host = document.getElementById('vcardPreview');
+  if(!host) return;
+
+  const name = `${safe(S.firstName.value,'[First]')} ${safe(S.lastName.value,'[Last]')}`.trim();
+  const title = safe(S.title.value,'[Title]');
+  const company = safe(S.company.value,'[Company]');
+  const headline = safe(S.headline.value,'');
+  const banner  = bannerUrl || 'https://images.unsplash.com/photo-1551817958-d33c6c9f24a1?q=80&w=1200&auto=format&fit=crop';
+  const hasPhoto = !!photoUrl;
+  const phone1 = safe(S.phoneBiz.value,''), phone2 = safe(S.phonePersonal.value,'');
+  const email1 = safe(S.emailBiz.value,''), email2 = safe(S.emailPersonal.value,'');
+  const website = safe(S.website.value,'');
+  const socialValid = socials.filter(s=>s.url);
+
+  host.innerHTML = `
+    <div class="v-banner" style="background-image:url('${banner}')">
+      <div class="v-save"><button class="btn blue">Save Contact</button></div>
+    </div>
+    <div class="v-head">
+      ${hasPhoto?`<div class="v-photo" style="background-image:url('${photoUrl}')"></div>`:''}
+      <div>
+        <div class="v-name">${name}</div>
+        <div class="v-company">${company}</div>
+        <div class="v-headline"><strong>${title}</strong>${headline?` — ${headline}`:''}</div>
+      </div>
+    </div>
+    <div class="v-list">
+      ${vRow(i16('phone'), phone1, phone1?`tel:${phone1.replace(/[^+\d]/g,'')}`:null)}
+      ${vRow(i16('phone'), phone2, phone2?`tel:${phone2.replace(/[^+\d]/g,'')}`:null)}
+      ${vRow(i16('mail'), email1, email1?`mailto:${email1}`:null)}
+      ${vRow(i16('mail'), email2, email2?`mailto:${email2}`:null)}
+      ${vRow(i16('link'), website, website||null)}
+      ${socialValid.map(s=>vRow(i16(socialIconKey(s.platform)), s.url, s.url)).join('')}
+    </div>
+  `;
+
+  // completion rules
+  const haveName = !!(S.firstName.value && S.lastName.value);
+  const haveOneEmail = !!(S.emailBiz.value || S.emailPersonal.value);
+  const haveOnePhone = !!(S.phoneBiz.value || S.phonePersonal.value);
+  const haveImages = !!(photoUrl && bannerUrl);
+  const haveHeadline = !!S.headline.value;
+  const haveTitle = !!S.title.value;
+  const haveOneLink = !!(S.website.value || socialValid.length>0);
+
+  const missing = [];
+  if(!haveName) missing.push('first & last name');
+  if(!haveOnePhone) missing.push('at least one phone');
+  if(!haveOneEmail) missing.push('at least one email');
+  if(!photoUrl) missing.push('headshot');
+  if(!bannerUrl) missing.push('background image');
+  if(!haveTitle) missing.push('title/role');
+  if(!haveHeadline) missing.push('headline');
+  if(!haveOneLink) missing.push('website or at least one social link');
+
+  const complete = missing.length===0;
+  const status = complete
+    ? `✅ <span class="ok">Your digital card is complete</span>`
+    : `⚠️ <span class="warn">Your digital card isn’t complete yet</span> — please add ${oxfordList(missing)}.`;
+  document.getElementById('cardStatus').innerHTML = status;
+
+  const fillBtn = document.getElementById('btnFillInfo');
+  if(fillBtn) fillBtn.style.display = complete ? 'none' : 'inline-flex';
+
+  const sum = document.getElementById('sumCard');
+  if(sum) sum.textContent = complete ? 'Digital card complete' : 'Digital card incomplete';
+}
+
+/* ========== vCard peek sheet (Steps 1–3) ========== */
+const sheet = document.getElementById('peekProfileSheet');
+const btnClose = document.getElementById('peekProfileClose');
+function togglePeek(show){
+  sheet.classList.toggle('show', !!show);
+  sheet.setAttribute('aria-hidden', show ? 'false' : 'true');
+  if(show) fillPeekFromInputs();
+}
+btnClose.addEventListener('click', ()=>togglePeek(false));
+window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && sheet.classList.contains('show')) togglePeek(false); });
+document.querySelectorAll('[data-peek]').forEach(b=> b.addEventListener('click', ()=>togglePeek(true)));
+
+function peekRow(iconName, text){
+  if(!text) return '';
+  return `<div class="v-row"><div class="ico">${i16(iconName)}</div><div>${text}</div></div>`;
+}
+function fillPeekFromInputs(){
+  document.getElementById('peekName').textContent     = `${safe(S.firstName.value,'Your')} ${safe(S.lastName.value,'Name')}`.trim();
+  document.getElementById('peekCompany').textContent  = safe(S.company.value,'Your Company');
+  document.getElementById('peekTitle').textContent    = safe(S.title.value,'Your Title');
+  document.getElementById('peekHeadline').textContent = safe(S.headline.value,'Your Headline');
+
+  const bannerDiv = document.getElementById('peekDemoBanner');
+  const photoDiv  = document.getElementById('peekDemoPhoto');
+  bannerDiv.style.backgroundImage = bannerUrl ? `url('${bannerUrl}')` : '';
+  if(photoUrl){ photoDiv.style.backgroundImage=`url('${photoUrl}')`; photoDiv.innerHTML=''; }
+  else { photoDiv.style.backgroundImage=''; if(!photoDiv.querySelector('svg')) photoDiv.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>'; }
+
+  const phoneA = safe(S.phoneBiz.value,''), phoneB = safe(S.phonePersonal.value,'');
+  const emailA = safe(S.emailBiz.value,''), emailB = safe(S.emailPersonal.value,'');
+  const website = safe(S.website.value,'');
+  const socialRows = socials.filter(s=>s.url).map(s=>peekRow(socialIconKey(s.platform), s.url)).join('');
+  document.getElementById('peekList').innerHTML = `
+    ${peekRow('phone', phoneA)}
+    ${peekRow('phone', phoneB)}
+    ${peekRow('mail', emailA)}
+    ${peekRow('mail', emailB)}
+    ${peekRow('link', website)}
+    ${socialRows}
+  `;
+}
+
+/* ========== Upgrade modal (reused) ========== */
+const upg = document.getElementById('upgradeModal');
+document.getElementById('upgClose').addEventListener('click', ()=>upg.classList.remove('show'));
+document.getElementById('upgGo').addEventListener('click', ()=>{ upg.classList.remove('show'); alert('Navigate to pricing'); });
+
+/* ========== Actions (phase 2) ========== */
+const actionDefs = [
+  {key:'email', label:'Send the Contact an Email', locked:false},
+  {key:'text', label:'Send the Contact a Text Message', locked:true},
+  {key:'task', label:'Assign a Task to Me', locked:true},
+  {key:'journey', label:'Add to a Journey', locked:true},
+];
+const chosenActions = new Set(['email']);
+const chipsHost = document.getElementById('actionChips');
+actionDefs.forEach(a=>{
+  const chip = document.createElement('button');
+  chip.className='chip'+(chosenActions.has(a.key)?' active':'');
+  chip.textContent = a.label + (a.locked?' 🔒':'');
+  chip.onclick = ()=>{
+    if(a.locked){ upg.classList.add('show'); return; }
+    if(chosenActions.has(a.key)) chosenActions.delete(a.key); else chosenActions.add(a.key);
+    chip.classList.toggle('active');
+  };
+  chipsHost.appendChild(chip);
+});
+document.getElementById('toEmailCfg').addEventListener('click', ()=>{
+  if(!chosenActions.has('email')){ alert('Select Email to continue.'); return; }
+  goTo(5);
+});
+
+/* ========== CTA Builder (single-select) ========== */
+const ctaOptions = [
+  {key:'book', label:'Book a Time', type:'link',  labelDefault:'Book a Meeting',     placeholder:'https://cal.com/yourname',         preDefault:'Grab a spot on my calendar:'},
+  {key:'email',label:'Send an Email',type:'email', labelDefault:'Email Me',           placeholder:'you@company.com',                 preDefault:'Prefer email?'},
+  {key:'call', label:'Call You',     type:'phone', labelDefault:'Call Me',            placeholder:'+1 (555) 123-4567',               preDefault:'Or reach me directly:'},
+  {key:'resources',label:'View Free Resources',type:'link',labelDefault:'See Free Resources', placeholder:'https://yourdomain.com/resources', preDefault:'Here are a few free resources:'}
+];
+const ctaState = {}; ctaOptions.forEach(o=>ctaState[o.key]={on:false,btnLabel:o.labelDefault,dest:'',pre:o.preDefault});
+
+function renderCtaBuilder(){
+  const host = document.getElementById('ctaBuilder');
+  host.innerHTML = `
+    <div class="label">Choose your call-to-action button</div>
+    <div style="display:grid;gap:10px">
+      ${ctaOptions.map(o=>{
+        const st=ctaState[o.key];
+        return `
+          <div class="card" style="border-style:${st.on?'solid':'dashed'}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" data-cta="${o.key}" ${st.on?'checked':''}/> <strong>${o.label}</strong>
+              </label>
+            </div>
+            <div style="display:grid;gap:8px;margin-top:10px;opacity:${st.on?1:.6}">
+              <div class="split">
+                <div>
+                  <div class="label">Button label</div>
+                  <input type="text" data-cta-label="${o.key}" value="${st.btnLabel}">
+                </div>
+                <div>
+                  <div class="label">Destination (${o.type==='email'?'email':o.type==='phone'?'phone or tel:': 'URL'})</div>
+                  <input type="${o.type==='email'?'email':o.type==='phone'?'text':'url'}" placeholder="${o.placeholder}" data-cta-dest="${o.key}" value="${st.dest}">
+                </div>
+              </div>
+              <div>
+                <div class="label">Short text (appears above button)</div>
+                <textarea data-cta-pre="${o.key}" placeholder="${o.preDefault}">${st.pre||''}</textarea>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+  host.querySelectorAll('input[type="checkbox"][data-cta]').forEach(cb=>{
+    cb.addEventListener('change', e=>{
+      const key = e.target.getAttribute('data-cta');
+      const anotherOn = Object.entries(ctaState).some(([k,v])=>v.on && k!==key);
+      if(e.target.checked && anotherOn){
+        e.target.checked = false;
+        upg.classList.add('show');            // gating multiple CTAs
+        return;
+      }
+      ctaState[key].on = e.target.checked;
+      renderCtaBuilder();
+    });
+  });
+  host.querySelectorAll('input[data-cta-label]').forEach(inp=>{
+    inp.addEventListener('input', e=>{ ctaState[e.target.getAttribute('data-cta-label')].btnLabel = e.target.value; });
+  });
+  host.querySelectorAll('input[data-cta-dest]').forEach(inp=>{
+    inp.addEventListener('input', e=>{ ctaState[e.target.getAttribute('data-cta-dest')].dest = e.target.value.trim(); });
+  });
+  host.querySelectorAll('textarea[data-cta-pre]').forEach(ta=>{
+    ta.addEventListener('input', e=>{ ctaState[e.target.getAttribute('data-cta-pre')].pre = e.target.value; });
+  });
+}
+renderCtaBuilder();
+
+document.getElementById('toPersonality').addEventListener('click', ()=>{
+  const one = Object.values(ctaState).filter(v=>v.on).length===1;
+  const done = Object.values(ctaState).some(v=>v.on && v.btnLabel && v.dest);
+  if(!one){ alert('Choose exactly one CTA.'); return; }
+  if(!done){ alert('Fill out the selected CTA fields.'); return; }
+  goTo(6);
+});
+
+/* ========== Brand Personality ========== */
+const personas = [
+  {key:'professional', label:'Professional & Clear'},
+  {key:'friendly',     label:'Friendly & Warm'},
+  {key:'bold',         label:'Bold & Energetic'},
+  {key:'thoughtful',   label:'Thoughtful & Consultative'}
+];
+let chosenPersona = 'professional';
+function renderPersona(){
+  const host = document.getElementById('personaPicker');
+  host.innerHTML = `
+    <div class="chips" role="listbox" aria-label="Brand personality">
+      ${personas.map(p=>`<button class="chip ${chosenPersona===p.key?'active':''}" data-persona="${p.key}">${p.label}</button>`).join('')}
+    </div>
+  `;
+  host.querySelectorAll('[data-persona]').forEach(b=>{
+    b.addEventListener('click', e=>{
+      chosenPersona = e.target.getAttribute('data-persona');
+      renderPersona();
+    });
+  });
+}
+renderPersona();
+document.getElementById('toContent').addEventListener('click', ()=>goTo(7));
+
+/* ========== AI Generate (dummy) ========== */
+const overlay = document.getElementById('aiOverlay');
+const coOverview = document.getElementById('coOverview');
+const coMission  = document.getElementById('coMission');
+const coValues   = document.getElementById('coValues');
+const coDiff     = document.getElementById('coDiff');
+
+const DUMMY = {
+  professional: [
+    {overview:"Segwik is a human-centered Relationship Operating System that unifies contacts, communication, and workflows so small teams can build consistent, revenue-driving relationships.",
+     mission:"To remove operational friction so people can spend more time with customers and less time managing tools.",
+     values:"Clarity • Reliability • Customer Empathy • Continuous Improvement",
+     diff:"An all-in-one, AI-assisted workspace that replaces scattered tools with one streamlined system."},
+    {overview:"We turn scattered pipelines into a single, clear workflow that scales from solopreneurs to growing teams.",
+     mission:"Help ambitious businesses communicate faster, follow up smarter, and never drop the ball.",
+     values:"Focus • Speed • Accountability • Simplicity",
+     diff:"Built-in automations and sensible defaults so adoption is instant—not a six-month project."}
+  ],
+  friendly: [
+    {overview:"Segwik helps you keep every convo, task, and relationship in one friendly home—so follow-up finally feels easy.",
+     mission:"Make growing your business feel human again.",
+     values:"Kindness • Transparency • Helpfulness • Joy",
+     diff:"Playful, practical tools that work out of the box—even if you hate CRMs."},
+    {overview:"Think of us as your team’s shared brain for customers—organized, calm, and on your side.",
+     mission:"Give you back time for the people who matter most.",
+     values:"Care • Curiosity • Respect • Reliability",
+     diff:"Smart nudges and templates that turn ‘I’ll get to it’ into ‘Done.’"}
+  ],
+  bold: [
+    {overview:"Segwik is the command center for relationships—cutting noise, speeding action, and growing revenue.",
+     mission:"Destroy busywork. Supercharge follow-up.",
+     values:"Ownership • Momentum • Candor • Craft",
+     diff:"Lightning-fast automations and a clean UI that ship wins on day one."},
+    {overview:"We arm scrappy teams with enterprise-grade horsepower—minus the bloat.",
+     mission:"Turn every touchpoint into traction.",
+     values:"Speed • Grit • Clarity • Results",
+     diff:"Opinionated defaults and AI assistance that keep you in flow."}
+  ],
+  thoughtful: [
+    {overview:"Segwik brings structure to relationship-building with unobtrusive automation and clear, shared context.",
+     mission:"Elevate the quality and consistency of every customer interaction.",
+     values:"Empathy • Rigor • Stewardship • Learning",
+     diff:"A pragmatic platform that meets teams where they are and grows with them."},
+    {overview:"We help teams replace tool overload with an integrated, intentional system for growth.",
+     mission:"Support better decisions through better information.",
+     values:"Clarity • Trust • Craft • Service",
+     diff:"Human-centered design paired with just-right automation."}
+  ]
+};
+let dummyIdx=0;
+function fillFromDummy(){
+  const set = DUMMY[chosenPersona][dummyIdx % DUMMY[chosenPersona].length];
+  coOverview.value=set.overview; coMission.value=set.mission; coValues.value=set.values; coDiff.value=set.diff; dummyIdx++;
+}
+function withLoader(fn){ overlay.classList.add('show'); setTimeout(()=>{ fn(); overlay.classList.remove('show'); if(phoneModalOpen) renderMail(); }, 900); }
+document.getElementById('genAI').addEventListener('click', ()=>withLoader(fillFromDummy));
+document.getElementById('regenAI').addEventListener('click', ()=>withLoader(fillFromDummy));
+
+/* ========== Subject / Logo step nav ========== */
+document.getElementById('toLogo').addEventListener('click', ()=>goTo(8));
+document.getElementById('finish').addEventListener('click', ()=>goTo(9));
+
+/* ========== Phone-styled Email Preview ========== */
+let phoneModalOpen = false;
+const phoneModal = document.getElementById('phonePreview');
+function togglePhone(show){
+  phoneModal.classList.toggle('show', !!show);
+  phoneModal.setAttribute('aria-hidden', show ? 'false' : 'true');
+  phoneModalOpen = !!show;
+  if(show) { syncPhoneTitle(); renderMail(); }
+}
+document.getElementById('phoneClose').addEventListener('click', ()=>togglePhone(false));
+document.getElementById('peekEmail1').addEventListener('click', ()=>togglePhone(true));
+document.getElementById('peekEmail2').addEventListener('click', ()=>togglePhone(true));
+
+function syncPhoneTitle(){ document.getElementById('phoneTitle').textContent = safe(S.subject.value, "It’s great to be connected!"); }
+
+function activeCTA(){
+  const entry = Object.entries(ctaState).find(([k,v])=>v.on && v.btnLabel && v.dest);
+  if(!entry) return null;
+  const [k,v]=entry; const def = ctaOptions.find(o=>o.key===k);
+  return {key:k, ...def, ...v};
+}
+function socialButtons(){
+  return socials.filter(s=>s.url).map(s=>{
+    const key=socialIconKey(s.platform);
+    return `<a href="${s.url}" target="_blank" rel="noopener" aria-label="${key}">${i16(key)}</a>`;
+  }).join('');
+}
+function buildCTA(a){
+  if(!a) return '';
+  let href='#', target='_self';
+  if(a.type==='link'){ href=a.dest; target='_blank';}
+  if(a.type==='email'){ href=`mailto:${a.dest}`;}
+  if(a.type==='phone'){ href=`tel:${a.dest.replace(/[^+\d]/g,'')}`;}
+  const pre = a.pre ? `<p>${a.pre}</p>` : '';
+  const cls = a.key==='book' ? 'cta blue' : 'cta';
+  return `${pre}<div style="margin:8px 0 12px 0"><a class="${cls}" href="${href}" target="${target}" rel="noopener">${a.btnLabel}</a></div>`;
+}
+function renderMail(){
+  const host = document.getElementById('mailPreview');
+  const subj = safe(S.subject.value, "It’s great to be connected!");
+  const a = activeCTA();
+  const logo = logoUrl ? `<div style="text-align:center;margin-bottom:10px"><img src="${logoUrl}" alt="logo" style="max-width:160px;max-height:60px;object-fit:contain"/></div>` : '';
+
+  const signature = `
+    <div class="sig">
+      ${photoUrl?`<img src="${photoUrl}" alt="headshot">`:''}
+      <div class="meta">
+        <div class="name">${safe(S.firstName.value,'[First]')} ${safe(S.lastName.value,'[Last]')}</div>
+        <div>${safe(S.company.value,'[Company]')}</div>
+        ${safe(S.emailBiz.value,'')?`<div>${S.emailBiz.value}</div>`:''}
+        ${safe(S.phoneBiz.value,'')?`<div>${S.phoneBiz.value}</div>`:''}
+        ${socials.length?`<div class="socials">${socialButtons()}</div>`:''}
+      </div>
+    </div>`;
+
+  host.innerHTML = `
+    <div class="mail-topbar"><div class="subject">${subj}</div></div>
+    <div class="mail-body">
+      ${logo}
+      <p>Hello [firstname], thanks for downloading my digital business card — I’m excited we crossed paths. Let me introduce myself a bit more:</p>
+
+      <p style="font-weight:800;margin-top:12px">About My Business</p>
+      <p>${safe(coOverview.value,'[company_overview]')}</p>
+
+      <p style="font-weight:800;margin-top:12px">What Drives Us</p>
+      <p>${safe(coMission.value,'[mission_statement]')}</p>
+
+      <p style="font-weight:800;margin-top:12px">What Makes Us Different</p>
+      <p>${safe(coDiff.value,'[organization_values]')}</p>
+
+      <p style="font-weight:800;margin-top:12px">Our Core Values</p>
+      <p>${safe(coValues.value,'[differentiating_propositions]')}</p>
+
+      ${buildCTA(a)}
+      ${signature}
+    </div>
+  `;
+}
+
+/* ========== Buttons & misc mocks ========== */
+document.getElementById('btnPreviewCard').addEventListener('click', ()=>alert('Mock: Opening public vCard link'));
+document.getElementById('btnFillInfo').addEventListener('click', ()=>goTo(1));
+document.getElementById('seeExamples').addEventListener('click', ()=>alert('Mock: shows a gallery of sample vCards.'));
+
+/* ========== Summary Toggle ========== */
+const toggle = document.getElementById('toggle');
+toggle.addEventListener('click', ()=>{
+  const on = toggle.classList.toggle('on');
+  toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+  alert(on ? 'Journey activated' : 'Journey deactivated');
+});
+
+/* ========== Init ========== */
+renderSocialRows();
+renderVcard();
+syncPhoneTitle();
+</script>

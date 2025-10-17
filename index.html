@@ -121,6 +121,58 @@
   .switch.on{background:var(--green);border-color:var(--green)}
   .knob{position:absolute;top:3px;left:3px;width:24px;height:24px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.18s ease}
   .switch.on .knob{left:29px}
+  /* ==== Peek sheet (exact style from your reference) ==== */
+.peeksheet-wrap{ position:absolute; inset:0; background:rgba(15,45,86,.28); display:none; align-items:flex-end; z-index:2000; }
+.peeksheet-wrap.show{ display:flex; }
+.peeksheet{
+  width:100%; height:calc(100% - 6px); max-height:100%;
+  background:#fff; border-top:1px solid var(--line);
+  border-radius:24px 24px 0 0; box-shadow:var(--shadow);
+  padding:0; display:flex; flex-direction:column;
+  transform:translateY(100%); animation:peekSlideUp .25s ease forwards;
+}
+@keyframes peekSlideUp{ to{ transform:translateY(0) } }
+.peeksheet-top{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:14px 16px; border-bottom:1px solid var(--line); background:#fff;
+  position:sticky; top:0; z-index:1;
+}
+.peeksheet-title{ font-weight:900; color:var(--accent); }
+.peeksheet-close{
+  appearance:none; border:0; background:#f8fafc; border:1px solid var(--line);
+  border-radius:10px; padding:6px 10px; cursor:pointer; font-size:18px; line-height:1;
+}
+.peeksheet-body{ flex:1; overflow:auto; -webkit-overflow-scrolling:touch; padding:14px 16px 22px; }
+
+/* Demo vCard inside the sheet (exact look) */
+.vcard-demo{ width:100%; border:1px solid #e6ebf2; border-radius:18px; overflow:hidden; background:#fff; box-shadow:var(--shadow); }
+.v-demo-banner{ height:180px; background:#eef2f7; background-size:cover; background-position:center; }
+.v-demo-headrow{ display:flex; align-items:flex-end; gap:12px; padding:18px 14px 8px; }
+.v-demo-photo{
+  width:84px; height:84px; border-radius:50%; border:3px solid #fff;
+  background:#e9edf3; display:grid; place-items:center; color:#9aa4b2;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  background-size:cover; background-position:center;
+}
+.v-demo-photo svg{ width:30px; height:30px; }
+.v-demo-save{
+  margin-left:auto; margin-bottom:6px; appearance:none; border:0;
+  background:#2563eb; color:#fff; padding:10px 14px; border-radius:14px; font-weight:800;
+}
+.v-demo-id{ line-height:1.45; padding:0 14px 10px; }
+.v-demo-name{ font-weight:900; font-size:20px; color:#0b1220; }
+.v-demo-company{ color:#263043; font-weight:700; }
+.v-demo-title{ color:#111827; font-weight:800; }
+.v-demo-headline{ color:#6b7280; }
+
+.v-demo-list{ padding:10px 14px 18px; display:grid; gap:14px; }
+.v-demo-row{ display:flex; gap:10px; align-items:center; color:#1f2937; }
+.icon-pill{ width:28px; height:28px; border-radius:50%; background:#000; display:grid; place-items:center; }
+.icon-pill svg{ width:14px; height:14px; stroke:#fff; fill:none; stroke-width:2; }
+
+/* Buttons that open the sheet */
+.peek-trigger{ display:inline-flex; align-self:flex-end; }
+
 </style>
 </head>
 <body>
@@ -1092,6 +1144,112 @@ goTo(0);
 renderSocialRows();
 renderCtaBuilder();
 updatePreviews();
+
+// ===== Restore the "Where will this appear?" behavior (reference-accurate) =====
+(function(){
+  // Prevent double wiring if scripts are concatenated
+  if (window.__seg_peek_wired) return;
+  window.__seg_peek_wired = true;
+
+  const sheet = document.getElementById('peekProfileSheet');
+  const btnClose = document.getElementById('peekProfileClose');
+
+  // Access your existing state/inputs
+  const S = {
+    firstName: document.getElementById('firstName'),
+    lastName : document.getElementById('lastName'),
+    title    : document.getElementById('title'),
+    company  : document.getElementById('company'),
+    headline : document.getElementById('headline'),
+    phoneBiz : document.getElementById('phoneBiz'),
+    phonePersonal: document.getElementById('phonePersonal'),
+    emailBiz : document.getElementById('emailBiz'),
+    emailPersonal: document.getElementById('emailPersonal'),
+    website  : document.getElementById('website'),
+  };
+
+  // Socials array is defined in your current code; reuse it if present
+  const socialsRef = (typeof socials !== 'undefined') ? socials : [];
+
+  // Use window.photoUrl / window.bannerUrl as in your current file
+  function safe(v,fallback=''){ return (v||'').trim()||fallback; }
+  function socialIconKey(platform){
+    if(platform && platform.startsWith('linkedin')) return 'linkedin';
+    const map = { facebook:'facebook', instagram:'instagram', pinterest:'pinterest', x:'x', google:'google', youtube:'youtube', tiktok:'tiktok' };
+    return map[platform] || 'link';
+  }
+  function peekRow(iconName, text){
+    if(!text) return '';
+    return `<div class="v-demo-row"><span class="icon-pill" aria-hidden="true">${i16(iconName)}</span><span>${text}</span></div>`;
+  }
+
+  function fillPeekFromInputs(){
+    const name = `${safe(S.firstName?.value,'Your')} ${safe(S.lastName?.value,'Name')}`.trim();
+    document.getElementById('peekName').textContent     = name || 'Your Name';
+    document.getElementById('peekCompany').textContent  = safe(S.company?.value,'Your Company');
+    document.getElementById('peekTitle').textContent    = safe(S.title?.value,'Your Title');
+    document.getElementById('peekHeadline').textContent = safe(S.headline?.value,'Your Headline');
+
+    const bannerDiv = document.getElementById('peekDemoBanner');
+    const photoDiv  = document.getElementById('peekDemoPhoto');
+
+    // Banner
+    if (window.bannerUrl) bannerDiv.style.backgroundImage = `url('${window.bannerUrl}')`;
+    else bannerDiv.style.backgroundImage = '';
+
+    // Photo (either show image or the placeholder icon)
+    if (window.photoUrl) {
+      photoDiv.style.backgroundImage = `url('${window.photoUrl}')`;
+      photoDiv.innerHTML = '';
+    } else {
+      photoDiv.style.backgroundImage = '';
+      if (!photoDiv.querySelector('svg')) {
+        photoDiv.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>';
+      }
+    }
+
+    // Contacts + socials
+    const phoneA = safe(S.phoneBiz?.value,''), phoneB = safe(S.phonePersonal?.value,'');
+    const emailA = safe(S.emailBiz?.value,''), emailB = safe(S.emailPersonal?.value,'');
+    const website = safe(S.website?.value,'');
+    const socialRows = socialsRef
+      .filter(s=>s.url)
+      .map(s => peekRow(socialIconKey(s.platform), s.url))
+      .join('');
+
+    document.getElementById('peekList').innerHTML = `
+      ${peekRow('phone', phoneA)}
+      ${peekRow('phone', phoneB)}
+      ${peekRow('mail',  emailA)}
+      ${peekRow('mail',  emailB)}
+      ${peekRow('link',  website)}
+      ${socialRows}
+    `;
+  }
+
+  function togglePeek(show){
+    sheet.classList.toggle('show', !!show);
+    sheet.setAttribute('aria-hidden', show ? 'false' : 'true');
+    if (show) fillPeekFromInputs();
+  }
+
+  // Open/close events
+  btnClose?.addEventListener('click', ()=>togglePeek(false));
+  window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && sheet.classList.contains('show')) togglePeek(false); });
+  document.querySelectorAll('[data-peek]').forEach(btn => btn.addEventListener('click', ()=>togglePeek(true)));
+
+  // Live updates while open (matches “Edits update live” in your reference)
+  document.addEventListener('input', (e)=>{
+    if (sheet.classList.contains('show') && e.target.closest('.screen')) {
+      fillPeekFromInputs();
+    }
+  });
+
+  // Click the dim background to close (already in your HTML via onclick guard)
+  window.togglePeek = togglePeek;               // expose (optional)
+  window.fillPeekFromInputs = fillPeekFromInputs;
+})();
+
 </script>
 </body>
 </html>

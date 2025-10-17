@@ -255,6 +255,9 @@
 /* "+ Add more follow-ups" link (reuse same style as others) */
 .add-template:hover{ text-decoration:underline; }
 
+.label {
+  font-weight: 400; /* normal weight, not bold */
+}
 
 
 </style>
@@ -300,26 +303,26 @@
               <div class="split">
                 <div>
                   <div class="label">First Name</div>
-                  <input id="firstName" type="text" placeholder="Pete">
+                  <input id="firstName" type="text" placeholder="">
                 </div>
                 <div>
                   <div class="label">Last Name</div>
-                  <input id="lastName" type="text" placeholder="Romano">
+                  <input id="lastName" type="text" placeholder="">
                 </div>
               </div>
               <div class="split" style="margin-top:10px">
                 <div>
                   <div class="label">Title / Role</div>
-                  <input id="title" type="text" placeholder="Founder">
+                  <input id="title" type="text" placeholder="">
                 </div>
                 <div>
                   <div class="label">Company Name</div>
-                  <input id="company" type="text" placeholder="Segwik">
+                  <input id="company" type="text" placeholder="">
                 </div>
               </div>
               <div style="margin-top:10px">
                 <div class="label">Headline</div>
-                <input id="headline" type="text" placeholder="Freeing Businesses of Mundane and Repetitive Tasks">
+                <input id="headline" type="text" placeholder="">
               </div>
             </div>
 
@@ -357,17 +360,17 @@
             <div class="card">
               <div class="label">Phones</div>
               <div class="split">
-                <div><input id="phoneBiz" type="text" placeholder="Business (555) 123-4567"></div>
-                <div><input id="phonePersonal" type="text" placeholder="Personal (555) 987-6543"></div>
+                <div><input id="phoneBiz" type="text" placeholder="Business Phone"></div>
+                <div><input id="phonePersonal" type="text" placeholder="Personal Phone"></div>
               </div>
               <div class="label" style="margin-top:10px">Emails</div>
               <div class="split">
-                <div><input id="emailBiz" type="email" placeholder="business@company.com"></div>
-                <div><input id="emailPersonal" type="email" placeholder="personal@email.com"></div>
+                <div><input id="emailBiz" type="email" placeholder="Business Email"></div>
+                <div><input id="emailPersonal" type="email" placeholder="Personal Email"></div>
               </div>
               <div style="margin-top:10px">
                 <div class="label">Website</div>
-                <input id="website" type="url" placeholder="https://www.segwik.com">
+                <input id="website" type="url" placeholder="https://">
               </div>
             </div>
 
@@ -1251,10 +1254,10 @@ document.getElementById('addTemplateLocked')?.addEventListener('click', ()=>{
 
 /* ========= CTA Builder (single-select gating) ========= */
 const ctaOptions = [
-  {key:'book', label:'Book a Time', type:'link',  labelDefault:'Book a Meeting',     placeholder:'https://cal.com/yourname',         preDefault:'Grab a spot on my calendar:'},
+  {key:'book', label:'Book a Time', type:'link',  labelDefault:'Book a Meeting',     placeholder:'https://',         preDefault:'Grab a spot on my calendar:'},
   {key:'email',label:'Send an Email',type:'email', labelDefault:'Email Me',           placeholder:'you@company.com',                 preDefault:'Prefer email?'},
-  {key:'call', label:'Call You',     type:'phone', labelDefault:'Call Me',            placeholder:'+1 (555) 123-4567',               preDefault:'Or reach me directly:'},
-  {key:'resources',label:'View Free Resources',type:'link',labelDefault:'See Free Resources', placeholder:'https://yourdomain.com/resources', preDefault:'Here are a few free resources:'}
+  {key:'call', label:'Call You',     type:'phone', labelDefault:'Call Me',            placeholder:'+1 ',               preDefault:'Or reach me directly:'},
+  {key:'resources',label:'View Free Resources',type:'link',labelDefault:'See Free Resources', placeholder:'https://', preDefault:'Here are a few free resources:'}
 ];
 const ctaState = {}; ctaOptions.forEach(o=>ctaState[o.key]={on:false,btnLabel:o.labelDefault,dest:'',pre:o.preDefault});
 

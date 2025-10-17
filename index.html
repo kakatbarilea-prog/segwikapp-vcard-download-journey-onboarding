@@ -31,6 +31,35 @@
   .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-weight:700;cursor:pointer}
   .chip.active{background:#eff6ff;border-color:#c7d2fe}
 
+  /* ==== Brand Personality (new UI) ==== */
+.group{display:flex;flex-direction:column;gap:8px}
+.group h3{margin:0;font-size:14px;color:var(--accent);font-weight:900}
+.group .help{font-size:12px;color:var(--muted)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid-1{display:grid;grid-template-columns:1fr;gap:8px}
+/* Tone: fixed two-column grid */
+.chips.twocol{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chips.twocol .chip{width:100%; text-align:left}
+
+/* Right-aligned small link under Tone chips */
+.more{display:flex; justify-content:flex-end; margin-top:2px}
+.more .btn.small{font-weight:700}
+
+
+/* radio-style chip (single-select) */
+.chip.radio{position:relative;padding-left:36px}
+.chip.radio::before{
+  content:""; position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  width:14px; height:14px; border:2px solid #cfd7e7; border-radius:50%; background:#fff;
+}
+.chip.radio.active::before{
+  border-color:var(--blue); box-shadow:inset 0 0 0 4px #fff, 0 0 0 2px var(--blue);
+}
+
+/* scroll helper (only this step may be long) */
+.bp-step .scroll{padding-bottom:calc(var(--nav-safe) + 8px); overflow:auto}
+
+
   .carousel{height:100%;display:flex;transition:transform .32s cubic-bezier(.22,.61,.36,1);will-change:transform}
   .slide{min-width:100%;height:100%;padding:14px;display:flex;flex-direction:column}
   .head{padding:6px 2px 8px}
@@ -40,13 +69,44 @@
   .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
   .label{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:6px}
   input[type="text"],input[type="email"],input[type="url"],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#f8fafc;font:inherit}
+  /* On-brand selects */
+select{
+  width:100%;
+  padding:10px 36px 10px 12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#f8fafc;
+  font:inherit;
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+  background-repeat:no-repeat;
+  background-position:right 10px center;
+  background-size:18px;
+}
+
+/* Headline textarea should be ~2 lines tall (override global textarea min-height) */
+textarea#headline{
+  min-height:60px; /* ~2 lines */
+}
+
   textarea{min-height:110px;resize:vertical}
   .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
   .nav{position:absolute;left:0;right:0;bottom:var(--footer-h);display:flex;justify-content:space-between;gap:8px;padding:0 14px;z-index:5}
   .pager{position:absolute;left:0;right:0;bottom:calc(var(--footer-h) + 42px);display:flex;justify-content:center;gap:6px;pointer-events:auto;z-index:5}
   .dot{width:8px;height:8px;border-radius:50%;background:#c9d2e4;opacity:.9;cursor:pointer}
-  .dot.active{background:var(--accent)}
+/* default active dot (except the Finish one) */
+.dot.active:not(.finish){
+  background: var(--accent);
+}
+
+/* Finish dot gets Segwik blue when active */
+.dot.finish.active{
+  background: var(--blue);
+}
+ 
 
   /* vCard tiles in the inline/peek previews */
   .vcard{border:1px solid #e6ebf2;border-radius:18px;overflow:hidden}
@@ -77,8 +137,6 @@
   .mail-topbar .subject{font-weight:800}
   .mail-body{padding:14px;line-height:1.55}
   .mail-body p{margin:0 0 10px 0}
-  .cta{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid #cfe1ff;background:#eef4ff;font-weight:800;color:#0F2D56;text-decoration:none}
-  .cta.blue{background:var(--blue);border-color:var(--blue);color:#fff}
   .sig{display:flex; gap:12px; align-items:flex-start; margin-top:14px; border-top:1px solid #eef1f6; padding-top:12px;}
   .sig img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.06)}
   .sig .meta{font-size:13px;color:#334155}
@@ -180,8 +238,17 @@
 .badge .dot { width:8px; height:8px; border-radius:50%; background:var(--green); }
 
 /* Stack chips one-per-row */
-.chips.stacked{ flex-direction:column }
-.chips.stacked .chip{ width:100%; justify-content:space-between }
+.chips.stacked{
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start;
+}
+.chips.stacked .chip{
+  width:100%;
+  justify-content:flex-start;
+  text-align:left;
+}
+
 
 #actionChips .chip { text-align: left; }
 
@@ -259,6 +326,26 @@
   font-weight: 400; /* normal weight, not bold */
 }
 
+.link-text{
+  font-size:13px;
+  color:var(--blue);
+  cursor:pointer;
+  text-decoration:underline;
+  font-weight:600;
+  user-select:none;
+}
+.link-text:hover{
+  text-decoration:none;
+}
+/* Make textareas expand automatically when typing */
+textarea {
+  overflow: hidden;
+  resize: none; /* optional: removes manual drag handle */
+  min-height: 300px;
+  transition: height 0.2s ease;
+}
+
+
 
 </style>
 </head>
@@ -320,71 +407,346 @@
                   <input id="company" type="text" placeholder="">
                 </div>
               </div>
-              <div style="margin-top:10px">
-                <div class="label">Headline</div>
-                <input id="headline" type="text" placeholder="">
-              </div>
+              <!-- NEW: Industry / Sub Industry -->
+<div class="split" style="margin-top:10px">
+  <div>
+    <div class="label">Industry</div>
+    <select id="industry">
+      <option value="">Select industry…</option>
+      <option>Technology</option>
+      <option>Real Estate</option>
+      <option>Financial Services</option>
+      <option>Healthcare</option>
+      <option>Marketing & Advertising</option>
+      <option>Education</option>
+      <option>Legal</option>
+      <option>Hospitality</option>
+      <option>Construction</option>
+      <option>Manufacturing</option>
+      <option>Retail & E-commerce</option>
+      <option>Nonprofit</option>
+      <option>Other</option>
+    </select>
+  </div>
+  <div>
+    <div class="label">Sub Industry</div>
+    <select id="subIndustry">
+      <option value="">Select sub industry…</option>
+      <option>Consulting</option>
+      <option>SaaS</option>
+      <option>Insurance</option>
+      <option>Mortgage</option>
+      <option>Residential</option>
+      <option>Commercial</option>
+      <option>Medical Devices</option>
+      <option>Therapy & Wellness</option>
+      <option>Coaching</option>
+      <option>Agency</option>
+      <option>Training</option>
+      <option>Services</option>
+      <option>Other</option>
+    </select>
+  </div>
+</div>
+
+<!-- Headline as a 2-line textarea -->
+<div style="margin-top:10px">
+  <div class="label">Headline</div>
+  <textarea id="headline" placeholder="Share What You’re Known For" rows="2"></textarea>
+</div>
+
             </div>
 
-            <div class="card">
-              <div class="label">Upload Images</div>
-              <div class="uploader">
-                <label class="drop" id="photoDrop">
-                  <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
-                  <span class="txt"><b>Upload Headshot</b>PNG or JPG, square works best</span>
-                  <input id="photo" type="file" accept="image/*">
-                  <span class="thumb" id="photoThumb" aria-hidden="true" style="display:none"></span>
-                </label>
-                <label class="drop" id="bannerDrop">
-                  <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
-                  <span class="txt"><b>Upload Background</b>Wide cover image looks great</span>
-                  <input id="banner" type="file" accept="image/*">
-                  <span class="thumb" id="bannerThumb" aria-hidden="true" style="display:none"></span>
-                </label>
-              </div>
-            </div>
+          
 
             <!-- Bottom of step: peek trigger -->
             <button class="btn peek-trigger" data-peek>👁 Where will this appear?</button>
           </div>
         </section>
 
-        <!-- Step: vCard — Contact & Social -->
-        <section class="slide">
+        <!-- Step: vCard — Contact -->
+<section class="slide">
+  <div class="head">
+    <div class="h1">Confirm Contact Details</div>
+    <div class="p">This will appear in your digital business card — a simple way to make sure you always show up polished and professional.</div>
+  </div>
+  <div class="scroll">
+
+    <div class="card">
+      <div class="label">Phones</div>
+      <div class="split">
+        <div><input id="phoneBiz" type="text" placeholder="Business Phone"></div>
+        <div><input id="phonePersonal" type="text" placeholder="Personal Phone"></div>
+      </div>
+      <div class="label" style="margin-top:10px">Emails</div>
+      <div class="split">
+        <div><input id="emailBiz" type="email" placeholder="Business Email"></div>
+        <div><input id="emailPersonal" type="email" placeholder="Personal Email"></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="label">Website</div>
+        <input id="website" type="url" placeholder="https://">
+      </div>
+    </div>
+
+    <!-- Bottom of step: peek trigger -->
+    <button class="btn peek-trigger" data-peek>👁 Where will this appear?</button>
+  </div>
+</section>
+
+<!-- Step: Logo upload -->
+        <section class="slide" data-step="logo">
           <div class="head">
-            <div class="h1">Confirm Contact & Social Details</div>
-            <div class="p">This will also appear in your digital business card — a simple way to make sure you always show up polished and professional.</div>
+            <div class="h1">Do you have a logo?</div>
+            <div class="p">Your logo helps people instantly recognize your brand.</div>
           </div>
           <div class="scroll">
+            
 
             <div class="card">
-              <div class="label">Phones</div>
-              <div class="split">
-                <div><input id="phoneBiz" type="text" placeholder="Business Phone"></div>
-                <div><input id="phonePersonal" type="text" placeholder="Personal Phone"></div>
-              </div>
-              <div class="label" style="margin-top:10px">Emails</div>
-              <div class="split">
-                <div><input id="emailBiz" type="email" placeholder="Business Email"></div>
-                <div><input id="emailPersonal" type="email" placeholder="Personal Email"></div>
-              </div>
-              <div style="margin-top:10px">
-                <div class="label">Website</div>
-                <input id="website" type="url" placeholder="https://">
+              <div class="uploader" style="grid-template-columns:1fr">
+                <label class="drop" id="logoDrop">
+                  <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <span class="txt"><b>Upload Logo</b>PNG with transparent background works best</span>
+                  <input id="logo" type="file" accept="image/*">
+                  <span class="thumb" id="logoThumb" aria-hidden="true" style="display:none"></span>
+                </label>
               </div>
             </div>
 
-            <div class="card">
-              <div class="label">Social Links</div>
-              <div id="socialList"></div>
-              <button id="addSocial" class="btn social-add">+ Add social link</button>
-              <div class="p" style="margin-top:6px">Choose one or more platforms, then paste the URL.</div>
-            </div>
+            <button id="peekEmail2" class="btn">See Example Placement</button>
 
-            <!-- Bottom of step: peek trigger -->
-            <button class="btn peek-trigger" data-peek>👁 Where will this appear?</button>
+            
           </div>
         </section>
+
+<!-- Step: Brand Personality -->
+     <!-- Step: Brand Personality (SPLIT INTO 8 SCREENS) -->
+<section class="slide bp-step" data-step="bp-tone">
+  <div class="head">
+    <div class="h1">How do you see yourself in the market?</div>
+    <div class="p">Select all that describe your brand personality.</div>
+  </div>
+  <div class="scroll">
+    <div class="card" id="brandPersonalityTone">
+      <div class="group">
+        <h3>1) Tone / Style</h3>
+        <div class="help">Select all that apply</div>
+        <div class="chips twocol" id="toneChips"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide bp-step" data-step="bp-length">
+  <div class="head">
+    <div class="h1">How do you see yourself in the market?</div>
+    <div class="p">Select all that describe your brand personality.</div>
+  </div>
+  <div class="scroll">
+    <div class="card" id="brandPersonalityLength">
+      <div class="group">
+        <h3>2) Length</h3>
+        <div class="help">Choose one</div>
+        <div class="chips" id="lengthRadios"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide bp-step" data-step="bp-formality">
+  <div class="head">
+    <div class="h1">How do you see yourself in the market?</div>
+    <div class="p">Select all that describe your brand personality.</div>
+  </div>
+  <div class="scroll">
+    <div class="card" id="brandPersonalityFormality">
+      <div class="group">
+        <h3>3) Formality</h3>
+        <div class="help">Choose one</div>
+        <div class="chips stacked" id="formalityRadios"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide bp-step" data-step="bp-pov">
+  <div class="head">
+    <div class="h1">How do you see yourself in the market?</div>
+    <div class="p">Select all that describe your brand personality.</div>
+  </div>
+  <div class="scroll">
+    <div class="card" id="brandPersonalityPOV">
+      <div class="group">
+        <h3>4) Point of View / Perspective</h3>
+        <div class="help">Select one or more</div>
+        <div class="chips" id="povChips"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide bp-step" data-step="bp-emo">
+  <div class="head">
+    <div class="h1">How do you see yourself in the market?</div>
+    <div class="p">Select all that describe your brand personality.</div>
+  </div>
+  <div class="scroll">
+    <div class="card" id="brandPersonalityEmo">
+      <div class="group">
+        <h3>5) Emotional Impact</h3>
+        <div class="help">Select all that apply</div>
+        <div class="chips twocol" id="emoChips"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide bp-step" data-step="bp-complexity">
+  <div class="head">
+    <div class="h1">How do you see yourself in the market?</div>
+    <div class="p">Select all that describe your brand personality.</div>
+  </div>
+  <div class="scroll">
+    <div class="card" id="brandPersonalityComplexity">
+      <div class="group">
+        <h3>6) Complexity / Readability</h3>
+        <div class="help">Choose one</div>
+        <div class="chips twocol" id="complexityRadios"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide bp-step" data-step="bp-usecase">
+  <div class="head">
+    <div class="h1">How do you see yourself in the market?</div>
+    <div class="p">Select all that describe your brand personality.</div>
+  </div>
+  <div class="scroll">
+    <div class="card" id="brandPersonalityUsecase">
+      <div class="group">
+        <h3>7) Use Case / Focus</h3>
+        <div class="help">Select all that apply</div>
+        <div class="chips twocol" id="usecaseChips"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide bp-step" data-step="bp-voice">
+  <div class="head">
+    <div class="h1">How do you see yourself in the market?</div>
+    <div class="p">Select all that describe your brand personality.</div>
+  </div>
+  <div class="scroll">
+    <div class="card" id="brandPersonalityVoice">
+      <div class="group">
+        <h3>8) Voice Strength</h3>
+        <div class="help">Choose one</div>
+        <div class="chips twocol" id="voiceRadios"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+        <!-- Step: Content + AI generate (SPLIT INTO 4 SCREENS) -->
+<!-- Screen 1: Overview -->
+<section class="slide" data-step="content1">
+  <div class="head">
+    <div class="h1">Tell us about your business</div>
+    <div class="p">You can write your own or let AI draft and then edit.</div>
+  </div>
+  <div class="scroll" style="position:relative">
+    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
+
+    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
+      <button data-regen class="btn">Regenerate with Segwik AI</button>
+    </div>
+
+    <div class="card">
+      <div class="label">Is this a good overview of your business?</div>
+      <textarea id="coOverview" placeholder="Describe what your company does…"></textarea>
+    </div>
+
+    <button id="peekEmail1" class="btn">See Example Placement</button>
+  </div>
+</section>
+
+<!-- Screen 2: Mission -->
+<section class="slide" data-step="content2">
+  <div class="head">
+    <div class="h1">Tell us about your business</div>
+    <div class="p">You can write your own or let AI draft and then edit.</div>
+  </div>
+  <div class="scroll" style="position:relative">
+    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
+
+    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
+      <button data-regen class="btn">Regenerate with Segwik AI</button>
+    </div>
+
+    <div class="card">
+      <div class="label">Does this describe your mission accurately?</div>
+      <textarea id="coMission" placeholder="State your mission…"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 3: Values -->
+<section class="slide" data-step="content3">
+  <div class="head">
+    <div class="h1">Tell us about your business</div>
+    <div class="p">You can write your own or let AI draft and then edit.</div>
+  </div>
+  <div class="scroll" style="position:relative">
+    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
+
+    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
+      <button data-regen class="btn">Regenerate with Segwik AI</button>
+    </div>
+
+    <div class="card">
+      <div class="label">Do you agree with this value statement?</div>
+      <textarea id="coValues" placeholder="List a few core values…"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 4 (LAST of Phase 1): Differentiation -->
+<section class="slide" data-step="content4">
+  <div class="head">
+    <div class="h1">Tell us about your business</div>
+    <div class="p">You can write your own or let AI draft and then edit.</div>
+  </div>
+  <div class="scroll" style="position:relative">
+    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
+
+    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
+      <button data-regen class="btn">Regenerate with Segwik AI</button>
+    </div>
+
+    <div class="card">
+      <div class="label">Is this a good way to differentiate your business?</div>
+      <textarea id="coDiff" placeholder="What makes you different…"></textarea>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- PHASE 2 INTRO (empty screen) -->
+<section class="slide" data-step="phase2intro">
+  <div class="head">
+    <div class="h1">Lets start building your first customer journey</div>
+    <div class="p">Set up the steps that will guide your prospects automatically from the moment they connect with you.</div>
+  </div>
+  <div class="scroll">
+    <!-- Empty for now -->
+  </div>
+</section>
+
 
         <!-- Step: vCard — Live Preview (inline matches peek sheet) -->
         <section class="slide" data-step="preview">
@@ -410,87 +772,9 @@
           </div>
         </section>
 
-<!-- Step: Brand Personality -->
-        <section class="slide" data-step="personality">
-          <div class="head">
-            <div class="h1">How do you see yourself in the market?</div>
-            <div class="p">Select all that describe your brand personality. Your AI-written autoresponder will match this tone.</div>
-          </div>
-          <div class="scroll">
-            <div class="card" id="personaPicker"></div>
-            <div class="right" style="margin-top:12px">
-              <button id="toContent" class="btn blue">Continue</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Step: Content + AI generate -->
-        <section class="slide" data-step="content">
-          <div class="head">
-            <div class="h1">Tell us about your business</div>
-            <div class="p">You can write your own or let AI draft and then edit.</div>
-          </div>
-          <div class="scroll" style="position:relative">
-            <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
-
-            <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
-  <button id="regenAI" class="btn">Regenerate with Segwik AI</button>
-</div>
 
 
-
-            <div class="card">
-              <div class="label">Is this a good overview of your business?</div>
-              <textarea id="coOverview" placeholder="Describe what your company does…"></textarea>
-            </div>
-            <div class="card">
-              <div class="label">Does this describe your mission accurately?</div>
-              <textarea id="coMission" placeholder="State your mission…"></textarea>
-            </div>
-            <div class="card">
-              <div class="label">Do you agree with this value statement?</div>
-              <textarea id="coValues" placeholder="List a few core values…"></textarea>
-            </div>
-            <div class="card">
-              <div class="label">Is this a good way to differentiate your business?</div>
-              <textarea id="coDiff" placeholder="What makes you different…"></textarea>
-            </div>
-
-            <button id="peekEmail1" class="btn">See Example Placement</button>
-
-            <div class="right">
-              <button id="toLogo" class="btn blue">Continue</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Step: Logo upload -->
-        <section class="slide" data-step="logo">
-          <div class="head">
-            <div class="h1">Do you have a logo?</div>
-            <div class="p">Your logo helps people instantly recognize your brand.</div>
-          </div>
-          <div class="scroll">
-            
-
-            <div class="card">
-              <div class="uploader" style="grid-template-columns:1fr">
-                <label class="drop" id="logoDrop">
-                  <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
-                  <span class="txt"><b>Upload Logo</b>PNG with transparent background works best</span>
-                  <input id="logo" type="file" accept="image/*">
-                  <span class="thumb" id="logoThumb" aria-hidden="true" style="display:none"></span>
-                </label>
-              </div>
-            </div>
-
-            <button id="peekEmail2" class="btn">See Example Placement</button>
-
-            <div class="right">
-              <button id="finish" class="btn blue">Continue</button>
-            </div>
-          </div>
-        </section>
+        
 
 <!-- Step: Profile Complete pause -->
 <section class="slide" data-step="handoff">
@@ -515,7 +799,6 @@
     <div class="card">
       <div class="p" style="font-weight:800">Up next: Start your journey by choosing how people connect with you</div>
       <div class="right" style="margin-top:10px">
-        <button id="toActionsFromHandoff" class="btn blue">Continue</button>
       </div>
     </div>
   </div>
@@ -535,11 +818,51 @@
         <a id="entryCustomLink" class="add-template" role="button">+ Create Custom Entry Point 🔒</a>
       </div>
       <div class="right" style="margin-top:12px">
-        <button id="toEntryConfirm" class="btn blue">Continue</button>
       </div>
     </div>
   </div>
 </section>
+
+
+<!-- Step: Upload Images (moved here) -->
+<!-- Step: Upload Images + Social Links -->
+<section class="slide" data-step="images">
+  <div class="head">
+    <div class="h1">Add Your Images & Social Links</div>
+    <div class="p">Upload your headshot and background image, then add your social profiles to complete your public profile.</div>
+  </div>
+  <div class="scroll">
+    <div class="card">
+      <div class="label">Upload Images</div>
+      <div class="uploader">
+        <label class="drop" id="photoDrop">
+          <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+          <span class="txt"><b>Upload Headshot</b>PNG or JPG, square works best</span>
+          <input id="photo" type="file" accept="image/*">
+          <span class="thumb" id="photoThumb" aria-hidden="true" style="display:none"></span>
+        </label>
+        <label class="drop" id="bannerDrop">
+          <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+          <span class="txt"><b>Upload Background</b>Wide cover image looks great</span>
+          <input id="banner" type="file" accept="image/*">
+          <span class="thumb" id="bannerThumb" aria-hidden="true" style="display:none"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Moved Social Links card -->
+    <div class="card">
+      <div class="label">Social Links</div>
+      <div id="socialList"></div>
+      <button id="addSocial" class="btn social-add">+ Add social link</button>
+      <div class="p" style="margin-top:6px">Choose one or more platforms, then paste the URL.</div>
+    </div>
+
+    <div class="right" style="margin-top:12px">
+    </div>
+  </div>
+</section>
+
 
 <!-- Step: Entry Confirm -->
 <section class="slide" data-step="entryConfirm">
@@ -550,7 +873,6 @@
   <div class="scroll">
     <button id="viewDownloadForm" class="btn">View “Download My Digital Card” Form</button>
     <div class="right" style="margin-top:12px">
-      <button id="toActionsFromEntryConfirm" class="btn blue">Continue</button>
     </div>
   </div>
 </section>
@@ -569,7 +891,6 @@
 <div class="chips stacked" id="actionChips"></div>
 
               <div class="right" style="margin-top:12px">
-                <button id="toEmailCfg" class="btn blue">Continue</button>
               </div>
             </div>
           </div>
@@ -592,22 +913,7 @@
 
 
 
-        <!-- Step: Email — Single CTA -->
-        <section class="slide" data-step="cta">
-          <div class="head">
-            <div class="h1">Step 4: When someone receives your email, what should they do?</div>
-            <div class="p">Choose <strong>one</strong> action for your autoresponder.</div>
-          </div>
-          <div class="scroll">
-            <div class="card" id="ctaBuilder"></div>
-            <div class="card">
-              <div class="right">
-                <button id="toFinalCheck" class="btn blue">Continue</button>
 
-              </div>
-            </div>
-          </div>
-        </section>
 
         
 <!-- Step: Final Check (full-screen email preview + add follow-ups) -->
@@ -670,12 +976,20 @@
         </section>
       </div>
 
-      <!-- Back/Next + pager -->
-      <div class="nav">
-        <button id="backBtn" class="btn small ghost">Back</button>
-        <button id="nextBtn" class="btn small">Next</button>
-      </div>
-      <div id="pager" class="pager"></div>
+      <!-- Back/Next + pager (Phase 1) -->
+<div id="nav1" class="nav">
+  <button id="backBtn1" class="btn small ghost">Back</button>
+  <button id="nextBtn1" class="btn small">Next</button>
+</div>
+<div id="pager1" class="pager"></div>
+
+<!-- Back/Next + pager (Phase 2) -->
+<div id="nav2" class="nav" style="display:none">
+  <button id="backBtn2" class="btn small ghost">Back</button>
+  <button id="nextBtn2" class="btn small">Next</button>
+</div>
+<div id="pager2" class="pager" style="display:none"></div>
+
 
       <!-- Upgrade modal -->
       <div id="upgradeModal" class="modal-wrap" role="dialog" aria-modal="true" aria-labelledby="upgTitle">
@@ -792,66 +1106,211 @@ let idx = 0;
 let doAutoGenNext = false;
 
 function goTo(i){
-  idx = Math.max(0, Math.min(slides.length-1, i));
+    idx = Math.max(0, Math.min(slides.length-1, i));
   carousel.style.transform = `translateX(-${idx*100}%)`;
     // ALWAYS refresh Step 5 preview when landing there
   if (i === IDX.finalcheck) {
     syncPhoneTitle();
     renderMail();
   }
+  // One-time regen button attention (per screen)
+  const currentStep = slides[idx]?.dataset?.step || null;
+  maybeAutoAnimateRegenOnEnter(currentStep);
+
 
   renderDots(); updateNav();
-  if (idx === IDX.preview) { renderStatus(); renderInlineVcardFromInputs(); }
-  if (idx === IDX.content && doAutoGenNext) {
-    // Give the slide a tick to render, then show overlay + fill
-    setTimeout(()=>{ withLoader(fillFromDummy); doAutoGenNext = false; }, 50);
+  // Phase-specific nav/pagers
+  const nav1   = document.getElementById('nav1');
+  const pager1 = document.getElementById('pager1');
+  const nav2   = document.getElementById('nav2');
+  const pager2 = document.getElementById('pager2');
+
+  // Hide all by default
+  nav1.style.display = 'none';
+  pager1.style.display = 'none';
+  nav2.style.display = 'none';
+  pager2.style.display = 'none';
+
+const inP1 = idx <= IDX.contentLast;        // Phase 1 = welcome .. last content screen
+  const inP2 = idx >= IDX.phase2intro;        // Phase 2 = phase2intro .. end
+
+  if (inP1) {
+    // Hide on very first welcome screen, show otherwise
+    if (idx !== 0) {
+      nav1.style.display = '';
+      pager1.style.display = '';
+    }
+  } else if (inP2) {
+    nav2.style.display = '';
+    pager2.style.display = '';
   }
+
+
+
+  if (idx === IDX.preview) { renderStatus(); renderInlineVcardFromInputs(); }
+ if (idx >= IDX.content1 && idx <= IDX.contentLast) {
+  // Seed persona automatically based on current selections, then auto-generate once.
+  if (!doAutoGenNext) {
+    chosenPersona = inferChosenPersona();
+    dummyIdx = 0;
+    doAutoGenNext = true;
+  }
+  setTimeout(()=>{ withLoader(fillFromDummy); doAutoGenNext = false; }, 50);
+}
+
+
 }
 
 function stepIndex(name){
   return slides.findIndex(s => s.dataset && s.dataset.step === name);
 }
 const IDX = {
-  preview:     stepIndex('preview'),
-  personality: stepIndex('personality'),
-  actions:     stepIndex('actions'),
-  template:    stepIndex('template'),
-  cta:         stepIndex('cta'),
-  content:     stepIndex('content'),
-  logo:        stepIndex('logo'),
-  handoff:     stepIndex('handoff'), 
-  entry:       stepIndex('entry'),        
-  entryConfirm:stepIndex('entryConfirm'),
-  finalcheck:  stepIndex('finalcheck'),
-  summary:     stepIndex('summary')
+  preview:       stepIndex('preview'),
+  personality:   stepIndex('bp-tone'), // first of the split brand-personality screens
+  actions:       stepIndex('actions'),
+  template:      stepIndex('template'),
+
+  // NEW: first/last content screens
+  content1:      stepIndex('content1'),
+  contentLast:   stepIndex('content4'),
+
+  phase2intro:   stepIndex('phase2intro'),
+  logo:          stepIndex('logo'),
+  handoff:       stepIndex('handoff'),
+  entry:         stepIndex('entry'),
+  images:        stepIndex('images'),
+  entryConfirm:  stepIndex('entryConfirm'),
+  finalcheck:    stepIndex('finalcheck'),
+  summary:       stepIndex('summary')
 };
+
+/* ===== One-time "Regenerate with Segwik AI" animation control ===== */
+const regenAnimState = {}; // step -> { autoShown: true, clickShown: true }
+
+function stepNameForElement(el){
+  const slide = el.closest('.slide');
+  return slide?.dataset?.step || null;
+}
+
+function animateRegenButtonsOnce(step, reason /* 'auto' | 'click' */){
+  if(!step) return;
+  regenAnimState[step] = regenAnimState[step] || {};
+  const key = reason === 'click' ? 'clickShown' : 'autoShown';
+  if (regenAnimState[step][key]) return;
+
+  const slide = slides.find(s => s.dataset && s.dataset.step === step);
+  if(!slide) return;
+
+  slide.querySelectorAll('[data-regen]').forEach(b=>{
+    b.classList.add('regen-animate');
+    b.addEventListener('animationend', ()=> b.classList.remove('regen-animate'), { once:true });
+  });
+
+  regenAnimState[step][key] = true;
+}
+
+function maybeAutoAnimateRegenOnEnter(step){
+  // Show ONCE on first visit ONLY for the first content screen ("overview").
+  // No auto animation for mission/values/diff screens.
+  if(step === 'content1'){
+    animateRegenButtonsOnce(step, 'auto');
+  }
+}
+
 
 
 function renderDots(){
-  const pager = document.getElementById('pager');
-  if(!pager) return;
-  pager.innerHTML='';
-  slides.forEach((_,i)=>{
-    const d=document.createElement('div');
-    d.className='dot'+(i===idx?' active':'');
-    d.onclick=()=>goTo(i);
-    pager.appendChild(d);
-  });
+  const pager1 = document.getElementById('pager1');
+  const pager2 = document.getElementById('pager2');
+  if (!pager1 || !pager2) return;
+
+  // Clear both
+  pager1.innerHTML = '';
+  pager2.innerHTML = '';
+
+  const inP1 = idx <= IDX.contentLast;
+  const inP2 = idx >= IDX.phase2intro;
+
+  if (inP1) {
+    // Phase 1 dots: indices 0 .. IDX.contentLast
+    for (let i = 0; i <= IDX.contentLast; i++){
+      const d = document.createElement('div');
+      d.classList.add('dot');
+      // Mark the final content screen as "finish" dot
+      if (slides[i].dataset && slides[i].dataset.step === 'content4') d.classList.add('finish');
+      if (i === idx) d.classList.add('active');
+      d.onclick = () => goTo(i);
+      pager1.appendChild(d);
+    }
+  } else if (inP2) {
+    // Phase 2 dots: indices IDX.phase2intro .. slides.length-1
+    for (let i = IDX.phase2intro; i < slides.length; i++){
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === idx ? ' active' : '');
+      d.onclick = () => goTo(i);
+      pager2.appendChild(d);
+    }
+  }
 }
+
 function updateNav(){
-  const back = document.getElementById('backBtn');
-  const next = document.getElementById('nextBtn');
-  if(!back || !next) return;
-  back.classList.toggle('ghost', idx===0);
-  next.textContent = idx===slides.length-1 ? 'Done' : 'Next';
+  const inP1 = idx <= IDX.contentLast;
+  const inP2 = idx >= IDX.phase2intro;
+
+  // Pick the active phase's buttons
+  const back = document.getElementById(inP1 ? 'backBtn1' : 'backBtn2');
+  const next = document.getElementById(inP1 ? 'nextBtn1' : 'nextBtn2');
+
+  if (!back || !next) return;
+
+  // Back button ghosted at the start of each phase
+  const isPhaseStart = inP1 ? (idx === 0) : (idx === IDX.phase2intro);
+  back.classList.toggle('ghost', isPhaseStart);
+
+  // Next text:
+  // - Phase 1: "Finish" on last content screen, otherwise "Next"
+  // - Phase 2: "Done" on very last slide, otherwise "Next"
+  if (inP1) {
+    next.textContent = (idx === IDX.contentLast) ? 'Finish' : 'Next';
+  } else {
+    next.textContent = (idx === slides.length - 1) ? 'Done' : 'Next';
+  }
 }
-document.getElementById('backBtn')?.addEventListener('click', ()=>goTo(idx-1));
-document.getElementById('nextBtn')?.addEventListener('click', ()=>goTo(idx+1));
+
+
+// Phase 1 buttons
+document.getElementById('backBtn1')?.addEventListener('click', ()=> goTo(idx-1));
+document.getElementById('nextBtn1')?.addEventListener('click', ()=>{
+  if (idx === IDX.contentLast) {
+    // Finish Phase 1: jump to Phase 2 intro (empty screen)
+    goTo(IDX.phase2intro);
+  } else {
+    goTo(idx+1);
+  }
+});
+
+
+// Phase 2 buttons
+document.getElementById('backBtn2')?.addEventListener('click', ()=> goTo(idx-1));
+document.getElementById('nextBtn2')?.addEventListener('click', ()=> goTo(idx+1));
+
 renderDots(); updateNav();
 
 /* quick nav */
-document.getElementById('startCard')?.addEventListener('click', ()=>goTo(1));
-document.getElementById('skip')?.addEventListener('click', ()=>goTo(1));
+document.getElementById('startCard')?.addEventListener('click', ()=>{
+  goTo(1);
+document.getElementById('nav1').style.display = '';
+document.getElementById('pager1').style.display = '';
+
+});
+document.getElementById('skip')?.addEventListener('click', ()=>{
+  goTo(1);
+  document.getElementById('nav1').style.display = '';
+document.getElementById('pager1').style.display = '';
+
+});
+
+
 
 /* ========= Global inputs/state ========= */
 const S = {
@@ -868,7 +1327,10 @@ const S = {
   emailPersonal: document.getElementById('emailPersonal'),
   website  : document.getElementById('website'),
   subject  : document.getElementById('subjectLine'),
-  logo     : document.getElementById('logo')
+  logo     : document.getElementById('logo'),
+    industry : document.getElementById('industry'),
+  subIndustry : document.getElementById('subIndustry'),
+
 };
 Object.values(S).forEach(el=>{ if(el) el.addEventListener('input', ()=>updatePreviews()); });
 
@@ -1181,10 +1643,7 @@ actionDefs.forEach(a=>{
   };
   chipsHost.appendChild(chip);
 });
-document.getElementById('toEmailCfg')?.addEventListener('click', ()=>{
-  if(!chosenActions.has('email')) { alert('Select Email to continue.'); return; }
-  goTo(IDX.template); 
-});
+
 
 /* ========= Email Template Picker ========= */
 const templateDefs = [
@@ -1229,7 +1688,7 @@ function renderTemplateList(){
   if(S.subject) S.subject.value = t.name;
  syncPhoneTitle();
 renderMail();
-goTo(IDX.cta); // Automatically continue after choosing
+goTo(IDX.finalcheck); // Skip CTA step
 
 });
 
@@ -1252,121 +1711,187 @@ document.getElementById('addTemplateLocked')?.addEventListener('click', ()=>{
 });
 
 
-/* ========= CTA Builder (single-select gating) ========= */
-const ctaOptions = [
-  {key:'book', label:'Book a Time', type:'link',  labelDefault:'Book a Meeting',     placeholder:'https://',         preDefault:'Grab a spot on my calendar:'},
-  {key:'email',label:'Send an Email',type:'email', labelDefault:'Email Me',           placeholder:'you@company.com',                 preDefault:'Prefer email?'},
-  {key:'call', label:'Call You',     type:'phone', labelDefault:'Call Me',            placeholder:'+1 ',               preDefault:'Or reach me directly:'},
-  {key:'resources',label:'View Free Resources',type:'link',labelDefault:'See Free Resources', placeholder:'https://', preDefault:'Here are a few free resources:'}
+
+
+
+
+/* ========= Brand Personality (new UI) ========= */
+/* Data */
+const TONE_OPTS = [
+  "Motivational","Inspirational","Informative","Friendly","Professional",
+"Bold","Thoughtful","Playful","Serious","Encouraging","Empathetic",
+"Persuasive","Confident","Humorous","Conversational","Optimistic",
+"Innovative","Trustworthy","Luxurious","Edgy","Minimalist"
+
+
 ];
-const ctaState = {}; ctaOptions.forEach(o=>ctaState[o.key]={on:false,btnLabel:o.labelDefault,dest:'',pre:o.preDefault});
+const LENGTH_OPTS    = ["Very Short (1–2 sentences)","Short (2–3 sentences)","Medium (3–5 sentences)","Long (5–8 sentences)","Very Long (full paragraph style)"];
+const FORMALITY_OPTS = ["Very Formal","Formal","Neutral","Casual","Very Casual / Conversational"];
+const POV_OPTS       = ["First Person (“I” / “We”)","Second Person (“You”)","Third Person (“They” / brand as narrator)","Mixed / Flexible"];
+const EMO_OPTS       = ["Happy","Confident","Calm","Urgent","Inspirational","Trusting","Curious","Surprising","Excited","Relaxed","Motivated","Friendly"];
+const COMPLEXITY_OPTS= ["Simple","Moderate","Detailed","Technical","Clear","Concise","Readable"];
+const USECASE_OPTS   = ["Brand Story","Product Features","Customer Benefits","Thought Leadership","Testimonials","Call-to-Action","Guides","Tips","Announcements","Updates"];
+const VOICE_OPTS     = ["Gentle","Neutral","Strong","Assertive","Bold","Friendly","Professional"];
 
-function renderCtaBuilder(){
-  const host = document.getElementById('ctaBuilder');
-  host.innerHTML = `
-    <div class="label">Choose your call-to-action button</div>
-    <div style="display:grid;gap:10px">
-      ${ctaOptions.map(o=>{
-        const st=ctaState[o.key];
-        return `
-          <div class="card" style="border-style:${st.on?'solid':'dashed'}">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-                <input type="checkbox" data-cta="${o.key}" ${st.on?'checked':''}/> <strong>${o.label}</strong>
-              </label>
-            </div>
-            <div style="display:grid;gap:8px;margin-top:10px;opacity:${st.on?1:.6}">
-              <div class="split">
-                <div>
-                  <div class="label">Button label</div>
-                  <input type="text" data-cta-label="${o.key}" value="${st.btnLabel}">
-                </div>
-                <div>
-                  <div class="label">Destination (${o.type==='email'?'email':o.type==='phone'?'phone or tel:': 'URL'})</div>
-                  <input type="${o.type==='email'?'email':o.type==='phone'?'text':'url'}" placeholder="${o.placeholder}" data-cta-dest="${o.key}" value="${st.dest}">
-                </div>
-              </div>
-              <div>
-                <div class="label">Short text (appears above button)</div>
-                <textarea data-cta-pre="${o.key}" placeholder="${o.preDefault}">${st.pre||''}</textarea>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('')}
-    </div>
-  `;
-  host.querySelectorAll('input[type="checkbox"][data-cta]').forEach(cb=>{
-    cb.addEventListener('change', e=>{
-      const key = e.target.getAttribute('data-cta');
-      const anotherOn = Object.entries(ctaState).some(([k,v])=>v.on && k!==key);
-      if(e.target.checked && anotherOn){
-        e.target.checked = false;
-        upg.classList.add('show'); // gate multiple
-        return;
-      }
-      ctaState[key].on = e.target.checked;
-      renderCtaBuilder();
-      renderMail();
+/* State */
+const BrandPrefs = {
+  tone: new Set(),
+  length: null,
+  formality: null,
+  pov: new Set(),
+  emotion: new Set(),
+  complexity: null,
+  usecase: new Set(),
+  voice: null
+};
 
+/* Helpers to render chips */
+function renderMulti(hostId, opts, setRef){
+  const host = document.getElementById(hostId);
+  host.innerHTML = '';
+  opts.forEach(label=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (setRef.has(label)?' active':'');
+    b.textContent = label;
+    b.addEventListener('click', ()=>{
+      if(setRef.has(label)) setRef.delete(label); else setRef.add(label);
+      renderMulti(hostId, opts, setRef);
     });
-  });
-  host.querySelectorAll('input[data-cta-label]').forEach(inp=>{
-    inp.addEventListener('input', e=>{ ctaState[e.target.getAttribute('data-cta-label')].btnLabel = e.target.value; if(phoneModalOpen) renderMail(); });
-  });
-  host.querySelectorAll('input[data-cta-dest]').forEach(inp=>{
-    inp.addEventListener('input', e=>{ ctaState[e.target.getAttribute('data-cta-dest')].dest = e.target.value.trim(); if(phoneModalOpen) renderMail(); });
-  });
-  host.querySelectorAll('textarea[data-cta-pre]').forEach(ta=>{
-    ta.addEventListener('input', e=>{ ctaState[e.target.getAttribute('data-cta-pre')].pre = e.target.value; if(phoneModalOpen) renderMail(); });
+    host.appendChild(b);
   });
 }
-renderCtaBuilder();
-document.getElementById('toFinalCheck')?.addEventListener('click', ()=>{
-  const one = Object.values(ctaState).filter(v=>v.on).length===1;
-  const done = Object.values(ctaState).some(v=>v.on && v.btnLabel && v.dest);
-  if(!one){ alert('Choose exactly one CTA.'); return; }
-  if(!done){ alert('Fill out the selected CTA fields.'); return; }
-  goTo(IDX.finalcheck);
-  // double-ensure fresh preview when arriving via this button
-  syncPhoneTitle();
-  renderMail();
-});
-
-
-
-
-/* ========= Personas ========= */
-const personas = [
-  {key:'professional', label:'Professional and Clear'},
-  {key:'friendly',     label:'Friendly & Warm'},
-  {key:'bold',         label:'Bold & Energetic'},
-  {key:'thoughtful',   label:'Thoughtful & Consultative'},
-  {key:'innovative',   label:'Innovative and Modern'},
-  {key:'reliable',   label:'Reliable and Trustworthy'}
-];
-let chosenPersona = 'professional';
-function renderPersona(){
-  const host = document.getElementById('personaPicker');
-  host.innerHTML = `
-    <div class="chips" role="listbox" aria-label="Brand personality">
-      ${personas.map(p=>`<button class="chip ${chosenPersona===p.key?'active':''}" data-persona="${p.key}">${p.label}</button>`).join('')}
-    </div>
-  `;
-  host.querySelectorAll('[data-persona]').forEach(b=>{
-    b.addEventListener('click', e=>{
-      chosenPersona = e.target.getAttribute('data-persona');
-      renderPersona();
+function renderSingle(hostId, opts, key){
+  const host = document.getElementById(hostId);
+  host.innerHTML = '';
+  opts.forEach(label=>{
+    const b = document.createElement('button');
+    b.className = 'chip radio' + (BrandPrefs[key]===label?' active':'');
+    b.textContent = label;
+    b.addEventListener('click', ()=>{
+      BrandPrefs[key] = (BrandPrefs[key]===label) ? null : label;
+      renderSingle(hostId, opts, key);
     });
+    host.appendChild(b);
   });
 }
-renderPersona();
-document.getElementById('toContent')?.addEventListener('click', ()=>{
-  // start from the first item for the chosen persona
-  dummyIdx = 0;
-  doAutoGenNext = true;  // signal goTo() to run the loader + fill
-  goTo(IDX.content);
-});
+/* Tone renderer: 2 columns + show first 10 with See more/less */
+/* Simplified renderers — no “See more”, show all options */
+
+/* Emotional Impact (multi-select) */
+function renderEmo(){
+  const host = document.getElementById('emoChips');
+  if(!host) return;
+  host.innerHTML = '';
+  EMO_OPTS.forEach(label=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (BrandPrefs.emotion.has(label) ? ' active' : '');
+    b.textContent = label;
+    b.addEventListener('click', ()=>{
+      if(BrandPrefs.emotion.has(label)) BrandPrefs.emotion.delete(label);
+      else BrandPrefs.emotion.add(label);
+      renderEmo();
+    });
+    host.appendChild(b);
+  });
+}
+
+/* Complexity / Readability (single-select) */
+function renderComplexity(){
+  const host = document.getElementById('complexityRadios');
+  if(!host) return;
+  host.innerHTML = '';
+  COMPLEXITY_OPTS.forEach(label=>{
+    const b = document.createElement('button');
+    b.className = 'chip radio' + (BrandPrefs.complexity === label ? ' active' : '');
+    b.textContent = label;
+    b.addEventListener('click', ()=>{
+      BrandPrefs.complexity = (BrandPrefs.complexity === label) ? null : label;
+      renderComplexity();
+    });
+    host.appendChild(b);
+  });
+}
+
+/* Use Case / Focus (multi-select) */
+function renderUsecase(){
+  const host = document.getElementById('usecaseChips');
+  if(!host) return;
+  host.innerHTML = '';
+  USECASE_OPTS.forEach(label=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (BrandPrefs.usecase.has(label) ? ' active' : '');
+    b.textContent = label;
+    b.addEventListener('click', ()=>{
+      if(BrandPrefs.usecase.has(label)) BrandPrefs.usecase.delete(label);
+      else BrandPrefs.usecase.add(label);
+      renderUsecase();
+    });
+    host.appendChild(b);
+  });
+}
+
+/* Voice Strength (single-select) */
+function renderVoice(){
+  const host = document.getElementById('voiceRadios');
+  if(!host) return;
+  host.innerHTML = '';
+  VOICE_OPTS.forEach(label=>{
+    const b = document.createElement('button');
+    b.className = 'chip radio' + (BrandPrefs.voice === label ? ' active' : '');
+    b.textContent = label;
+    b.addEventListener('click', ()=>{
+      BrandPrefs.voice = (BrandPrefs.voice === label) ? null : label;
+      renderVoice();
+    });
+    host.appendChild(b);
+  });
+}
+
+/* Tone / Style (multi-select) */
+function renderTone(){
+  const host = document.getElementById('toneChips');
+  if(!host) return;
+  host.innerHTML = '';
+  TONE_OPTS.forEach(label=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (BrandPrefs.tone.has(label)?' active':'');
+    b.textContent = label;
+    b.addEventListener('click', ()=>{
+      if(BrandPrefs.tone.has(label)) BrandPrefs.tone.delete(label);
+      else BrandPrefs.tone.add(label);
+      renderTone();
+    });
+    host.appendChild(b);
+  });
+}
+
+
+/* Initial render */
+renderTone();
+renderSingle('lengthRadios', LENGTH_OPTS, 'length');
+renderSingle('formalityRadios', FORMALITY_OPTS, 'formality');
+renderMulti('povChips', POV_OPTS, BrandPrefs.pov);
+renderEmo();
+renderComplexity();
+renderUsecase();
+renderVoice();
+
+
+
+/* Map selections to existing AI persona buckets (for generator) */
+function inferChosenPersona(){
+  const t = [...BrandPrefs.tone];
+  const has = (needle)=>t.some(v=>v.toLowerCase().includes(needle));
+  if (has('friendly') || has('warm') || has('empathetic')) return 'friendly';
+  if (has('bold') || has('edgy')) return 'bold';
+  if (has('thoughtful') || has('consultative')) return 'thoughtful';
+  if (has('innovative') || has('forward')) return 'innovative';
+  if (has('trustworthy') || has('reliable') || has('luxurious') || has('serious') || has('professional')) return 'reliable';
+  return 'professional';
+}
+
+
+
 
 
 
@@ -1511,12 +2036,19 @@ function fillFromDummy(){
   coOverview.value=set.overview; coMission.value=set.mission; coValues.value=set.values; coDiff.value=set.diff; dummyIdx++;
 }
 function withLoader(fn){ overlay.classList.add('show'); setTimeout(()=>{ fn(); overlay.classList.remove('show'); renderMail(); }, 800); }
-document.getElementById('regenAI')?.addEventListener('click', ()=>withLoader(fillFromDummy));
+// Attach regenerate handler to all buttons with data-regen
+document.querySelectorAll('[data-regen]').forEach(btn=>{
+  const step = stepNameForElement(btn);
+  btn.addEventListener('click', ()=>{
+    // Show the attention animation only once when the user clicks
+    animateRegenButtonsOnce(step, 'click');
+    withLoader(fillFromDummy);
+  });
+});
+
+
 
 /* ========= Subject / Logo step nav ========= */
-document.getElementById('toLogo')?.addEventListener('click', ()=>goTo(IDX.logo));
-
-document.getElementById('finish')?.addEventListener('click', ()=>goTo(IDX.handoff));
 
 document.getElementById('handoffPreviewCard')?.addEventListener('click', ()=>{
   // Use the same behavior as your other preview button (mock or real)
@@ -1525,9 +2057,6 @@ document.getElementById('handoffPreviewCard')?.addEventListener('click', ()=>{
   // Or call the same function you use for #btnPreviewCard if you have one.
 });
 
-document.getElementById('toActionsFromHandoff')?.addEventListener('click', ()=>{
-  goTo(IDX.entry);   // was IDX.actions before
-});
 
 /* ========= Entry (how automation begins) ========= */
 const entryDefs = [
@@ -1571,20 +2100,11 @@ document.getElementById('entryCustomLink')?.addEventListener('click', ()=>{
   if(title) title.textContent = 'Unlock more ways to start your journeys.';
   upg.classList.add('show');
 });
-document.getElementById('toEntryConfirm')?.addEventListener('click', ()=>{
-  // Only the unlocked option proceeds (download)
-  if(chosenEntry!=='download'){
-    const title = document.getElementById('upgTitle');
-    if(title) title.textContent = 'Unlock more ways to start your journeys.';
-    upg.classList.add('show');
-    return;
-  }
-  goTo(IDX.entryConfirm);
-});
 
-document.getElementById('toActionsFromEntryConfirm')?.addEventListener('click', ()=>{
-  goTo(IDX.actions);
-});
+
+
+
+
 
 /* ========= Form Preview sheet ========= */
 const formSheet = document.getElementById('formPreviewSheet');
@@ -1620,31 +2140,16 @@ function syncPhoneTitle(){
 }
 
 
-function activeCTA(){
-  const entry = Object.entries(ctaState).find(([k,v])=>v.on && v.btnLabel && v.dest);
-  if(!entry) return null;
-  const [k,v]=entry; const def = ctaOptions.find(o=>o.key===k);
-  return {key:k, ...def, ...v};
-}
+
 function socialButtons(){
   return socials.filter(s=>s.url).map(s=>{
     const key=socialIconKey(s.platform);
     return `<a href="${s.url}" target="_blank" rel="noopener" aria-label="${key}">${i16(key)}</a>`;
   }).join('');
 }
-function buildCTA(a){
-  if(!a) return '';
-  let href='#', target='_self';
-  if(a.type==='link'){ href=a.dest; target='_blank';}
-  if(a.type==='email'){ href=`mailto:${a.dest}`;}
-  if(a.type==='phone'){ href=`tel:${a.dest.replace(/[^+\d]/g,'')}`;}
-  const pre = a.pre ? `<p>${a.pre}</p>` : '';
-  const cls = a.key==='book' ? 'cta blue' : 'cta';
-  return `${pre}<div style="margin:8px 0 12px 0"><a class="${cls}" href="${href}" target="${target}" rel="noopener">${a.btnLabel}</a></div>`;
-}
+
 function renderMail(){
   const subj = safe(S.subject?.value, "It’s great to be connected!");
-  const a = activeCTA();
   const logo = logoUrl ? `<div style="text-align:center;margin-bottom:10px"><img src="${logoUrl}" alt="logo" style="max-width:160px;max-height:60px;object-fit:contain"/></div>` : '';
 
   const signature = `
@@ -1699,7 +2204,6 @@ function renderMail(){
       <p style="font-weight:800;margin-top:12px">Our Core Values</p>
       <p>${safe(coValues?.value,'[differentiating_propositions]')}</p>
 
-      ${buildCTA(a)}
       ${signature}
     </div>
   `;
@@ -1744,16 +2248,24 @@ document.getElementById('addMoreFollowups')?.addEventListener('click', ()=>{
   if(modal) modal.innerHTML = 'Adding another follow-up email is available on paid plans.';
   document.getElementById('upgradeModal')?.classList.add('show');
 });
+// Auto-expand textareas while typing
+document.addEventListener('input', e => {
+  if (e.target.tagName.toLowerCase() === 'textarea') {
+    e.target.style.height = 'auto';
+    e.target.style.height = (e.target.scrollHeight) + 'px';
+  }
+});
 
 
 /* ========= Init ========= */
 renderSocialRows();
-renderCtaBuilder();
-renderPersona();
+/* (replaced) render of new personality UI happens on load above */
 goTo(0);
 updatePreviews();
 syncPhoneTitle();
 renderMail();
+
+
 
 </script>
 </body>

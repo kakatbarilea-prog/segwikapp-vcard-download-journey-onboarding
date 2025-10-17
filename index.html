@@ -200,6 +200,63 @@
 .form-preview a{ color:#2563eb; text-decoration:underline; cursor:pointer }
 
 
+/* Email templates list */
+.templates{display:grid; gap:8px}
+.template-row{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:#fff;
+}
+.template-row .name{font-weight:400; color:var(--accent)}
+.template-row .actions{display:flex; gap:6px}
+.template-row .eye{appearance:none; border:1px solid var(--line); background:#f8fafc;
+  border-radius:8px; padding:6px; display:grid; place-items:center; cursor:pointer}
+.template-row .choose{appearance:none; border:1px solid var(--line); background:#eef4ff;
+  color:#0F2D56; border-radius:8px; padding:6px 8px; font-weight:600; cursor:pointer}
+.template-row.active{border-color:#9ab8ff; background:#f5f8ff}
+.add-template{margin-top:12px; color:#2563eb; cursor:pointer; text-align:left; font-size:14px;}
+
+/* ===== Step 5 (Final Check) ===== */
+/* Header row: label on left, button on right */
+.label-row{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.label-row .label{ margin:0; }
+
+/* Use the same phone look INSIDE the card */
+.phone-frame.final {
+  width:100%;
+  max-width:100%;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.phone-titlebar.final {
+  display:flex; gap:6px; align-items:center;
+  padding:10px; background:#f9fafb; border-bottom:1px solid #eef1f6;
+}
+.email-preview.final { max-height:420px; overflow:auto; }
+
+/* push confirmation stays the same look */
+.push {
+  position:sticky; top:-14px; margin:-14px -14px 12px -14px;
+  background:#ecfeff; color:#0f766e; border:1px solid #a5f3fc;
+  border-radius:12px; padding:10px 12px; font-weight:800; display:none;
+}
+.push.show{ display:block; }
+
+/* the button used beside the label */
+#sendTestBtn{
+  appearance:none; border:1px solid var(--line); background:#eef4ff;
+  color:#0F2D56; border-radius:10px; padding:6px 10px; font-weight:700; cursor:pointer;
+}
+
+/* "+ Add more follow-ups" link (reuse same style as others) */
+.add-template:hover{ text-decoration:underline; }
+
+
+
 </style>
 </head>
 <body>
@@ -465,14 +522,14 @@
 <!-- Step: Decide Entry -->
 <section class="slide" data-step="entry">
   <div class="head">
-    <div class="h1">Decide how your automation begins</div>
+    <div class="h1">Step 1: Decide how your automation begins</div>
     <div class="p">Pick from common starting points below to decide how people enter your workflow.</div>
   </div>
   <div class="scroll">
     <div class="card">
       <div class="chips stacked" id="entryChips"></div>
       <div style="margin-top:8px">
-        <a id="entryCustomLink">+ Create Custom Entry Point 🔒</a>
+        <a id="entryCustomLink" class="add-template" role="button">+ Create Custom Entry Point 🔒</a>
       </div>
       <div class="right" style="margin-top:12px">
         <button id="toEntryConfirm" class="btn blue">Continue</button>
@@ -501,12 +558,13 @@
         <!-- Step: Journey — Choose actions -->
         <section class="slide" data-step="actions">
           <div class="head">
-            <div class="h1">Phase 2: After you meet a prospect, what should happen?</div>
+            <div class="h1">Step 2: After you meet a prospect, what should happen?</div>
             <div class="p">Select all actions you want Segwik to automate.</div>
           </div>
           <div class="scroll">
             <div class="card">
 <div class="chips stacked" id="actionChips"></div>
+
               <div class="right" style="margin-top:12px">
                 <button id="toEmailCfg" class="btn blue">Continue</button>
               </div>
@@ -514,23 +572,76 @@
           </div>
         </section>
 
+        <!-- Step: Email Template Picker -->
+<section class="slide" data-step="template">
+  <div class="head">
+    <div class="h1">Step 3: Choose an Email Template</div>
+    <div class="p">Select a pre-designed email template for your autoresponder.</div>
+  </div>
+  <div class="scroll">
+    <div class="card">
+      <div class="label">Recommended Templates</div>
+      <div id="templateList" class="templates"></div>
+      <div class="add-template" id="addTemplateLocked">+ Add Email Template 🔒</div>
+    </div>
+  </div>
+</section>
+
+
+
         <!-- Step: Email — Single CTA -->
         <section class="slide" data-step="cta">
           <div class="head">
-            <div class="h1">When someone receives your email, what should they do?</div>
+            <div class="h1">Step 4: When someone receives your email, what should they do?</div>
             <div class="p">Choose <strong>one</strong> action for your autoresponder.</div>
           </div>
           <div class="scroll">
             <div class="card" id="ctaBuilder"></div>
             <div class="card">
               <div class="right">
-                <button id="toPersonality" class="btn blue">Continue</button>
+                <button id="toFinalCheck" class="btn blue">Continue</button>
+
               </div>
             </div>
           </div>
         </section>
 
         
+<!-- Step: Final Check (full-screen email preview + add follow-ups) -->
+<section class="slide" data-step="finalcheck">
+  <div class="head">
+    <div class="h1">Step 5: Final Check Before Activation</div>
+    <div class="p">Take a moment to preview everything and make sure it looks just right.</div>
+  </div>
+  <div class="scroll">
+    <div class="card">
+  <div class="label-row">
+    <div class="label">Email Preview</div>
+    <button id="sendTestBtn">Send me a Test Email</button>
+  </div><br>
+
+  <!-- Push confirmation (shown after clicking Send me a Test Email) -->
+  <div id="testPush" class="push">Test email sent to your address.</div>
+
+  <!-- Phone-styled preview (IDENTICAL look to the 👁 modal) -->
+  <div class="phone-frame final">
+    <div class="phone-titlebar final">
+      <div class="dot-r"></div><div class="dot-o"></div><div class="dot-g"></div>
+      <div id="fullPhoneTitle" style="margin-left:8px;font-weight:800;color:#0F2D56">It’s great to be connected!</div>
+    </div>
+    <div class="email-preview final">
+      <div class="mail-frame" id="mailPreviewFull"></div>
+    </div>
+  </div>
+
+  <!-- Add more follow-ups link (opens upgrade modal) -->
+  <div style="margin-top:10px">
+    <a id="addMoreFollowups" class="add-template" role="button">+ Add more follow-ups</a>
+  </div>
+</div>
+
+  </div>
+</section>
 
         
 
@@ -695,14 +806,17 @@ const IDX = {
   preview:     stepIndex('preview'),
   personality: stepIndex('personality'),
   actions:     stepIndex('actions'),
+  template:    stepIndex('template'),
   cta:         stepIndex('cta'),
   content:     stepIndex('content'),
   logo:        stepIndex('logo'),
   handoff:     stepIndex('handoff'), 
   entry:       stepIndex('entry'),        
   entryConfirm:stepIndex('entryConfirm'),
+  finalcheck:  stepIndex('finalcheck'),
   summary:     stepIndex('summary')
 };
+
 
 function renderDots(){
   const pager = document.getElementById('pager');
@@ -1031,8 +1145,12 @@ function fillPeekFromInputs(){
 const actionDefs = [
   {key:'email', label:'Send the Contact an Email', locked:false},
   {key:'text', label:'Send the Contact a Text Message', locked:true},
+  {key:'journey', label:'Send Push Notification', locked:true},
   {key:'task', label:'Assign a Task to Me', locked:true},
   {key:'journey', label:'Add to a Journey', locked:true},
+  {key:'journey', label:'Update Attribute(s)', locked:true},
+  {key:'journey', label:'Generate a Transaction', locked:true},
+  {key:'journey', label:'Assign a Workflow', locked:true},
 ];
 const chosenActions = new Set(['email']);
 const chipsHost = document.getElementById('actionChips');
@@ -1053,9 +1171,72 @@ actionDefs.forEach(a=>{
 });
 document.getElementById('toEmailCfg')?.addEventListener('click', ()=>{
   if(!chosenActions.has('email')) { alert('Select Email to continue.'); return; }
-goTo(IDX.cta);
-
+  goTo(IDX.template); 
 });
+
+/* ========= Email Template Picker ========= */
+const templateDefs = [
+  {key:'connected',   name:'It’s Great to Be Connected'},
+  {key:'welcome',     name:'Welcome & Introduction'},
+  {key:'nicetomeet',  name:'Nice to Meet You'},
+  {key:'getstarted',  name:'Let’s Get Started'},
+  {key:'help',        name:'Here’s How I Can Help'}
+];
+
+let chosenTemplate = 'connected';
+
+function renderTemplateList(){
+  const host = document.getElementById('templateList');
+  if(!host) return;
+  host.innerHTML = '';
+  templateDefs.forEach(t=>{
+    const row = document.createElement('div');
+    row.className = 'template-row' + (chosenTemplate===t.key ? ' active' : '');
+    row.innerHTML = `
+      <div class="name">${t.name}</div>
+      <div class="actions">
+        <button class="eye" title="Preview" aria-label="Preview ${t.name}">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+        <button class="choose">Choose</button>
+      </div>
+    `;
+    // open the same phone preview modal used by 👁 buttons
+    row.querySelector('.eye').addEventListener('click', ()=>{
+      // Optionally set subject/title bar to template name for clarity
+      document.getElementById('phoneTitle').textContent = t.name;
+      togglePhone(true);
+    });
+    // choose handler
+   row.querySelector('.choose').addEventListener('click', ()=>{
+  chosenTemplate = t.key;
+  renderTemplateList();
+  if(S.subject) S.subject.value = t.name;
+  if (phoneModalOpen) { syncPhoneTitle(); renderMail(); }
+  goTo(IDX.cta); // Automatically continue after choosing
+});
+
+    // allow clicking the row name to select too
+    row.addEventListener('click', (e)=>{
+      if(e.target.closest('.actions')) return; // buttons already handle
+      chosenTemplate = t.key;
+      renderTemplateList();
+    });
+    host.appendChild(row);
+  });
+}
+renderTemplateList();
+
+// Locked “Add Template” link
+document.getElementById('addTemplateLocked')?.addEventListener('click', ()=>{
+  const title = document.getElementById('upgTitle');
+  if(title) title.textContent = 'Requires an Upgrade';
+  upg.classList.add('show');
+});
+
 
 /* ========= CTA Builder (single-select gating) ========= */
 const ctaOptions = [
@@ -1126,13 +1307,17 @@ function renderCtaBuilder(){
   });
 }
 renderCtaBuilder();
-document.getElementById('toPersonality')?.addEventListener('click', ()=>{
+document.getElementById('toFinalCheck')?.addEventListener('click', ()=>{
   const one = Object.values(ctaState).filter(v=>v.on).length===1;
   const done = Object.values(ctaState).some(v=>v.on && v.btnLabel && v.dest);
   if(!one){ alert('Choose exactly one CTA.'); return; }
   if(!done){ alert('Fill out the selected CTA fields.'); return; }
+  goTo(IDX.finalcheck);
+});
+document.getElementById('finalToSummary')?.addEventListener('click', ()=>{
   goTo(IDX.summary);
 });
+
 
 
 /* ========= Personas ========= */
@@ -1410,7 +1595,14 @@ document.getElementById('phoneClose')?.addEventListener('click', ()=>togglePhone
 document.getElementById('peekEmail1')?.addEventListener('click', ()=>togglePhone(true));
 document.getElementById('peekEmail2')?.addEventListener('click', ()=>togglePhone(true));
 
-function syncPhoneTitle(){ document.getElementById('phoneTitle').textContent = safe(S.subject?.value, "It’s great to be connected!"); }
+function syncPhoneTitle(){
+  const txt = safe(S.subject?.value, "It’s great to be connected!");
+  const t1 = document.getElementById('phoneTitle');
+  if(t1) t1.textContent = txt;
+  const t2 = document.getElementById('fullPhoneTitle');
+  if(t2) t2.textContent = txt;
+}
+
 
 function activeCTA(){
   const entry = Object.entries(ctaState).find(([k,v])=>v.on && v.btnLabel && v.dest);
@@ -1435,7 +1627,6 @@ function buildCTA(a){
   return `${pre}<div style="margin:8px 0 12px 0"><a class="${cls}" href="${href}" target="${target}" rel="noopener">${a.btnLabel}</a></div>`;
 }
 function renderMail(){
-  const host = document.getElementById('mailPreview');
   const subj = safe(S.subject?.value, "It’s great to be connected!");
   const a = activeCTA();
   const logo = logoUrl ? `<div style="text-align:center;margin-bottom:10px"><img src="${logoUrl}" alt="logo" style="max-width:160px;max-height:60px;object-fit:contain"/></div>` : '';
@@ -1452,8 +1643,8 @@ function renderMail(){
       </div>
     </div>`;
 
-  host.innerHTML = `
-    <div class="mail-topbar"><div class="subject">${subj}</div></div>
+  const html = `
+    
     <div class="mail-body">
       ${logo}
       <p>Hello [firstname], thanks for downloading my digital business card — I’m excited we crossed paths. Let me introduce myself a bit more:</p>
@@ -1474,6 +1665,12 @@ function renderMail(){
       ${signature}
     </div>
   `;
+
+  const hostPhone = document.getElementById('mailPreview');
+  if(hostPhone) hostPhone.innerHTML = html;
+
+  const hostFull = document.getElementById('mailPreviewFull');
+  if(hostFull) hostFull.innerHTML = html;
 }
 
 /* ========= Buttons & Summary Toggle ========= */
@@ -1488,6 +1685,28 @@ toggle?.addEventListener('click', ()=>{
   alert(on ? 'Journey activated' : 'Journey deactivated');
 });
 
+/* ===== Final Check actions ===== */
+document.getElementById('sendTestBtn')?.addEventListener('click', ()=>{
+  // show push
+  const p = document.getElementById('testPush');
+  if(p){
+    p.textContent = 'Test email sent to your address.';
+    p.classList.add('show');
+    setTimeout(()=> p.classList.remove('show'), 2200);
+  }
+  // (No actual send; this is a UI confirmation only.)
+});
+
+document.getElementById('addMoreFollowups')?.addEventListener('click', ()=>{
+  // open upgrade modal with required copy
+  const title = document.getElementById('upgTitle');
+  if(title) title.textContent = 'Requires an Upgrade';
+  const modal = document.querySelector('#upgradeModal .modal p');
+  if(modal) modal.innerHTML = 'Adding another follow-up email is available on paid plans.';
+  document.getElementById('upgradeModal')?.classList.add('show');
+});
+
+
 /* ========= Init ========= */
 renderSocialRows();
 renderCtaBuilder();
@@ -1495,6 +1714,8 @@ renderPersona();
 goTo(0);
 updatePreviews();
 syncPhoneTitle();
+renderMail();
+
 </script>
 </body>
 </html>

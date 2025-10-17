@@ -616,7 +616,7 @@
   <div class="scroll">
     <div class="card">
   <div class="label-row">
-    <div class="label">Email Preview</div>
+    <div class="label">Timing: Immediately</div>
     <button id="sendTestBtn">Send me a Test Email</button>
   </div><br>
 
@@ -791,6 +791,12 @@ let doAutoGenNext = false;
 function goTo(i){
   idx = Math.max(0, Math.min(slides.length-1, i));
   carousel.style.transform = `translateX(-${idx*100}%)`;
+    // ALWAYS refresh Step 5 preview when landing there
+  if (i === IDX.finalcheck) {
+    syncPhoneTitle();
+    renderMail();
+  }
+
   renderDots(); updateNav();
   if (idx === IDX.preview) { renderStatus(); renderInlineVcardFromInputs(); }
   if (idx === IDX.content && doAutoGenNext) {
@@ -1095,8 +1101,11 @@ function updatePreviews(){
   if (idx === IDX.preview) { renderStatus(); renderInlineVcardFromInputs(); }
 
   if(sheet.classList.contains('show')) fillPeekFromInputs();
-  if(phoneModalOpen) renderMail();
+
+  // ALWAYS update the email previews (phone modal + Step 5 full preview)
+  renderMail();
 }
+
 
 /* ========= Peek sheet ========= */
 const sheet = document.getElementById('peekProfileSheet');
@@ -1215,8 +1224,10 @@ function renderTemplateList(){
   chosenTemplate = t.key;
   renderTemplateList();
   if(S.subject) S.subject.value = t.name;
-  if (phoneModalOpen) { syncPhoneTitle(); renderMail(); }
-  goTo(IDX.cta); // Automatically continue after choosing
+ syncPhoneTitle();
+renderMail();
+goTo(IDX.cta); // Automatically continue after choosing
+
 });
 
     // allow clicking the row name to select too
@@ -1293,7 +1304,8 @@ function renderCtaBuilder(){
       }
       ctaState[key].on = e.target.checked;
       renderCtaBuilder();
-      if(phoneModalOpen) renderMail();
+      renderMail();
+
     });
   });
   host.querySelectorAll('input[data-cta-label]').forEach(inp=>{
@@ -1313,10 +1325,11 @@ document.getElementById('toFinalCheck')?.addEventListener('click', ()=>{
   if(!one){ alert('Choose exactly one CTA.'); return; }
   if(!done){ alert('Fill out the selected CTA fields.'); return; }
   goTo(IDX.finalcheck);
+  // double-ensure fresh preview when arriving via this button
+  syncPhoneTitle();
+  renderMail();
 });
-document.getElementById('finalToSummary')?.addEventListener('click', ()=>{
-  goTo(IDX.summary);
-});
+
 
 
 
@@ -1494,7 +1507,7 @@ function fillFromDummy(){
   const set = DUMMY[chosenPersona][dummyIdx % DUMMY[chosenPersona].length];
   coOverview.value=set.overview; coMission.value=set.mission; coValues.value=set.values; coDiff.value=set.diff; dummyIdx++;
 }
-function withLoader(fn){ overlay.classList.add('show'); setTimeout(()=>{ fn(); overlay.classList.remove('show'); if(phoneModalOpen) renderMail(); }, 800); }
+function withLoader(fn){ overlay.classList.add('show'); setTimeout(()=>{ fn(); overlay.classList.remove('show'); renderMail(); }, 800); }
 document.getElementById('regenAI')?.addEventListener('click', ()=>withLoader(fillFromDummy));
 
 /* ========= Subject / Logo step nav ========= */
@@ -1643,8 +1656,30 @@ function renderMail(){
       </div>
     </div>`;
 
-  const html = `
-    
+  /* Phone modal (👁) preview — no CTA injected here */
+  const htmlPhone = `
+    <div class="mail-body">
+      ${logo}
+      <p>Hello [firstname], thanks for downloading my digital business card — I’m excited we crossed paths. Let me introduce myself a bit more:</p>
+
+      <p style="font-weight:800;margin-top:12px">About My Business</p>
+      <p>${safe(coOverview?.value,'[company_overview]')}</p>
+
+      <p style="font-weight:800;margin-top:12px">What Drives Us</p>
+      <p>${safe(coMission?.value,'[mission_statement]')}</p>
+
+      <p style="font-weight:800;margin-top:12px">What Makes Us Different</p>
+      <p>${safe(coDiff?.value,'[organization_values]')}</p>
+
+      <p style="font-weight:800;margin-top:12px">Our Core Values</p>
+      <p>${safe(coValues?.value,'[differentiating_propositions]')}</p>
+
+      ${signature}
+    </div>
+  `;
+
+  /* Step 5 (Final Check) full preview — CTA appears BEFORE the footer */
+  const htmlFull = `
     <div class="mail-body">
       ${logo}
       <p>Hello [firstname], thanks for downloading my digital business card — I’m excited we crossed paths. Let me introduce myself a bit more:</p>
@@ -1667,11 +1702,12 @@ function renderMail(){
   `;
 
   const hostPhone = document.getElementById('mailPreview');
-  if(hostPhone) hostPhone.innerHTML = html;
+  if(hostPhone) hostPhone.innerHTML = htmlPhone;
 
   const hostFull = document.getElementById('mailPreviewFull');
-  if(hostFull) hostFull.innerHTML = html;
+  if(hostFull) hostFull.innerHTML = htmlFull;
 }
+
 
 /* ========= Buttons & Summary Toggle ========= */
 document.getElementById('btnPreviewCard')?.addEventListener('click', ()=>alert('Mock: Opening public vCard link'));

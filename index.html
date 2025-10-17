@@ -171,6 +171,35 @@
   .icon-pill svg{ width:14px; height:14px; stroke:#fff; fill:none; stroke-width:2; }
 
   .peek-trigger{ display:inline-flex; align-self:flex-end; }
+  /* Green badge used on the pause screen */
+.badge {
+  display:inline-flex; align-items:center; gap:8px;
+  font-weight:900; color:#064e3b; background:#dcfce7;
+  border:1px solid #bbf7d0; border-radius:999px; padding:6px 10px;
+}
+.badge .dot { width:8px; height:8px; border-radius:50%; background:var(--green); }
+
+/* Stack chips one-per-row */
+.chips.stacked{ flex-direction:column }
+.chips.stacked .chip{ width:100%; justify-content:space-between }
+
+#actionChips .chip { text-align: left; }
+
+
+/* Form preview (inside peek sheet) */
+.form-preview{ padding:6px 0 }
+.form-preview .big-title{
+  display:flex; align-items:center; gap:8px; font-weight:900; color:#0F2D56; margin-bottom:6px;
+}
+.form-preview .big-title .ok{ color:#22c55e; }
+.form-preview .sub{ color:#667085; margin-bottom:12px; }
+.form-preview .hint{ font-size:12px; color:#667085; margin:6px 0 10px; }
+.form-preview .row{ display:grid; gap:8px; }
+.form-preview .row .intl-phone{ display:grid; grid-template-columns:80px 1fr; gap:8px; }
+.form-preview .submit{ width:100%; padding:12px 14px; border-radius:999px; border:0; font-weight:800; color:#fff; background:#d1d5db; cursor:not-allowed }
+.form-preview a{ color:#2563eb; text-decoration:underline; cursor:pointer }
+
+
 </style>
 </head>
 <body>
@@ -403,6 +432,71 @@
           </div>
         </section>
 
+<!-- Step: Profile Complete pause -->
+<section class="slide" data-step="handoff">
+  <div class="head">
+    <div class="h1">Your account profile is complete 🎉</div>
+    <div class="p">We’ve paused here. Just a few quick tasks left to set up your automation for when someone downloads your vCard.</div>
+  </div>
+
+  <div class="scroll">
+    <!-- Box 1 -->
+    <div class="card">
+      <div class="badge"><span class="dot"></span> Profile Complete</div>
+      <div class="p" style="margin-top:10px">
+        Your profile details, company info, images, and logo are all set. Everything is looking great so far. You can preview your vCard anytime.
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button id="handoffPreviewCard" class="btn">Open vCard</button>
+      </div>
+    </div>
+
+    <!-- Box 2 -->
+    <div class="card">
+      <div class="p" style="font-weight:800">Up next: Start your journey by choosing how people connect with you</div>
+      <div class="right" style="margin-top:10px">
+        <button id="toActionsFromHandoff" class="btn blue">Continue</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Step: Decide Entry -->
+<section class="slide" data-step="entry">
+  <div class="head">
+    <div class="h1">Decide how your automation begins</div>
+    <div class="p">Pick from common starting points below to decide how people enter your workflow.</div>
+  </div>
+  <div class="scroll">
+    <div class="card">
+      <div class="chips stacked" id="entryChips"></div>
+      <div style="margin-top:8px">
+        <a id="entryCustomLink">+ Create Custom Entry Point 🔒</a>
+      </div>
+      <div class="right" style="margin-top:12px">
+        <button id="toEntryConfirm" class="btn blue">Continue</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Step: Entry Confirm -->
+<section class="slide" data-step="entryConfirm">
+  <div class="head">
+    <div class="h1">Here’s what triggers your automation</div>
+    <div class="p">When someone downloads your digital card and completes this form, it kicks off your follow-up journey—no manual work needed.</div>
+  </div>
+  <div class="scroll">
+    <button id="viewDownloadForm" class="btn">View “Download My Digital Card” Form</button>
+    <div class="right" style="margin-top:12px">
+      <button id="toActionsFromEntryConfirm" class="btn blue">Continue</button>
+    </div>
+  </div>
+</section>
+
+
+
 
         <!-- Step: Journey — Choose actions -->
         <section class="slide" data-step="actions">
@@ -412,7 +506,7 @@
           </div>
           <div class="scroll">
             <div class="card">
-              <div class="chips" id="actionChips"></div>
+<div class="chips stacked" id="actionChips"></div>
               <div class="right" style="margin-top:12px">
                 <button id="toEmailCfg" class="btn blue">Continue</button>
               </div>
@@ -524,6 +618,48 @@
       </div>
     </div>
 
+<!-- Form Preview sheet -->
+<div id="formPreviewSheet" class="peeksheet-wrap" aria-hidden="true" onclick="if(event.target.id==='formPreviewSheet'){toggleFormPreview(false)}">
+  <div class="peeksheet" role="dialog" aria-modal="true" aria-label="Form preview" onclick="event.stopPropagation()">
+    <div class="peeksheet-top">
+      <div class="peeksheet-title">Download My Digital Card — Contact Form</div>
+      <button id="formPreviewClose" class="peeksheet-close" aria-label="Close">×</button>
+    </div>
+    <div class="peeksheet-body">
+      <div class="form-preview">
+        <div class="big-title">
+          <span class="ok">✔</span> Please Share Your Information
+        </div>
+        <div class="sub">To help stay in touch, please share your information back.</div>
+
+        <div class="row">
+          <div class="label">Your First Name*</div>
+          <input type="text" placeholder="">
+          <div class="label">Your Last Name*</div>
+          <input type="text" placeholder="">
+          <div class="label">Your Email*</div>
+          <input type="email" placeholder="">
+          <div class="label">Your Phone*</div>
+          <div class="intl-phone">
+            <select>
+              <option>+1</option>
+              <option>+44</option>
+              <option>+61</option>
+            </select>
+            <input type="text" placeholder="Enter phone number">
+          </div>
+          <div class="label">Your Company</div>
+          <input type="text" placeholder="">
+          <div><a>Add Note...</a></div>
+          <textarea placeholder="Enter note..."></textarea>
+          <div class="hint">* Required fields</div>
+          <button class="submit" disabled>Submit And Save Contact</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!-- Bottom icon tray -->
     <div class="tray" id="footer-tray">
       <div class="ibtn" data-icon="home"></div>
@@ -537,7 +673,7 @@
 <script>
 /* ========= Carousel / Pager ========= */
 const carousel = document.getElementById('carousel');
-const slides = Array.from(carousel.children);
+const slides = Array.from(carousel.querySelectorAll('.slide'));
 let idx = 0;
 let doAutoGenNext = false;
 
@@ -562,6 +698,9 @@ const IDX = {
   cta:         stepIndex('cta'),
   content:     stepIndex('content'),
   logo:        stepIndex('logo'),
+  handoff:     stepIndex('handoff'), 
+  entry:       stepIndex('entry'),        
+  entryConfirm:stepIndex('entryConfirm'),
   summary:     stepIndex('summary')
 };
 
@@ -1176,7 +1315,86 @@ document.getElementById('regenAI')?.addEventListener('click', ()=>withLoader(fil
 /* ========= Subject / Logo step nav ========= */
 document.getElementById('toLogo')?.addEventListener('click', ()=>goTo(IDX.logo));
 
-document.getElementById('finish')?.addEventListener('click', ()=>goTo(IDX.summary));
+document.getElementById('finish')?.addEventListener('click', ()=>goTo(IDX.handoff));
+
+document.getElementById('handoffPreviewCard')?.addEventListener('click', ()=>{
+  // Use the same behavior as your other preview button (mock or real)
+  // If you want to match your existing mock preview:
+  alert('Mock: Opening public vCard link');
+  // Or call the same function you use for #btnPreviewCard if you have one.
+});
+
+document.getElementById('toActionsFromHandoff')?.addEventListener('click', ()=>{
+  goTo(IDX.entry);   // was IDX.actions before
+});
+
+/* ========= Entry (how automation begins) ========= */
+const entryDefs = [
+  {key:'download', label:'Download My Digital Card - Personal Profile Page', locked:false},
+  {key:'form',     label:'Submitted a Contact Form', locked:true},
+  {key:'booked',   label:'Booked a Meeting', locked:true},
+  {key:'attended', label:'Attended an Event', locked:true},
+  {key:'clicked',  label:'Clicked a Link in an Email', locked:true},
+  {key:'scanned',  label:'Scanned your vCard QR Code', locked:true},
+];
+let chosenEntry = 'download';
+
+function renderEntryChips(){
+  const host = document.getElementById('entryChips');
+  if(!host) return;
+  host.innerHTML = '';
+  entryDefs.forEach(e=>{
+    const b = document.createElement('button');
+    b.className = 'chip' + (chosenEntry===e.key?' active':'');
+    b.textContent = e.label + (e.locked ? ' 🔒' : '');
+    b.style.textAlign = 'left';
+    b.onclick = ()=>{
+      if(e.locked){
+        // Show same upgrade modal but with different heading
+        const title = document.getElementById('upgTitle');
+        if(title) title.textContent = 'Unlock more ways to start your journeys.';
+        upg.classList.add('show');
+        return;
+      }
+      chosenEntry = e.key;
+      renderEntryChips();
+    };
+    host.appendChild(b);
+  });
+}
+renderEntryChips();
+
+/* Entry footer controls */
+document.getElementById('entryCustomLink')?.addEventListener('click', ()=>{
+  const title = document.getElementById('upgTitle');
+  if(title) title.textContent = 'Unlock more ways to start your journeys.';
+  upg.classList.add('show');
+});
+document.getElementById('toEntryConfirm')?.addEventListener('click', ()=>{
+  // Only the unlocked option proceeds (download)
+  if(chosenEntry!=='download'){
+    const title = document.getElementById('upgTitle');
+    if(title) title.textContent = 'Unlock more ways to start your journeys.';
+    upg.classList.add('show');
+    return;
+  }
+  goTo(IDX.entryConfirm);
+});
+
+document.getElementById('toActionsFromEntryConfirm')?.addEventListener('click', ()=>{
+  goTo(IDX.actions);
+});
+
+/* ========= Form Preview sheet ========= */
+const formSheet = document.getElementById('formPreviewSheet');
+function toggleFormPreview(show){
+  formSheet.classList.toggle('show', !!show);
+  formSheet.setAttribute('aria-hidden', show ? 'false' : 'true');
+}
+document.getElementById('viewDownloadForm')?.addEventListener('click', ()=>toggleFormPreview(true));
+document.getElementById('formPreviewClose')?.addEventListener('click', ()=>toggleFormPreview(false));
+window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && formSheet.classList.contains('show')) toggleFormPreview(false); });
+
 
 
 /* ========= Phone-styled Email Preview ========= */

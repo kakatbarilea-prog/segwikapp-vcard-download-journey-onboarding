@@ -203,7 +203,7 @@
           </div>
         </section>
 
-        <!-- Step 1: vCard — Profile -->
+        <!-- Step: vCard — Profile -->
         <section class="slide">
           <div class="head">
             <div class="h1">Confirm Profile Details</div>
@@ -260,7 +260,7 @@
           </div>
         </section>
 
-        <!-- Step 2: vCard — Contact & Social -->
+        <!-- Step: vCard — Contact & Social -->
         <section class="slide">
           <div class="head">
             <div class="h1">Confirm Contact & Social Details</div>
@@ -297,8 +297,8 @@
           </div>
         </section>
 
-        <!-- Step 3: vCard — Live Preview (inline matches peek sheet) -->
-        <section class="slide">
+        <!-- Step: vCard — Live Preview (inline matches peek sheet) -->
+        <section class="slide" data-step="preview">
           <div class="head">
             <div class="h1">Preview Your Digital Card</div>
             <div class="p">This is what people will see when you share your link or QR code.</div>
@@ -321,40 +321,8 @@
           </div>
         </section>
 
-        <!-- Step 4: Journey — Choose actions -->
-        <section class="slide">
-          <div class="head">
-            <div class="h1">Phase 2: After you meet a prospect, what should happen?</div>
-            <div class="p">Select all actions you want Segwik to automate.</div>
-          </div>
-          <div class="scroll">
-            <div class="card">
-              <div class="chips" id="actionChips"></div>
-              <div class="right" style="margin-top:12px">
-                <button id="toEmailCfg" class="btn blue">Continue</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Step 5: Email — Single CTA -->
-        <section class="slide">
-          <div class="head">
-            <div class="h1">When someone receives your email, what should they do?</div>
-            <div class="p">Choose <strong>one</strong> action for your autoresponder.</div>
-          </div>
-          <div class="scroll">
-            <div class="card" id="ctaBuilder"></div>
-            <div class="card">
-              <div class="right">
-                <button id="toPersonality" class="btn blue">Continue</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Step 6: Brand Personality -->
-        <section class="slide">
+<!-- Step: Brand Personality -->
+        <section class="slide" data-step="personality">
           <div class="head">
             <div class="h1">How do you see yourself in the market?</div>
             <div class="p">Select all that describe your brand personality. Your AI-written autoresponder will match this tone.</div>
@@ -367,8 +335,8 @@
           </div>
         </section>
 
-        <!-- Step 7: Content + AI generate -->
-        <section class="slide">
+        <!-- Step: Content + AI generate -->
+        <section class="slide" data-step="content">
           <div class="head">
             <div class="h1">Tell us about your business</div>
             <div class="p">You can write your own or let AI draft and then edit.</div>
@@ -376,27 +344,26 @@
           <div class="scroll" style="position:relative">
             <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
 
-            <div class="card">
-              <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
-                <button id="genAI" class="btn">Generate with AI</button>
-                <button id="regenAI" class="btn ghost">Regenerate</button>
-              </div>
-            </div>
+            <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
+  <button id="regenAI" class="btn">Regenerate with Segwik AI</button>
+</div>
+
+
 
             <div class="card">
-              <div class="label">Company Overview</div>
+              <div class="label">Is this a good overview of your business?</div>
               <textarea id="coOverview" placeholder="Describe what your company does…"></textarea>
             </div>
             <div class="card">
-              <div class="label">Mission Statement</div>
+              <div class="label">Does this describe your mission accurately?</div>
               <textarea id="coMission" placeholder="State your mission…"></textarea>
             </div>
             <div class="card">
-              <div class="label">Organization Values</div>
+              <div class="label">Do you agree with this value statement?</div>
               <textarea id="coValues" placeholder="List a few core values…"></textarea>
             </div>
             <div class="card">
-              <div class="label">Differentiating Propositions</div>
+              <div class="label">Is this a good way to differentiate your business?</div>
               <textarea id="coDiff" placeholder="What makes you different…"></textarea>
             </div>
 
@@ -408,17 +375,14 @@
           </div>
         </section>
 
-        <!-- Step 8: Subject + Logo upload -->
-        <section class="slide">
+        <!-- Step: Logo upload -->
+        <section class="slide" data-step="logo">
           <div class="head">
-            <div class="h1">Subject & Logo</div>
-            <div class="p">We’ll include your logo at the top of the autoresponder.</div>
+            <div class="h1">Do you have a logo?</div>
+            <div class="p">Your logo helps people instantly recognize your brand.</div>
           </div>
           <div class="scroll">
-            <div class="card">
-              <div class="label">Subject Line</div>
-              <input id="subjectLine" type="text" value="It’s great to be connected!">
-            </div>
+            
 
             <div class="card">
               <div class="uploader" style="grid-template-columns:1fr">
@@ -439,8 +403,45 @@
           </div>
         </section>
 
-        <!-- Step 9: Summary with toggle -->
-        <section class="slide">
+
+        <!-- Step: Journey — Choose actions -->
+        <section class="slide" data-step="actions">
+          <div class="head">
+            <div class="h1">Phase 2: After you meet a prospect, what should happen?</div>
+            <div class="p">Select all actions you want Segwik to automate.</div>
+          </div>
+          <div class="scroll">
+            <div class="card">
+              <div class="chips" id="actionChips"></div>
+              <div class="right" style="margin-top:12px">
+                <button id="toEmailCfg" class="btn blue">Continue</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step: Email — Single CTA -->
+        <section class="slide" data-step="cta">
+          <div class="head">
+            <div class="h1">When someone receives your email, what should they do?</div>
+            <div class="p">Choose <strong>one</strong> action for your autoresponder.</div>
+          </div>
+          <div class="scroll">
+            <div class="card" id="ctaBuilder"></div>
+            <div class="card">
+              <div class="right">
+                <button id="toPersonality" class="btn blue">Continue</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        
+
+        
+
+        <!-- Step: Summary with toggle -->
+        <section class="slide" data-step="summary">
           <div class="head">
             <div class="h1">Your vCard Download Journey is ready</div>
             <div class="p">Share your card link or QR, and we’ll handle the follow-up.</div>
@@ -538,12 +539,32 @@
 const carousel = document.getElementById('carousel');
 const slides = Array.from(carousel.children);
 let idx = 0;
+let doAutoGenNext = false;
+
 function goTo(i){
   idx = Math.max(0, Math.min(slides.length-1, i));
   carousel.style.transform = `translateX(-${idx*100}%)`;
   renderDots(); updateNav();
-  if(idx===2){ renderStatus(); renderInlineVcardFromInputs(); } // Step 3
+  if (idx === IDX.preview) { renderStatus(); renderInlineVcardFromInputs(); }
+  if (idx === IDX.content && doAutoGenNext) {
+    // Give the slide a tick to render, then show overlay + fill
+    setTimeout(()=>{ withLoader(fillFromDummy); doAutoGenNext = false; }, 50);
+  }
 }
+
+function stepIndex(name){
+  return slides.findIndex(s => s.dataset && s.dataset.step === name);
+}
+const IDX = {
+  preview:     stepIndex('preview'),
+  personality: stepIndex('personality'),
+  actions:     stepIndex('actions'),
+  cta:         stepIndex('cta'),
+  content:     stepIndex('content'),
+  logo:        stepIndex('logo'),
+  summary:     stepIndex('summary')
+};
+
 function renderDots(){
   const pager = document.getElementById('pager');
   if(!pager) return;
@@ -796,9 +817,15 @@ function renderStatus(){
   if(!(S.website.value || socialValid.length>0)) missing.push('website or at least one social link');
 
   const complete = missing.length===0;
+
+  const missingList = missing.length
+    ? `<ul style="margin:6px 0; padding-left:20px;">${missing.map(item => `<li>${item}</li>`).join('')}</ul>`
+    : '';
+
   const status = complete
     ? `✅ <span class="ok">Your digital card is complete</span>`
-    : `⚠️ <span class="warn">Your digital card isn’t complete yet</span> — please add ${oxfordList(missing)}.`;
+    : `⚠️ <span class="warn">Your public profile isn’t ready yet. Please add:</span><br>${missingList}Completing your profile helps your vcard look complete and professional.`;
+
   const statusEl = document.getElementById('cardStatus');
   if(statusEl) statusEl.innerHTML = status;
 
@@ -809,9 +836,11 @@ function renderStatus(){
   if(sum) sum.textContent = complete ? 'Digital card complete' : 'Digital card incomplete';
 }
 
+
 /* Keep everything live */
 function updatePreviews(){
-  if(idx===2){ renderInlineVcardFromInputs(); renderStatus(); }
+  if (idx === IDX.preview) { renderStatus(); renderInlineVcardFromInputs(); }
+
   if(sheet.classList.contains('show')) fillPeekFromInputs();
   if(phoneModalOpen) renderMail();
 }
@@ -885,7 +914,8 @@ actionDefs.forEach(a=>{
 });
 document.getElementById('toEmailCfg')?.addEventListener('click', ()=>{
   if(!chosenActions.has('email')) { alert('Select Email to continue.'); return; }
-  goTo(5);
+goTo(IDX.cta);
+
 });
 
 /* ========= CTA Builder (single-select gating) ========= */
@@ -962,8 +992,9 @@ document.getElementById('toPersonality')?.addEventListener('click', ()=>{
   const done = Object.values(ctaState).some(v=>v.on && v.btnLabel && v.dest);
   if(!one){ alert('Choose exactly one CTA.'); return; }
   if(!done){ alert('Fill out the selected CTA fields.'); return; }
-  goTo(6);
+  goTo(IDX.summary);
 });
+
 
 /* ========= Personas ========= */
 const personas = [
@@ -990,7 +1021,15 @@ function renderPersona(){
   });
 }
 renderPersona();
-document.getElementById('toContent')?.addEventListener('click', ()=>goTo(7));
+document.getElementById('toContent')?.addEventListener('click', ()=>{
+  // start from the first item for the chosen persona
+  dummyIdx = 0;
+  doAutoGenNext = true;  // signal goTo() to run the loader + fill
+  goTo(IDX.content);
+});
+
+
+
 
 /* ========= AI Generate (dummy) ========= */
 const overlay = document.getElementById('aiOverlay');
@@ -1000,41 +1039,145 @@ const coValues   = document.getElementById('coValues');
 const coDiff     = document.getElementById('coDiff');
 const DUMMY = {
   professional: [
-    {overview:"Segwik is a human-centered Relationship Operating System that unifies contacts, communication, and workflows so small teams can build consistent, revenue-driving relationships.",
-     mission:"To remove operational friction so people can spend more time with customers and less time managing tools.",
-     values:"Clarity • Reliability • Customer Empathy • Continuous Improvement",
-     diff:"An all-in-one, AI-assisted workspace that replaces scattered tools with one streamlined system."},
-    {overview:"We turn scattered pipelines into a single, clear workflow that scales from solopreneurs to growing teams.",
-     mission:"Help ambitious businesses communicate faster, follow up smarter, and never drop the ball.",
-     values:"Focus • Speed • Accountability • Simplicity",
-     diff:"Built-in automations and sensible defaults so adoption is instant—not a six-month project."}
+    {
+      overview: "Segwik is a human-centered Relationship Operating System built to bring structure, clarity, and efficiency to how small teams manage connections. We help businesses unify their contacts, communication, and workflows into one seamless environment that drives consistent growth and meaningful relationships.",
+      mission: "Our mission is to simplify the way professionals operate by removing unnecessary friction in daily tasks. We empower teams to focus their time and energy on serving clients, closing deals, and nurturing long-term relationships instead of juggling disconnected tools.",
+      values: "We value clarity in communication, reliability in our systems, and empathy for the customer experience. Through continuous improvement, we make sure our platform evolves with the needs of modern professionals.",
+      diff: "Unlike traditional CRMs that require complex setup and maintenance, Segwik offers an all-in-one, AI-assisted workspace designed for immediate usability. We streamline every touchpoint so teams can operate efficiently from day one."
+    },
+    {
+      overview: "At Segwik, we help ambitious professionals and small teams gain full visibility into their pipelines, projects, and communications. Our platform connects every interaction—from first contact to final follow-up—so nothing falls through the cracks.",
+      mission: "We aim to help teams work smarter, not harder. By combining automation, analytics, and collaboration tools, Segwik creates a single hub that keeps your business organized and responsive to client needs.",
+      values: "Professionalism, accountability, and precision guide everything we do. We believe that attention to detail builds trust and that consistency creates success.",
+      diff: "Segwik eliminates the chaos of scattered spreadsheets and disconnected apps. With built-in automation and intuitive design, we help teams adapt quickly without requiring months of onboarding or tech setup."
+    },
+    {
+      overview: "Segwik serves as the operating foundation for professionals who value organization and efficiency. We help teams centralize their data, streamline operations, and maintain high standards in client communication.",
+      mission: "Our goal is to create reliable digital infrastructure that scales with your business. Whether you’re managing a few clients or hundreds, Segwik provides the tools to keep your work consistent, clear, and professional.",
+      values: "Integrity, dependability, and excellence define our culture. We take pride in delivering stable technology that professionals can count on every day.",
+      diff: "Segwik stands out by offering a structured, professional experience built for results-driven teams. Our tools don’t just manage data—they elevate the quality of every client relationship."
+    }
+  ],
+
+  innovative: [
+    {
+      overview: "Segwik redefines how small teams build relationships by merging automation, intelligence, and design. We combine the science of workflow with the art of personalization to help businesses communicate better and scale faster.",
+      mission: "Our mission is to push boundaries in customer engagement by blending cutting-edge AI with real human insight. We create technology that feels intuitive, adaptive, and empowering—never complicated.",
+      values: "Innovation, creativity, and progress drive us forward. We believe in staying curious, challenging conventions, and building tools that inspire people to work smarter every day.",
+      diff: "Segwik delivers forward-thinking automation that evolves with your business. Our platform adapts dynamically to your workflow, offering next-generation capabilities without the enterprise-level complexity."
+    },
+    {
+      overview: "We help businesses innovate the way they connect with clients. Through AI-driven insights and automation, Segwik transforms ordinary interactions into opportunities for deeper engagement and lasting relationships.",
+      mission: "We strive to make innovation accessible. By simplifying advanced technology, we allow small businesses to leverage the same intelligent systems that power large organizations.",
+      values: "We value curiosity, experimentation, and the courage to try new ideas. Every update and feature we build reflects our belief in constant learning and innovation.",
+      diff: "Unlike traditional CRMs, Segwik continuously learns from your activity. It predicts needs, automates responses, and helps your business stay ahead of the curve."
+    },
+    {
+      overview: "Segwik was designed for forward-thinking teams that see technology as a partner, not a burden. We empower modern professionals to work more creatively and adaptively using smart, flexible automation.",
+      mission: "To bridge the gap between technology and human connection. We want innovation to enhance, not replace, authentic relationships in business.",
+      values: "Innovation, responsiveness, and authenticity guide everything we do. We believe the best solutions are both intelligent and human-centered.",
+      diff: "Segwik sets itself apart with adaptable tools that grow with you. Our intelligent automation anticipates next steps and removes barriers so your ideas can move faster."
+    }
+  ],
+
+  reliable: [
+    {
+      overview: "Segwik is the dependable backbone for relationship-driven businesses. We provide tools that help teams operate with consistency, accuracy, and confidence every day.",
+      mission: "Our mission is to give professionals peace of mind by creating systems that simply work. We handle the technical complexity so you can focus on building meaningful human connections.",
+      values: "Trust, dependability, and consistency are at the heart of Segwik. We believe in long-term reliability over short-term trends.",
+      diff: "Segwik distinguishes itself by providing a stable, secure platform built to last. Our performance and uptime ensure your operations never skip a beat."
+    },
+    {
+      overview: "At Segwik, reliability means everything. We support small teams and growing businesses with tools that are intuitive, predictable, and dependable—no surprises, just results.",
+      mission: "We’re committed to helping our users deliver consistent experiences to their clients. When your tools work flawlessly, your relationships thrive.",
+      values: "Honesty, responsibility, and service guide how we build and support our technology. We take pride in earning the trust of our users every day.",
+      diff: "Segwik stands apart for its simplicity and dependability. Every feature is designed to work smoothly, ensuring you never lose data or momentum."
+    },
+    {
+      overview: "Segwik helps businesses operate with confidence through technology they can trust. From communication to workflow tracking, every component is built for reliability and consistency.",
+      mission: "Our purpose is to give users a system that just works—every time. We want you to spend less time troubleshooting and more time connecting with your clients.",
+      values: "We believe in transparency, stability, and follow-through. Our users depend on us, and we take that responsibility seriously.",
+      diff: "While other platforms chase trends, Segwik focuses on dependable performance. We’re the quiet engine that keeps your business running smoothly behind the scenes."
+    }
+  ],
+
+  friendly: [
+    {
+      overview: "Segwik is your friendly home for keeping track of every conversation, task, and relationship. We make organization feel approachable and easy, so following up doesn’t feel like a chore.",
+      mission: "We want to make growing your business feel personal and fun again. By combining smart tools with a warm user experience, we help you stay connected effortlessly.",
+      values: "Kindness, transparency, and helpfulness guide everything we do. We believe technology should feel supportive, not stressful.",
+      diff: "Segwik stands out for its human touch. Our tools are designed for real people—not just power users—so you can enjoy building relationships instead of managing systems."
+    },
+    {
+      overview: "Segwik helps you stay in touch with clients in a genuine, friendly way. We simplify organization so you can focus on what truly matters—people.",
+      mission: "Our mission is to help you communicate with ease and warmth. Whether it’s a reminder, follow-up, or introduction, we make every interaction feel natural.",
+      values: "We value approachability, empathy, and positivity. Every feature we design supports real human connection.",
+      diff: "Segwik keeps technology simple and human. We make complex tasks feel easy, so you can focus on nurturing relationships instead of wrestling with software."
+    },
+    {
+      overview: "Segwik brings friendliness and simplicity to your daily workflow. We help businesses build long-lasting relationships by keeping communication open and approachable.",
+      mission: "To make every digital interaction feel like a real conversation. We believe business can be warm, personable, and still professional.",
+      values: "Joy, empathy, and clarity are our guiding principles. We design experiences that make people smile and feel understood.",
+      diff: "Segwik delivers an experience that feels light and approachable while still being powerful. We make relationship management feel natural and enjoyable."
+    }
+  ],
+
+  bold: [
+    {
+      overview: "Segwik is the command center for businesses that move fast and aim high. We cut through noise, speed up follow-up, and turn daily chaos into organized momentum.",
+      mission: "We’re on a mission to eliminate busywork and give power back to the people doing the work. We help bold thinkers move faster and smarter with clarity and control.",
+      values: "Momentum, ownership, and candor drive us forward. We believe in taking decisive action and celebrating results.",
+      diff: "Segwik stands apart with lightning-fast automation and a clean, intuitive design that keeps teams focused on winning—not managing systems."
+    },
+    {
+      overview: "For those who like to make things happen, Segwik provides the platform to do it. We help you lead with energy, clarity, and control over every client touchpoint.",
+      mission: "Our goal is to supercharge follow-up and accelerate growth. We believe that when communication moves fast, business follows.",
+      values: "Drive, courage, and focus are the foundation of our work. We encourage decisive action and direct communication.",
+      diff: "Segwik is built for bold professionals who want speed without losing precision. We help you make an impression—quickly and effectively."
+    },
+    {
+      overview: "Segwik helps high-energy teams stay sharp and unstoppable. We turn follow-up from a chore into a competitive advantage with tools built for speed and impact.",
+      mission: "To give ambitious teams the tools to act fast and stay organized. We believe growth comes from confidence, clarity, and action.",
+      values: "Determination, excellence, and forward motion define us. We move with purpose and help our users do the same.",
+      diff: "Segwik delivers an edge to high-performance professionals. Our streamlined interface and automation tools keep you two steps ahead."
+    }
+  ],
+
+  thoughtful: [
+    {
+      overview: "Segwik brings thoughtful structure to relationship management. We help professionals organize their communication and workflows with clarity and empathy so every interaction feels intentional.",
+      mission: "Our mission is to elevate the quality and consistency of every customer experience. We believe great relationships come from genuine care backed by reliable systems.",
+      values: "Empathy, rigor, and continuous learning are the foundation of our work. We aim to build technology that supports human thoughtfulness, not replaces it.",
+      diff: "Segwik differentiates itself by offering calm, structured automation that complements your natural workflow. We help teams work smarter while maintaining a human touch."
+    },
+    {
+      overview: "Segwik provides clarity and organization for teams who value precision and purpose. Every feature is built to make client communication smoother and more thoughtful.",
+      mission: "We’re here to help professionals lead with empathy and consistency. Our tools make it easy to show clients that their experience truly matters.",
+      values: "Stewardship, intentionality, and respect guide our development. We build tools that support meaningful, long-term relationships.",
+      diff: "Segwik’s design philosophy is quiet and deliberate. We enhance your workflow without overwhelming it, offering support exactly where you need it."
+    },
+    {
+      overview: "Segwik is built for professionals who believe relationships deserve care and attention. We help you bring structure and thoughtfulness to every step of the client journey.",
+      mission: "To simplify operations without losing the personal touch. We create tools that balance automation with authenticity, making every interaction meaningful.",
+      values: "Consideration, honesty, and precision define us. We design with empathy to make organization feel intuitive and calm.",
+      diff: "Segwik’s difference lies in balance—we automate what helps and leave room for the human moments that matter most."
+    }
   ]
-  ,innovative: [
-    {overview:"Segwik is a human-centered Relationship Operating System that unifies contacts, communication, and workflows so small teams can build consistent, revenue-driving relationships.",
-     mission:"To remove operational friction so people can spend more time with customers and less time managing tools.",
-     values:"Clarity • Reliability • Customer Empathy • Continuous Improvement",
-     diff:"An all-in-one, AI-assisted workspace that replaces scattered tools with one streamlined system."}]
-  ,reliable: [
-    {overview:"Segwik is a human-centered Relationship Operating System that unifies contacts, communication, and workflows so small teams can build consistent, revenue-driving relationships.",
-     mission:"To remove operational friction so people can spend more time with customers and less time managing tools.",
-     values:"Clarity • Reliability • Customer Empathy • Continuous Improvement",
-     diff:"An all-in-one, AI-assisted workspace that replaces scattered tools with one streamlined system."}]
-  ,friendly:[{overview:"Segwik helps you keep every convo, task, and relationship in one friendly home—so follow-up finally feels easy.",mission:"Make growing your business feel human again.",values:"Kindness • Transparency • Helpfulness • Joy",diff:"Playful, practical tools that work out of the box—even if you hate CRMs."}]
-  ,bold:[{overview:"Segwik is the command center for relationships—cutting noise, speeding action, and growing revenue.",mission:"Destroy busywork. Supercharge follow-up.",values:"Ownership • Momentum • Candor • Craft",diff:"Lightning-fast automations and a clean UI that ship wins on day one."}]
-  ,thoughtful:[{overview:"Segwik brings structure to relationship-building with unobtrusive automation and clear, shared context.",mission:"Elevate the quality and consistency of every customer interaction.",values:"Empathy • Rigor • Stewardship • Learning",diff:"A pragmatic platform that meets teams where they are and grows with them."}]
 };
+
 let dummyIdx=0;
 function fillFromDummy(){
   const set = DUMMY[chosenPersona][dummyIdx % DUMMY[chosenPersona].length];
   coOverview.value=set.overview; coMission.value=set.mission; coValues.value=set.values; coDiff.value=set.diff; dummyIdx++;
 }
 function withLoader(fn){ overlay.classList.add('show'); setTimeout(()=>{ fn(); overlay.classList.remove('show'); if(phoneModalOpen) renderMail(); }, 800); }
-document.getElementById('genAI')?.addEventListener('click', ()=>withLoader(fillFromDummy));
 document.getElementById('regenAI')?.addEventListener('click', ()=>withLoader(fillFromDummy));
 
 /* ========= Subject / Logo step nav ========= */
-document.getElementById('toLogo')?.addEventListener('click', ()=>goTo(8));
-document.getElementById('finish')?.addEventListener('click', ()=>goTo(9));
+document.getElementById('toLogo')?.addEventListener('click', ()=>goTo(IDX.logo));
+
+document.getElementById('finish')?.addEventListener('click', ()=>goTo(IDX.summary));
+
 
 /* ========= Phone-styled Email Preview ========= */
 let phoneModalOpen = false;

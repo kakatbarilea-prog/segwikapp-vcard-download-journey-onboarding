@@ -356,8 +356,8 @@
         <!-- Step 6: Brand Personality -->
         <section class="slide">
           <div class="head">
-            <div class="h1">Pick a Brand Personality</div>
-            <div class="p">Your AI-written autoresponder will match this tone. The content you provide next will be used when someone downloads your card.</div>
+            <div class="h1">How do you see yourself in the market?</div>
+            <div class="p">Select all that describe your brand personality. Your AI-written autoresponder will match this tone.</div>
           </div>
           <div class="scroll">
             <div class="card" id="personaPicker"></div>
@@ -370,7 +370,7 @@
         <!-- Step 7: Content + AI generate -->
         <section class="slide">
           <div class="head">
-            <div class="h1">Tell us about your brand</div>
+            <div class="h1">Tell us about your business</div>
             <div class="p">You can write your own or let AI draft and then edit.</div>
           </div>
           <div class="scroll" style="position:relative">
@@ -967,10 +967,12 @@ document.getElementById('toPersonality')?.addEventListener('click', ()=>{
 
 /* ========= Personas ========= */
 const personas = [
-  {key:'professional', label:'Professional & Clear'},
+  {key:'professional', label:'Professional and Clear'},
   {key:'friendly',     label:'Friendly & Warm'},
   {key:'bold',         label:'Bold & Energetic'},
-  {key:'thoughtful',   label:'Thoughtful & Consultative'}
+  {key:'thoughtful',   label:'Thoughtful & Consultative'},
+  {key:'innovative',   label:'Innovative and Modern'},
+  {key:'reliable',   label:'Reliable and Trustworthy'}
 ];
 let chosenPersona = 'professional';
 function renderPersona(){
@@ -1007,6 +1009,16 @@ const DUMMY = {
      values:"Focus • Speed • Accountability • Simplicity",
      diff:"Built-in automations and sensible defaults so adoption is instant—not a six-month project."}
   ]
+  ,innovative: [
+    {overview:"Segwik is a human-centered Relationship Operating System that unifies contacts, communication, and workflows so small teams can build consistent, revenue-driving relationships.",
+     mission:"To remove operational friction so people can spend more time with customers and less time managing tools.",
+     values:"Clarity • Reliability • Customer Empathy • Continuous Improvement",
+     diff:"An all-in-one, AI-assisted workspace that replaces scattered tools with one streamlined system."}]
+  ,reliable: [
+    {overview:"Segwik is a human-centered Relationship Operating System that unifies contacts, communication, and workflows so small teams can build consistent, revenue-driving relationships.",
+     mission:"To remove operational friction so people can spend more time with customers and less time managing tools.",
+     values:"Clarity • Reliability • Customer Empathy • Continuous Improvement",
+     diff:"An all-in-one, AI-assisted workspace that replaces scattered tools with one streamlined system."}]
   ,friendly:[{overview:"Segwik helps you keep every convo, task, and relationship in one friendly home—so follow-up finally feels easy.",mission:"Make growing your business feel human again.",values:"Kindness • Transparency • Helpfulness • Joy",diff:"Playful, practical tools that work out of the box—even if you hate CRMs."}]
   ,bold:[{overview:"Segwik is the command center for relationships—cutting noise, speeding action, and growing revenue.",mission:"Destroy busywork. Supercharge follow-up.",values:"Ownership • Momentum • Candor • Craft",diff:"Lightning-fast automations and a clean UI that ship wins on day one."}]
   ,thoughtful:[{overview:"Segwik brings structure to relationship-building with unobtrusive automation and clear, shared context.",mission:"Elevate the quality and consistency of every customer interaction.",values:"Empathy • Rigor • Stewardship • Learning",diff:"A pragmatic platform that meets teams where they are and grows with them."}]

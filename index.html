@@ -184,19 +184,20 @@
         <!-- Step 0: Welcome -->
         <section class="slide">
           <div class="head">
-            <div class="h1">Let’s set up your first journey</div>
-            <div class="p">This journey starts when you meet a lead or prospect and want to share your information, or collect their information.</div>
+            <div class="h1">Let’s build your account profile.</div>
+            <div class="p">This profile helps personalize your Segwik experience and keeps your information consistent across your journeys and automations</div>
           </div>
 
           <div class="scroll">
             <div class="card">
-              <img src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1760653455734.png" alt="vCard setup preview" class="setup-image"/>
+              <img src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1760702903557.png" alt="vCard setup preview" class="setup-image"/>
               <div class="p" style="margin-bottom:12px">
-                First, let’s set up your digital card so that you look great and show up great when you meet important people.
+                Please snap a pic of your business card, front and back.
+
               </div>
               <div class="row">
-                <button id="seeExamples" class="btn">See examples</button>
-                <button id="startCard" class="btn blue" style="margin-left:auto">Start Building Journey</button>
+                <button id="skip" class="btn">Skip</button>
+                <button id="startCard" class="btn blue" style="margin-left:auto">Save & Continue</button>
               </div>
             </div>
           </div>
@@ -205,8 +206,8 @@
         <!-- Step 1: vCard — Profile -->
         <section class="slide">
           <div class="head">
-            <div class="h1">Your Digital Card — Profile</div>
-            <div class="p">We’ll use this info on your public vCard.</div>
+            <div class="h1">Confirm Profile Details</div>
+            <div class="p">This will be part of your digital business card, helping you look great and show up professionally when you meet new people.</div>
           </div>
           <div class="scroll">
             <div class="card">
@@ -262,8 +263,8 @@
         <!-- Step 2: vCard — Contact & Social -->
         <section class="slide">
           <div class="head">
-            <div class="h1">Contact & Social</div>
-            <div class="p">Tap-to-call, tap-to-email, and quick links.</div>
+            <div class="h1">Confirm Contact & Social Details</div>
+            <div class="p">This will be part of your digital business card — a simple way to make sure you always show up polished and professional.</div>
           </div>
           <div class="scroll">
 
@@ -567,6 +568,7 @@ renderDots(); updateNav();
 
 /* quick nav */
 document.getElementById('startCard')?.addEventListener('click', ()=>goTo(1));
+document.getElementById('skip')?.addEventListener('click', ()=>goTo(1));
 
 /* ========= Global inputs/state ========= */
 const S = {

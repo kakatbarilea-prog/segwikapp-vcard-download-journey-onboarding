@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -153,6 +154,26 @@ textarea#headline{
 
   .setup-image{ display:block; width:auto; height:360px; margin:0 auto 16px; border-radius:8px; object-fit:contain; }
 
+/* Bridge screen image (adjust size here) */
+.bridge-image{
+  display:block;
+  width:340px;
+  height:auto;     /* ← adjust this height to change image size */
+  margin:0 auto 16px;
+  border-radius:8px;
+  object-fit:contain;
+}
+/* Entry Confirm GIF (adjust size here) */
+.entry-gif{
+  display:block;
+  width:auto;
+  height:350px;   /* ← adjust this height to change the GIF size */
+  object-fit:cover;
+  border-radius:8px;
+  margin:10px 0 8px;
+}
+
+
   .uploader{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .drop{ border:2px dashed #bfd3ff; background:#f5f8ff; color:#0F2D56; padding:14px; border-radius:14px; cursor:pointer; display:flex; gap:12px; align-items:center; transition:.18s ease; position:relative; min-height:74px; }
   .drop:hover{ background:#eef4ff; border-color:#9ab8ff; }
@@ -277,10 +298,22 @@ textarea#headline{
 .template-row .actions{display:flex; gap:6px}
 .template-row .eye{appearance:none; border:1px solid var(--line); background:#f8fafc;
   border-radius:8px; padding:6px; display:grid; place-items:center; cursor:pointer}
-.template-row .choose{appearance:none; border:1px solid var(--line); background:#eef4ff;
-  color:#0F2D56; border-radius:8px; padding:6px 8px; font-weight:600; cursor:pointer}
 .template-row.active{border-color:#9ab8ff; background:#f5f8ff}
 .add-template{margin-top:12px; color:#2563eb; cursor:pointer; text-align:left; font-size:14px;}
+
+/* CTA button (rendered before footer in email preview) */
+.cta-btn{
+  display:inline-block;
+  padding:12px 16px;
+  border-radius:999px;
+  background:#2563eb;
+  color:#fff;
+  font-weight:800;
+  text-decoration:none;
+  border:1px solid #1d4ed8;
+}
+.cta-btn:hover{ background:#1d4ed8 }
+
 
 /* ===== Step 5 (Final Check) ===== */
 /* Header row: label on left, button on right */
@@ -459,8 +492,7 @@ textarea {
 
           
 
-            <!-- Bottom of step: peek trigger -->
-            <button class="btn peek-trigger" data-peek>👁 Where will this appear?</button>
+            <!-- Bottom of step: peek trigger <button class="btn peek-trigger" data-peek>👁 Where will this appear?</button> -->
           </div>
         </section>
 
@@ -489,8 +521,8 @@ textarea {
       </div>
     </div>
 
-    <!-- Bottom of step: peek trigger -->
-    <button class="btn peek-trigger" data-peek>👁 Where will this appear?</button>
+    <!-- Bottom of step: peek trigger <button class="btn peek-trigger" data-peek>👁 Where will this appear?</button>-->
+    
   </div>
 </section>
 
@@ -514,141 +546,49 @@ textarea {
               </div>
             </div>
 
-            <button id="peekEmail2" class="btn">See Example Placement</button>
+            <!-- <button id="peekEmail2" class="btn">See Example Placement</button>-->
 
             
           </div>
         </section>
 
-<!-- Step: Brand Personality -->
-     <!-- Step: Brand Personality (SPLIT INTO 8 SCREENS) -->
-<section class="slide bp-step" data-step="bp-tone">
+    <!-- Step: Brand Personality (ONE SCREEN – MULTISELECT) -->
+<section class="slide bp-step" data-step="bp-all">
   <div class="head">
     <div class="h1">How do you see yourself in the market?</div>
     <div class="p">Select all that describe your brand personality.</div>
   </div>
   <div class="scroll">
-    <div class="card" id="brandPersonalityTone">
+    <div class="card" id="brandPersonalityAll">
       <div class="group">
-        <h3>1) Tone / Style</h3>
+        <h3>1) Sincerity</h3>
         <div class="help">Select all that apply</div>
-        <div class="chips twocol" id="toneChips"></div>
+        <div class="chips twocol" id="bpSincerity"></div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide bp-step" data-step="bp-length">
-  <div class="head">
-    <div class="h1">How do you see yourself in the market?</div>
-    <div class="p">Select all that describe your brand personality.</div>
-  </div>
-  <div class="scroll">
-    <div class="card" id="brandPersonalityLength">
-      <div class="group">
-        <h3>2) Length</h3>
-        <div class="help">Choose one</div>
-        <div class="chips" id="lengthRadios"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide bp-step" data-step="bp-formality">
-  <div class="head">
-    <div class="h1">How do you see yourself in the market?</div>
-    <div class="p">Select all that describe your brand personality.</div>
-  </div>
-  <div class="scroll">
-    <div class="card" id="brandPersonalityFormality">
-      <div class="group">
-        <h3>3) Formality</h3>
-        <div class="help">Choose one</div>
-        <div class="chips stacked" id="formalityRadios"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide bp-step" data-step="bp-pov">
-  <div class="head">
-    <div class="h1">How do you see yourself in the market?</div>
-    <div class="p">Select all that describe your brand personality.</div>
-  </div>
-  <div class="scroll">
-    <div class="card" id="brandPersonalityPOV">
-      <div class="group">
-        <h3>4) Point of View / Perspective</h3>
-        <div class="help">Select one or more</div>
-        <div class="chips" id="povChips"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide bp-step" data-step="bp-emo">
-  <div class="head">
-    <div class="h1">How do you see yourself in the market?</div>
-    <div class="p">Select all that describe your brand personality.</div>
-  </div>
-  <div class="scroll">
-    <div class="card" id="brandPersonalityEmo">
-      <div class="group">
-        <h3>5) Emotional Impact</h3>
+      <div class="group" style="margin-top:12px">
+        <h3>2) Excitement</h3>
         <div class="help">Select all that apply</div>
-        <div class="chips twocol" id="emoChips"></div>
+        <div class="chips twocol" id="bpExcitement"></div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide bp-step" data-step="bp-complexity">
-  <div class="head">
-    <div class="h1">How do you see yourself in the market?</div>
-    <div class="p">Select all that describe your brand personality.</div>
-  </div>
-  <div class="scroll">
-    <div class="card" id="brandPersonalityComplexity">
-      <div class="group">
-        <h3>6) Complexity / Readability</h3>
-        <div class="help">Choose one</div>
-        <div class="chips twocol" id="complexityRadios"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide bp-step" data-step="bp-usecase">
-  <div class="head">
-    <div class="h1">How do you see yourself in the market?</div>
-    <div class="p">Select all that describe your brand personality.</div>
-  </div>
-  <div class="scroll">
-    <div class="card" id="brandPersonalityUsecase">
-      <div class="group">
-        <h3>7) Use Case / Focus</h3>
+      <div class="group" style="margin-top:12px">
+        <h3>3) Competence</h3>
         <div class="help">Select all that apply</div>
-        <div class="chips twocol" id="usecaseChips"></div>
+        <div class="chips twocol" id="bpCompetence"></div>
+      </div>
+      <div class="group" style="margin-top:12px">
+        <h3>4) Sophistication</h3>
+        <div class="help">Select all that apply</div>
+        <div class="chips twocol" id="bpSophistication"></div>
+      </div>
+      <div class="group" style="margin-top:12px">
+        <h3>5) Ruggedness</h3>
+        <div class="help">Select all that apply</div>
+        <div class="chips twocol" id="bpRuggedness"></div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="slide bp-step" data-step="bp-voice">
-  <div class="head">
-    <div class="h1">How do you see yourself in the market?</div>
-    <div class="p">Select all that describe your brand personality.</div>
-  </div>
-  <div class="scroll">
-    <div class="card" id="brandPersonalityVoice">
-      <div class="group">
-        <h3>8) Voice Strength</h3>
-        <div class="help">Choose one</div>
-        <div class="chips twocol" id="voiceRadios"></div>
-      </div>
-    </div>
-  </div>
-</section>
 
 
         <!-- Step: Content + AI generate (SPLIT INTO 4 SCREENS) -->
@@ -670,7 +610,7 @@ textarea {
       <textarea id="coOverview" placeholder="Describe what your company does…"></textarea>
     </div>
 
-    <button id="peekEmail1" class="btn">See Example Placement</button>
+  <!--   <button id="peekEmail1" class="btn">See Example Placement</button> -->
   </div>
 </section>
 
@@ -734,82 +674,50 @@ textarea {
   </div>
 </section>
 
-
-
-<!-- PHASE 2 INTRO (empty screen) -->
-<section class="slide" data-step="phase2intro">
+<!-- PHASE 1 → PHASE 2 BRIDGE (no back/next/pager) -->
+<section class="slide" data-step="bridge">
   <div class="head">
-    <div class="h1">Lets start building your first customer journey</div>
-    <div class="p">Set up the steps that will guide your prospects automatically from the moment they connect with you.</div>
+    <div class="h1">Congratulations! Your profile and company details are all set.</div>
   </div>
   <div class="scroll">
-    <!-- Empty for now -->
+    <div class="card">
+      <img
+        src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1760737883979.png"
+        alt="Segwik setup complete"
+        class="bridge-image"
+      />
+     
+    </div>
+
+
+ <div class="h1" style="margin-top:6px">Lets start building your first customer journey</div>
+    <div class="p">Set up the steps that will guide your prospects automatically from the moment they connect with you.</div>
+
+ 
+    <!-- Buttons moved OUTSIDE the card -->
+    <div class="row" style="margin-top:12px;display:flex;gap:8px;align-items:center">
+      <button id="bridgeSkip" class="btn">Skip</button>
+      <button id="bridgeContinue" class="btn blue" style="margin-left:auto">Continue</button>
+    </div>
   </div>
 </section>
 
 
-        <!-- Step: vCard — Live Preview (inline matches peek sheet) -->
-        <section class="slide" data-step="preview">
-          <div class="head">
-            <div class="h1">Preview Your Digital Card</div>
-            <div class="p">This is what people will see when you share your link or QR code.</div>
-          </div>
-          <div class="scroll">
-            <!-- Inline vCard preview (same structure as the 👁 peek sheet) -->
-            <div class="card">
-              <div class="vcard-demo" id="vcardInline">
-                <!-- Filled by JS to mirror the peek sheet -->
-              </div>
-            </div>
 
-            <div class="card">
-              <div id="cardStatus" class="p"></div>
-              <div class="row" style="margin-top:8px">
-                <button id="btnPreviewCard" class="btn">Open vCard Link</button>
-                <button id="btnFillInfo" class="btn blue" style="margin-left:auto">Fill In Information</button>
-              </div>
-            </div>
-          </div>
-        </section>
+
+
+       
 
 
 
         
 
-<!-- Step: Profile Complete pause -->
-<section class="slide" data-step="handoff">
-  <div class="head">
-    <div class="h1">Your account profile is complete 🎉</div>
-    <div class="p">We’ve paused here. Just a few quick tasks left to set up your automation for when someone downloads your vCard.</div>
-  </div>
-
-  <div class="scroll">
-    <!-- Box 1 -->
-    <div class="card">
-      <div class="badge"><span class="dot"></span> Profile Complete</div>
-      <div class="p" style="margin-top:10px">
-        Your profile details, company info, images, and logo are all set. Everything is looking great so far. You can preview your vCard anytime.
-      </div>
-      <div class="row" style="margin-top:10px">
-        <button id="handoffPreviewCard" class="btn">Open vCard</button>
-      </div>
-    </div>
-
-    <!-- Box 2 -->
-    <div class="card">
-      <div class="p" style="font-weight:800">Up next: Start your journey by choosing how people connect with you</div>
-      <div class="right" style="margin-top:10px">
-      </div>
-    </div>
-  </div>
-</section>
-
 
 <!-- Step: Decide Entry -->
 <section class="slide" data-step="entry">
   <div class="head">
-    <div class="h1">Step 1: Decide how your automation begins</div>
-    <div class="p">Pick from common starting points below to decide how people enter your workflow.</div>
+    <div class="h1">What's your customer journey entry point?</div>
+    <div class="p">Select from common starting points to see how contacts enter your journey.</div>
   </div>
   <div class="scroll">
     <div class="card">
@@ -823,6 +731,29 @@ textarea {
   </div>
 </section>
 
+<!-- Step: Entry Confirm -->
+<section class="slide" data-step="entryConfirm">
+  <div class="head">
+    <div class="h1">Here’s how your customer journey begins</div>
+    <div class="p">When someone downloads your digital card and completes the vCard form, it kicks off your follow-up journey—no manual work needed.</div>
+  </div>
+  <div class="scroll">
+    <button id="viewDownloadForm" class="btn">Preview This Customer Journey Entry Point</button>
+
+<!-- GIF preview of the entry flow -->
+<img
+  src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1760747575341.gif"
+  alt="Journey Entry Flow GIF"
+  class="entry-gif"
+/>
+
+<!-- Right-aligned blue button to open the vCard peek sheet -->
+<div class="row" style="margin-top:12px;display:flex;gap:8px;align-items:center">
+  <button id="previewVCardBtn" class="btn blue" style="margin-left:auto">Preview My VCard</button>
+</div>
+
+  </div>
+</section>
 
 <!-- Step: Upload Images (moved here) -->
 <!-- Step: Upload Images + Social Links -->
@@ -858,24 +789,17 @@ textarea {
       <div class="p" style="margin-top:6px">Choose one or more platforms, then paste the URL.</div>
     </div>
 
-    <div class="right" style="margin-top:12px">
+    <div class="row" style="margin-top:12px;display:flex;gap:8px;align-items:center">
+  <button id="previewVCardBtn2" class="btn blue" style="margin-left:auto">Preview My VCard</button>
+</div>
+<div class="right" style="margin-top:12px">
+
     </div>
   </div>
 </section>
 
 
-<!-- Step: Entry Confirm -->
-<section class="slide" data-step="entryConfirm">
-  <div class="head">
-    <div class="h1">Here’s what triggers your automation</div>
-    <div class="p">When someone downloads your digital card and completes this form, it kicks off your follow-up journey—no manual work needed.</div>
-  </div>
-  <div class="scroll">
-    <button id="viewDownloadForm" class="btn">View “Download My Digital Card” Form</button>
-    <div class="right" style="margin-top:12px">
-    </div>
-  </div>
-</section>
+
 
 
 
@@ -883,8 +807,8 @@ textarea {
         <!-- Step: Journey — Choose actions -->
         <section class="slide" data-step="actions">
           <div class="head">
-            <div class="h1">Step 2: After you meet a prospect, what should happen?</div>
-            <div class="p">Select all actions you want Segwik to automate.</div>
+            <div class="h1">What should happen after the customer journey starts?</div>
+            <div class="p">Select an action you want Segwik to do after the journey starts.</div>
           </div>
           <div class="scroll">
             <div class="card">
@@ -899,13 +823,21 @@ textarea {
         <!-- Step: Email Template Picker -->
 <section class="slide" data-step="template">
   <div class="head">
-    <div class="h1">Step 3: Choose an Email Template</div>
+    <div class="h1">Choose an Email Template</div>
     <div class="p">Select a pre-designed email template for your autoresponder.</div>
   </div>
   <div class="scroll">
     <div class="card">
       <div class="label">Recommended Templates</div>
       <div id="templateList" class="templates"></div>
+
+<!-- Shown only when template == "Book a Meeting" -->
+<div id="ctaDestinationRow" class="group" style="display:none; margin-top:10px">
+  <h3>Destination</h3>
+  <div class="help">Paste your scheduling link.</div>
+  <input id="ctaDest" type="url" placeholder="https://">
+</div>
+
       <div class="add-template" id="addTemplateLocked">+ Add Email Template 🔒</div>
     </div>
   </div>
@@ -919,7 +851,7 @@ textarea {
 <!-- Step: Final Check (full-screen email preview + add follow-ups) -->
 <section class="slide" data-step="finalcheck">
   <div class="head">
-    <div class="h1">Step 5: Final Check Before Activation</div>
+    <div class="h1">Final Check Before Activation</div>
     <div class="p">Take a moment to preview everything and make sure it looks just right.</div>
   </div>
   <div class="scroll">
@@ -952,28 +884,47 @@ textarea {
   </div>
 </section>
 
-        
+      
+ 
+
+
 
         <!-- Step: Summary with toggle -->
         <section class="slide" data-step="summary">
-          <div class="head">
-            <div class="h1">Your vCard Download Journey is ready</div>
-            <div class="p">Share your card link or QR, and we’ll handle the follow-up.</div>
-          </div>
-          <div class="scroll">
-            <div class="card">
-              <ul style="margin:0;padding-left:18px;line-height:1.8">
-                <li><span id="sumCard" class="ok">Digital card complete</span></li>
-                <li><span class="ok">Instant autoresponder configured</span></li>
-                <li><span id="sumCtas" class="ok">CTA added</span></li>
-              </ul>
-              <div class="row" style="margin-top:12px;align-items:center;gap:12px">
-                <div style="font-weight:800">Activate Journey</div>
-                <div id="toggle" class="switch" role="switch" aria-checked="false"><span class="knob"></span></div>
-              </div>
-            </div>
-          </div>
-        </section>
+  <div class="head">
+    <div class="h1">Your vCard Download Journey is ready</div>
+    <div class="p">Share your card link or QR, and we’ll handle the follow-up.</div>
+  </div>
+  <div class="scroll">
+    <!-- Box 1 -->
+    <div class="card">
+      <ul style="margin:0;padding-left:18px;line-height:1.8">
+        <li><span id="sumCard" class="ok">Digital card complete</span></li>
+        <li><span class="ok">Instant autoresponder configured</span></li>
+        <li><span id="sumCtas" class="ok">CTA added</span></li>
+      </ul>
+    </div>
+
+    <!-- Box 2 -->
+    <div class="card" style="text-align:center">
+      <img
+        src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1760737883979.png"
+        alt="Segwik setup complete"
+        class="bridge-image"
+        style="max-width:100%;border-radius:12px"
+      />
+    </div>
+
+    <!-- Box 3 -->
+    <div class="card">
+      <div class="row" style="align-items:center;gap:12px;justify-content:space-between">
+        <div style="font-weight:800">Activate Journey</div>
+        <div id="toggle" class="switch" role="switch" aria-checked="false"><span class="knob"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
       </div>
 
       <!-- Back/Next + pager (Phase 1) -->
@@ -1099,11 +1050,15 @@ textarea {
   </div>
 
 <script>
+  
 /* ========= Carousel / Pager ========= */
 const carousel = document.getElementById('carousel');
 const slides = Array.from(carousel.querySelectorAll('.slide'));
 let idx = 0;
 let doAutoGenNext = false;
+let chosenPersona = 'professional';
+let dummyIdx = 0;
+
 
 function goTo(i){
     idx = Math.max(0, Math.min(slides.length-1, i));
@@ -1132,7 +1087,8 @@ function goTo(i){
   pager2.style.display = 'none';
 
 const inP1 = idx <= IDX.contentLast;        // Phase 1 = welcome .. last content screen
-  const inP2 = idx >= IDX.phase2intro;        // Phase 2 = phase2intro .. end
+const inP2 = idx >= IDX.entry;        // Phase 2 = entry .. end
+
 
   if (inP1) {
     // Hide on very first welcome screen, show otherwise
@@ -1166,7 +1122,7 @@ function stepIndex(name){
 }
 const IDX = {
   preview:       stepIndex('preview'),
-  personality:   stepIndex('bp-tone'), // first of the split brand-personality screens
+personality:   stepIndex('bp-all'), // single-screen brand personality
   actions:       stepIndex('actions'),
   template:      stepIndex('template'),
 
@@ -1174,7 +1130,10 @@ const IDX = {
   content1:      stepIndex('content1'),
   contentLast:   stepIndex('content4'),
 
-  phase2intro:   stepIndex('phase2intro'),
+  // PHASE 1 → PHASE 2 bridge screen
+  bridge:        stepIndex('bridge'),
+
+
   logo:          stepIndex('logo'),
   handoff:       stepIndex('handoff'),
   entry:         stepIndex('entry'),
@@ -1229,7 +1188,8 @@ function renderDots(){
   pager2.innerHTML = '';
 
   const inP1 = idx <= IDX.contentLast;
-  const inP2 = idx >= IDX.phase2intro;
+  const inP2 = idx >= IDX.entry
+;
 
   if (inP1) {
     // Phase 1 dots: indices 0 .. IDX.contentLast
@@ -1242,20 +1202,22 @@ function renderDots(){
       d.onclick = () => goTo(i);
       pager1.appendChild(d);
     }
-  } else if (inP2) {
-    // Phase 2 dots: indices IDX.phase2intro .. slides.length-1
-    for (let i = IDX.phase2intro; i < slides.length; i++){
+    } else if (inP2) {
+    // Phase 2 dots: indices IDX.entry .. slides.length-1
+    for (let i = IDX.entry; i < slides.length; i++) {
       const d = document.createElement('div');
-      d.className = 'dot' + (i === idx ? ' active' : '');
+      d.classList.add('dot');
+      if (i === idx) d.classList.add('active');
       d.onclick = () => goTo(i);
       pager2.appendChild(d);
     }
   }
+
 }
 
 function updateNav(){
   const inP1 = idx <= IDX.contentLast;
-  const inP2 = idx >= IDX.phase2intro;
+  const inP2 = idx >= IDX.entry;
 
   // Pick the active phase's buttons
   const back = document.getElementById(inP1 ? 'backBtn1' : 'backBtn2');
@@ -1264,7 +1226,7 @@ function updateNav(){
   if (!back || !next) return;
 
   // Back button ghosted at the start of each phase
-  const isPhaseStart = inP1 ? (idx === 0) : (idx === IDX.phase2intro);
+ const isPhaseStart = inP1 ? (idx === 0) : (idx === IDX.entry);
   back.classList.toggle('ghost', isPhaseStart);
 
   // Next text:
@@ -1282,12 +1244,15 @@ function updateNav(){
 document.getElementById('backBtn1')?.addEventListener('click', ()=> goTo(idx-1));
 document.getElementById('nextBtn1')?.addEventListener('click', ()=>{
   if (idx === IDX.contentLast) {
-    // Finish Phase 1: jump to Phase 2 intro (empty screen)
-    goTo(IDX.phase2intro);
+    // Finish Phase 1: go to the bridge screen first
+    goTo(IDX.bridge);
   } else {
     goTo(idx+1);
   }
 });
+
+
+
 
 
 // Phase 2 buttons
@@ -1309,6 +1274,10 @@ document.getElementById('skip')?.addEventListener('click', ()=>{
 document.getElementById('pager1').style.display = '';
 
 });
+// Bridge screen actions → go to Phase 2 intro
+document.getElementById('bridgeSkip')?.addEventListener('click', ()=> goTo(IDX.entry));
+document.getElementById('bridgeContinue')?.addEventListener('click', ()=> goTo(IDX.entry));
+
 
 
 
@@ -1326,6 +1295,8 @@ const S = {
   emailBiz : document.getElementById('emailBiz'),
   emailPersonal: document.getElementById('emailPersonal'),
   website  : document.getElementById('website'),
+    ctaDest  : document.getElementById('ctaDest'),
+
   subject  : document.getElementById('subjectLine'),
   logo     : document.getElementById('logo'),
     industry : document.getElementById('industry'),
@@ -1647,14 +1618,13 @@ actionDefs.forEach(a=>{
 
 /* ========= Email Template Picker ========= */
 const templateDefs = [
-  {key:'connected',   name:'It’s Great to Be Connected'},
-  {key:'welcome',     name:'Welcome & Introduction'},
-  {key:'nicetomeet',  name:'Nice to Meet You'},
-  {key:'getstarted',  name:'Let’s Get Started'},
-  {key:'help',        name:'Here’s How I Can Help'}
+  {key:'book',  name:'vCard Downloaded – Book a Call'},
+  {key:'email', name:'vCard Downloaded – Send an Email'},
+  {key:'call',  name:'vCard Downloaded – Call Me'}
 ];
 
-let chosenTemplate = 'connected';
+
+let chosenTemplate = 'email';
 
 function renderTemplateList(){
   const host = document.getElementById('templateList');
@@ -1672,35 +1642,35 @@ function renderTemplateList(){
             <circle cx="12" cy="12" r="3"/>
           </svg>
         </button>
-        <button class="choose">Choose</button>
       </div>
     `;
-    // open the same phone preview modal used by 👁 buttons
-    row.querySelector('.eye').addEventListener('click', ()=>{
-      // Optionally set subject/title bar to template name for clarity
-      document.getElementById('phoneTitle').textContent = t.name;
-      togglePhone(true);
-    });
-    // choose handler
-   row.querySelector('.choose').addEventListener('click', ()=>{
-  chosenTemplate = t.key;
-  renderTemplateList();
-  if(S.subject) S.subject.value = t.name;
- syncPhoneTitle();
-renderMail();
-goTo(IDX.finalcheck); // Skip CTA step
 
+    // Eye opens the phone-style preview modal (subject titlebar set to template name)
+    row.querySelector('.eye').addEventListener('click', ()=>{
+  document.getElementById('phoneTitle').textContent = t.name;
+  // Open the phone preview and render using THIS row's template (without selecting it)
+  togglePhone(true, t.key);
 });
 
-    // allow clicking the row name to select too
+
+    // Clicking the row selects the template
     row.addEventListener('click', (e)=>{
-      if(e.target.closest('.actions')) return; // buttons already handle
+      if(e.target.closest('.eye')) return; // ignore the eye button itself
       chosenTemplate = t.key;
       renderTemplateList();
+      syncPhoneTitle();
+      showCtaDestIfNeeded();
+      renderMail();
     });
+
     host.appendChild(row);
   });
+
+  // ensure Destination row visibility matches current selection
+  showCtaDestIfNeeded();
 }
+renderTemplateList();
+
 renderTemplateList();
 
 // Locked “Add Template” link
@@ -1710,44 +1680,49 @@ document.getElementById('addTemplateLocked')?.addEventListener('click', ()=>{
   upg.classList.add('show');
 });
 
+function showCtaDestIfNeeded(){
+  const row = document.getElementById('ctaDestinationRow');
+  if(!row) return;
+  row.style.display = (chosenTemplate === 'book') ? '' : 'none';
+}
 
 
 
 
 
-/* ========= Brand Personality (new UI) ========= */
-/* Data */
-const TONE_OPTS = [
-  "Motivational","Inspirational","Informative","Friendly","Professional",
-"Bold","Thoughtful","Playful","Serious","Encouraging","Empathetic",
-"Persuasive","Confident","Humorous","Conversational","Optimistic",
-"Innovative","Trustworthy","Luxurious","Edgy","Minimalist"
-
-
-];
-const LENGTH_OPTS    = ["Very Short (1–2 sentences)","Short (2–3 sentences)","Medium (3–5 sentences)","Long (5–8 sentences)","Very Long (full paragraph style)"];
-const FORMALITY_OPTS = ["Very Formal","Formal","Neutral","Casual","Very Casual / Conversational"];
-const POV_OPTS       = ["First Person (“I” / “We”)","Second Person (“You”)","Third Person (“They” / brand as narrator)","Mixed / Flexible"];
-const EMO_OPTS       = ["Happy","Confident","Calm","Urgent","Inspirational","Trusting","Curious","Surprising","Excited","Relaxed","Motivated","Friendly"];
-const COMPLEXITY_OPTS= ["Simple","Moderate","Detailed","Technical","Clear","Concise","Readable"];
-const USECASE_OPTS   = ["Brand Story","Product Features","Customer Benefits","Thought Leadership","Testimonials","Call-to-Action","Guides","Tips","Announcements","Updates"];
-const VOICE_OPTS     = ["Gentle","Neutral","Strong","Assertive","Bold","Friendly","Professional"];
-
-/* State */
-const BrandPrefs = {
-  tone: new Set(),
-  length: null,
-  formality: null,
-  pov: new Set(),
-  emotion: new Set(),
-  complexity: null,
-  usecase: new Set(),
-  voice: null
+/* ========= Brand Personality (ONE SCREEN — MULTISELECT) ========= */
+/* Data: Five-Dimension Brand Personality Sets */
+const PERSONA_OPTS = {
+  sincerity: [
+    "Honest","Cheerful","Wholesome","Genuine","Family-oriented","Friendly","Caring"
+  ],
+  excitement: [
+    "Daring","Trendy","Imaginative","Spirited","Exciting","Up-to-date","Youthful"
+  ],
+  competence: [
+    "Reliable","Efficient","Successful","Expert","Intelligent","Responsible","Trustworthy"
+  ],
+  sophistication: [
+    "Upper-class","Charming","Glamorous","Stylish","Refined","Luxurious","Elegant"
+  ],
+  ruggedness: [
+    "Outdoorsy","Rugged","Masculine","Tough","Durable","Strong","Adventurous"
+  ]
 };
 
-/* Helpers to render chips */
-function renderMulti(hostId, opts, setRef){
+/* State: all multiselect */
+const Persona = {
+  sincerity: new Set(),
+  excitement: new Set(),
+  competence: new Set(),
+  sophistication: new Set(),
+  ruggedness: new Set()
+};
+
+/* Generic chip renderer (multi) */
+function renderPersonaChips(hostId, setRef, opts){
   const host = document.getElementById(hostId);
+  if(!host) return;
   host.innerHTML = '';
   opts.forEach(label=>{
     const b = document.createElement('button');
@@ -1755,140 +1730,72 @@ function renderMulti(hostId, opts, setRef){
     b.textContent = label;
     b.addEventListener('click', ()=>{
       if(setRef.has(label)) setRef.delete(label); else setRef.add(label);
-      renderMulti(hostId, opts, setRef);
-    });
-    host.appendChild(b);
-  });
-}
-function renderSingle(hostId, opts, key){
-  const host = document.getElementById(hostId);
-  host.innerHTML = '';
-  opts.forEach(label=>{
-    const b = document.createElement('button');
-    b.className = 'chip radio' + (BrandPrefs[key]===label?' active':'');
-    b.textContent = label;
-    b.addEventListener('click', ()=>{
-      BrandPrefs[key] = (BrandPrefs[key]===label) ? null : label;
-      renderSingle(hostId, opts, key);
-    });
-    host.appendChild(b);
-  });
-}
-/* Tone renderer: 2 columns + show first 10 with See more/less */
-/* Simplified renderers — no “See more”, show all options */
-
-/* Emotional Impact (multi-select) */
-function renderEmo(){
-  const host = document.getElementById('emoChips');
-  if(!host) return;
-  host.innerHTML = '';
-  EMO_OPTS.forEach(label=>{
-    const b = document.createElement('button');
-    b.className = 'chip' + (BrandPrefs.emotion.has(label) ? ' active' : '');
-    b.textContent = label;
-    b.addEventListener('click', ()=>{
-      if(BrandPrefs.emotion.has(label)) BrandPrefs.emotion.delete(label);
-      else BrandPrefs.emotion.add(label);
-      renderEmo();
+      renderPersona(); // re-render this screen only
     });
     host.appendChild(b);
   });
 }
 
-/* Complexity / Readability (single-select) */
-function renderComplexity(){
-  const host = document.getElementById('complexityRadios');
-  if(!host) return;
-  host.innerHTML = '';
-  COMPLEXITY_OPTS.forEach(label=>{
-    const b = document.createElement('button');
-    b.className = 'chip radio' + (BrandPrefs.complexity === label ? ' active' : '');
-    b.textContent = label;
-    b.addEventListener('click', ()=>{
-      BrandPrefs.complexity = (BrandPrefs.complexity === label) ? null : label;
-      renderComplexity();
-    });
-    host.appendChild(b);
-  });
+/* Render ALL five groups */
+function renderPersona(){
+  renderPersonaChips('bpSincerity',     Persona.sincerity,     PERSONA_OPTS.sincerity);
+  renderPersonaChips('bpExcitement',    Persona.excitement,    PERSONA_OPTS.excitement);
+  renderPersonaChips('bpCompetence',    Persona.competence,    PERSONA_OPTS.competence);
+  renderPersonaChips('bpSophistication',Persona.sophistication,PERSONA_OPTS.sophistication);
+  renderPersonaChips('bpRuggedness',    Persona.ruggedness,    PERSONA_OPTS.ruggedness);
 }
 
-/* Use Case / Focus (multi-select) */
-function renderUsecase(){
-  const host = document.getElementById('usecaseChips');
-  if(!host) return;
-  host.innerHTML = '';
-  USECASE_OPTS.forEach(label=>{
-    const b = document.createElement('button');
-    b.className = 'chip' + (BrandPrefs.usecase.has(label) ? ' active' : '');
-    b.textContent = label;
-    b.addEventListener('click', ()=>{
-      if(BrandPrefs.usecase.has(label)) BrandPrefs.usecase.delete(label);
-      else BrandPrefs.usecase.add(label);
-      renderUsecase();
-    });
-    host.appendChild(b);
-  });
-}
-
-/* Voice Strength (single-select) */
-function renderVoice(){
-  const host = document.getElementById('voiceRadios');
-  if(!host) return;
-  host.innerHTML = '';
-  VOICE_OPTS.forEach(label=>{
-    const b = document.createElement('button');
-    b.className = 'chip radio' + (BrandPrefs.voice === label ? ' active' : '');
-    b.textContent = label;
-    b.addEventListener('click', ()=>{
-      BrandPrefs.voice = (BrandPrefs.voice === label) ? null : label;
-      renderVoice();
-    });
-    host.appendChild(b);
-  });
-}
-
-/* Tone / Style (multi-select) */
-function renderTone(){
-  const host = document.getElementById('toneChips');
-  if(!host) return;
-  host.innerHTML = '';
-  TONE_OPTS.forEach(label=>{
-    const b = document.createElement('button');
-    b.className = 'chip' + (BrandPrefs.tone.has(label)?' active':'');
-    b.textContent = label;
-    b.addEventListener('click', ()=>{
-      if(BrandPrefs.tone.has(label)) BrandPrefs.tone.delete(label);
-      else BrandPrefs.tone.add(label);
-      renderTone();
-    });
-    host.appendChild(b);
-  });
-}
-
-
-/* Initial render */
-renderTone();
-renderSingle('lengthRadios', LENGTH_OPTS, 'length');
-renderSingle('formalityRadios', FORMALITY_OPTS, 'formality');
-renderMulti('povChips', POV_OPTS, BrandPrefs.pov);
-renderEmo();
-renderComplexity();
-renderUsecase();
-renderVoice();
+/* Initial render for the single-screen personality step */
+renderPersona();
 
 
 
 /* Map selections to existing AI persona buckets (for generator) */
 function inferChosenPersona(){
-  const t = [...BrandPrefs.tone];
-  const has = (needle)=>t.some(v=>v.toLowerCase().includes(needle));
-  if (has('friendly') || has('warm') || has('empathetic')) return 'friendly';
-  if (has('bold') || has('edgy')) return 'bold';
-  if (has('thoughtful') || has('consultative')) return 'thoughtful';
-  if (has('innovative') || has('forward')) return 'innovative';
-  if (has('trustworthy') || has('reliable') || has('luxurious') || has('serious') || has('professional')) return 'reliable';
+  // Count selections per dimension
+  const counts = {
+    sincerity:     Persona.sincerity.size,
+    excitement:    Persona.excitement.size,
+    competence:    Persona.competence.size,
+    sophistication:Persona.sophistication.size,
+    ruggedness:    Persona.ruggedness.size
+  };
+
+  // Quick helpers to see if certain key traits were chosen
+  const hasAny = (setRef, arr) => arr.some(t => setRef.has(t));
+
+  // Priority heuristics → map to existing DUMMY keys:
+  //   'friendly','bold','innovative','reliable','professional','thoughtful'
+  // 1) If Excitement or Ruggedness dominates → bold
+  if (counts.excitement >= Math.max(counts.sincerity, counts.competence, counts.sophistication) ||
+      counts.ruggedness  >= Math.max(counts.sincerity, counts.competence, counts.sophistication)) {
+    // If Excitement leans more on "Imaginative/Up-to-date" → innovative
+    if (hasAny(Persona.excitement, ["Imaginative","Up-to-date","Trendy","Exciting","Youthful"])) {
+      return 'innovative';
+    }
+    return 'bold';
+  }
+
+  // 2) If Competence dominates → reliable (professional-ish)
+  if (counts.competence > counts.sincerity && counts.competence >= counts.sophistication) {
+    return 'reliable';
+  }
+
+  // 3) If Sincerity dominates → friendly / thoughtful
+  if (counts.sincerity >= Math.max(counts.competence, counts.sophistication)) {
+    if (hasAny(Persona.sincerity, ["Caring","Genuine","Honest","Friendly"])) return 'friendly';
+    return 'thoughtful';
+  }
+
+  // 4) If Sophistication is strong → professional (reliable tone)
+  if (counts.sophistication > 0) {
+    return 'professional';
+  }
+
+  // Default fallback
   return 'professional';
 }
+
 
 
 
@@ -2030,7 +1937,6 @@ const DUMMY = {
   ]
 };
 
-let dummyIdx=0;
 function fillFromDummy(){
   const set = DUMMY[chosenPersona][dummyIdx % DUMMY[chosenPersona].length];
   coOverview.value=set.overview; coMission.value=set.mission; coValues.value=set.values; coDiff.value=set.diff; dummyIdx++;
@@ -2060,7 +1966,7 @@ document.getElementById('handoffPreviewCard')?.addEventListener('click', ()=>{
 
 /* ========= Entry (how automation begins) ========= */
 const entryDefs = [
-  {key:'download', label:'Download My Digital Card - Personal Profile Page', locked:false},
+  {key:'download', label:'Downloaded My Personal Digital Card', locked:false},
   {key:'form',     label:'Submitted a Contact Form', locked:true},
   {key:'booked',   label:'Booked a Meeting', locked:true},
   {key:'attended', label:'Attended an Event', locked:true},
@@ -2113,6 +2019,9 @@ function toggleFormPreview(show){
   formSheet.setAttribute('aria-hidden', show ? 'false' : 'true');
 }
 document.getElementById('viewDownloadForm')?.addEventListener('click', ()=>toggleFormPreview(true));
+document.getElementById('previewVCardBtn')?.addEventListener('click', ()=>togglePeek(true));
+document.getElementById('previewVCardBtn2')?.addEventListener('click', ()=>togglePeek(true));
+
 document.getElementById('formPreviewClose')?.addEventListener('click', ()=>toggleFormPreview(false));
 window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && formSheet.classList.contains('show')) toggleFormPreview(false); });
 
@@ -2121,15 +2030,16 @@ window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && formSheet.class
 /* ========= Phone-styled Email Preview ========= */
 let phoneModalOpen = false;
 const phoneModal = document.getElementById('phonePreview');
-function togglePhone(show){
+function togglePhone(show, previewKey = null){
   phoneModal.classList.toggle('show', !!show);
   phoneModal.setAttribute('aria-hidden', show ? 'false' : 'true');
   phoneModalOpen = !!show;
-  if(show) { syncPhoneTitle(); renderMail(); }
+  if(show) { syncPhoneTitle(); renderMail(previewKey); }
 }
+
 document.getElementById('phoneClose')?.addEventListener('click', ()=>togglePhone(false));
-document.getElementById('peekEmail1')?.addEventListener('click', ()=>togglePhone(true));
-document.getElementById('peekEmail2')?.addEventListener('click', ()=>togglePhone(true));
+document.getElementById('peekEmail1')?.addEventListener('click', ()=>togglePhone(true, null));
+document.getElementById('peekEmail2')?.addEventListener('click', ()=>togglePhone(true, null));
 
 function syncPhoneTitle(){
   const txt = safe(S.subject?.value, "It’s great to be connected!");
@@ -2148,7 +2058,7 @@ function socialButtons(){
   }).join('');
 }
 
-function renderMail(){
+function renderMail(previewKey = null){
   const subj = safe(S.subject?.value, "It’s great to be connected!");
   const logo = logoUrl ? `<div style="text-align:center;margin-bottom:10px"><img src="${logoUrl}" alt="logo" style="max-width:160px;max-height:60px;object-fit:contain"/></div>` : '';
 
@@ -2164,28 +2074,48 @@ function renderMail(){
       </div>
     </div>`;
 
-  /* Phone modal (👁) preview — no CTA injected here */
+/* Build CTA once — used in both 👁 modal and Final Check */
+const templateKey = previewKey || chosenTemplate;
+let ctaHtml = '';
+if (templateKey === 'book') {
+  const dest = safe(S.ctaDest?.value, '');
+  const href = dest || '#';
+  ctaHtml = `<p style="margin:18px 0"><a class="cta-btn" href="${href}" target="_blank" rel="noopener">Book a Meeting</a></p>`;
+} else if (templateKey === 'email') {
+  const mail = safe(S.emailBiz?.value, '');
+  const href = mail ? `mailto:${mail}` : '#';
+  ctaHtml = `<p style="margin:18px 0"><a class="cta-btn" href="${href}">Send Me an Email</a></p>`;
+} else if (templateKey === 'call') {
+  const ph = safe(S.phoneBiz?.value, '');
+  const href = ph ? `tel:${ph.replace(/[^+\d]/g,'')}` : '#';
+  ctaHtml = `<p style="margin:18px 0"><a class="cta-btn" href="${href}">Call Me</a></p>`;
+}
+
+
+/* Phone modal (👁) preview — CTA now included BEFORE the footer */
   const htmlPhone = `
-    <div class="mail-body">
-      ${logo}
-      <p>Hello [firstname], thanks for downloading my digital business card — I’m excited we crossed paths. Let me introduce myself a bit more:</p>
+  <div class="mail-body">
+    ${logo}
+    <p>Hello [firstname], thanks for downloading my digital business card — I’m excited we crossed paths. Let me introduce myself a bit more:</p>
 
-      <p style="font-weight:800;margin-top:12px">About My Business</p>
-      <p>${safe(coOverview?.value,'[company_overview]')}</p>
+    <p style="font-weight:800;margin-top:12px">About My Business</p>
+    <p>${safe(coOverview?.value,'[company_overview]')}</p>
 
-      <p style="font-weight:800;margin-top:12px">What Drives Us</p>
-      <p>${safe(coMission?.value,'[mission_statement]')}</p>
+    <p style="font-weight:800;margin-top:12px">What Drives Us</p>
+    <p>${safe(coMission?.value,'[mission_statement]')}</p>
 
-      <p style="font-weight:800;margin-top:12px">What Makes Us Different</p>
-      <p>${safe(coDiff?.value,'[organization_values]')}</p>
+    <p style="font-weight:800;margin-top:12px">What Makes Us Different</p>
+    <p>${safe(coDiff?.value,'[organization_values]')}</p>
 
-      <p style="font-weight:800;margin-top:12px">Our Core Values</p>
-      <p>${safe(coValues?.value,'[differentiating_propositions]')}</p>
+    <p style="font-weight:800;margin-top:12px">Our Core Values</p>
+    <p>${safe(coValues?.value,'[differentiating_propositions]')}</p>
 
-      ${signature}
-    </div>
-  `;
+    ${ctaHtml}
+    ${signature}
+  </div>
+`;
 
+   
   /* Step 5 (Final Check) full preview — CTA appears BEFORE the footer */
   const htmlFull = `
     <div class="mail-body">
@@ -2204,6 +2134,7 @@ function renderMail(){
       <p style="font-weight:800;margin-top:12px">Our Core Values</p>
       <p>${safe(coValues?.value,'[differentiating_propositions]')}</p>
 
+      ${ctaHtml}
       ${signature}
     </div>
   `;

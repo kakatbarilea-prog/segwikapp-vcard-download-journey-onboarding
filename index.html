@@ -378,6 +378,41 @@ textarea {
   transition: height 0.2s ease;
 }
 
+/* ===== Accordion (Choose Actions) ===== */
+.accordion{display:grid; gap:8px}
+.acc-item{border:1px solid var(--line); border-radius:12px; background:#fff}
+.acc-header{
+  width:100%; appearance:none; border:0; background:#fff;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 14px; font-weight:800; color:var(--accent); cursor:pointer;
+  border-radius:12px;
+}
+.acc-header[aria-expanded="true"]{border-bottom:1px solid var(--line); border-radius:12px 12px 0 0}
+.acc-title{display:flex; align-items:center; gap:8px}
+.acc-arrow{
+  width:18px; height:18px; display:grid; place-items:center;
+  transition:transform .18s ease; flex:0 0 18px;
+}
+.acc-header[aria-expanded="true"] .acc-arrow{ transform:rotate(180deg) }
+.acc-panel{
+  display:none; padding:10px 14px 12px;
+}
+.acc-panel.show{ display:block }
+.acc-locked .acc-header{ color:#94a3b8; background:#f8fafc; cursor:not-allowed }
+.acc-locked .acc-header .acc-title::after{ content:" 🔒"; font-weight:800; color:#94a3b8 }
+.acc-locked .acc-panel{ display:block; background:#f9fafb }
+.placeholder-row{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:8px 10px; border:1px dashed var(--line); border-radius:10px;
+  color:#9aa4b2; background:#f8fafc;
+}
+.template-row .choose{
+  appearance:none; border:1px solid var(--line); background:#2563eb; color:#fff;
+  border-radius:8px; padding:6px 10px; font-weight:800; cursor:pointer;
+}
+.template-row.locked{ opacity:.6; filter:grayscale(0.3) }
+.template-row.locked .name{ color:#94a3b8 }
+.template-row.locked .actions .eye{ opacity:.5; cursor:not-allowed }
 
 
 </style>
@@ -813,39 +848,12 @@ textarea {
           </div>
           <div class="scroll">
             <div class="card">
-<div class="chips stacked" id="actionChips"></div>
-
-              <div class="right" style="margin-top:12px">
-              </div>
-            </div>
+  <div id="actionsAccordion" class="accordion" aria-label="Choose an action to expand and select a template"></div>
+</div>
           </div>
         </section>
 
-        <!-- Step: Email Template Picker -->
-<section class="slide" data-step="template">
-  <div class="head">
-    <div class="h1">Choose an Email Template</div>
-    <div class="p">Select a pre-designed email template for your autoresponder.</div>
-  </div>
-  <div class="scroll">
-    <div class="card">
-      <div class="label">Recommended Templates</div>
-      <div id="templateList" class="templates"></div>
-
-<!-- Shown only when template == "Book a Meeting" -->
-<div id="ctaDestinationRow" class="group" style="display:none; margin-top:10px">
-  <h3>Destination</h3>
-  <div class="help">Paste your scheduling link.</div>
-  <input id="ctaDest" type="url" placeholder="https://">
-</div>
-
-      <div class="add-template" id="addTemplateLocked">+ Add Email Template 🔒</div>
-    </div>
-  </div>
-</section>
-
-
-
+      
 
 
         
@@ -1125,7 +1133,6 @@ const IDX = {
   preview:       stepIndex('preview'),
 personality:   stepIndex('bp-all'), // single-screen brand personality
   actions:       stepIndex('actions'),
-  template:      stepIndex('template'),
 
   // NEW: first/last content screens
   content1:      stepIndex('content1'),
@@ -1586,107 +1593,250 @@ function fillPeekFromInputs(){
     ${socialRows}
   `;
 }
-
-/* ========= Actions & upgrade modal ========= */
-const actionDefs = [
-  {key:'email', label:'Send the Contact an Email', locked:false},
-  {key:'text', label:'Send the Contact a Text Message', locked:true},
-  {key:'journey', label:'Send Push Notification', locked:true},
-  {key:'task', label:'Assign a Task to Me', locked:true},
-  {key:'journey', label:'Add to a Journey', locked:true},
-  {key:'journey', label:'Update Attribute(s)', locked:true},
-  {key:'journey', label:'Generate a Transaction', locked:true},
-  {key:'journey', label:'Assign a Workflow', locked:true},
-];
-const chosenActions = new Set(['email']);
-const chipsHost = document.getElementById('actionChips');
-const upg = document.getElementById('upgradeModal');
-document.getElementById('upgClose')?.addEventListener('click', ()=>upg.classList.remove('show'));
-document.getElementById('upgGo')?.addEventListener('click', ()=>{ upg.classList.remove('show'); alert('Navigate to pricing'); });
-
-actionDefs.forEach(a=>{
-  const chip = document.createElement('button');
-  chip.className='chip'+(chosenActions.has(a.key)?' active':'');
-  chip.textContent = a.label + (a.locked?' 🔒':'');
-  chip.onclick = ()=>{
-    if(a.locked){ upg.classList.add('show'); return; }
-    if(chosenActions.has(a.key)) chosenActions.delete(a.key); else chosenActions.add(a.key);
-    chip.classList.toggle('active');
-  };
-  chipsHost.appendChild(chip);
-});
-
-
-/* ========= Email Template Picker ========= */
+/* ========= Email Template Definitions (must exist before Accordion renders) ========= */
 const templateDefs = [
   {key:'book',  name:'vCard Downloaded – Book a Call'},
   {key:'email', name:'vCard Downloaded – Send an Email'},
   {key:'call',  name:'vCard Downloaded – Call Me'}
 ];
-
-
 let chosenTemplate = 'email';
 
-function renderTemplateList(){
-  const host = document.getElementById('templateList');
-  if(!host) return;
-  host.innerHTML = '';
-  templateDefs.forEach(t=>{
-    const row = document.createElement('div');
-    row.className = 'template-row' + (chosenTemplate===t.key ? ' active' : '');
-    row.innerHTML = `
-      <div class="name">${t.name}</div>
+
+/* ========= Actions & upgrade modal (Accordion) ========= */
+const upg = document.getElementById('upgradeModal');
+document.getElementById('upgClose')?.addEventListener('click', ()=>upg.classList.remove('show'));
+document.getElementById('upgGo')?.addEventListener('click', ()=>{ upg.classList.remove('show'); alert('Navigate to pricing'); });
+
+/* Single-open accordion behavior + template lists */
+const actionsAccordionHost = document.getElementById('actionsAccordion');
+
+/* Reuse existing templateDefs and chosenTemplate variables (defined above) */
+
+function renderActionsAccordion(){
+  if(!actionsAccordionHost) return;
+actionsAccordionHost.innerHTML = `
+  <div class="add-template" id="timingImmediate">Timing: Immediate 🔒</div>
+`;
+  const arrowSvg = `
+    <span class="acc-arrow" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </span>
+  `;
+
+  // ===== 1) EMAIL (unlocked) =====
+  const emailItem = document.createElement('div');
+  emailItem.className = 'acc-item';
+  emailItem.innerHTML = `
+    <button class="acc-header" type="button" aria-expanded="false">
+      <span class="acc-title">Send the Contact an Email</span>${arrowSvg}
+    </button>
+    <div class="acc-panel" role="region" aria-label="Recommended email templates">
+      <div class="templates">
+        ${templateDefs.map(t => `
+          <div class="template-row" data-tkey="${t.key}">
+            <div class="name">${t.name}</div>
+            <div class="actions">
+              <button class="eye" title="Preview" aria-label="Preview">
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+              <button class="choose">Choose</button>
+            </div>
+          </div>
+        `).join('')}
+
+        <div class="add-template locked" id="addCustomEmailLink">+ Add Custom Email Template 🔒</div>
+
+
+  `;
+  actionsAccordionHost.appendChild(emailItem);
+
+  // helper to make locked lists
+  const lockedList = (names) => names.map(n => `
+    <div class="template-row locked" data-locked="true">
+      <div class="name">${n}</div>
       <div class="actions">
-        <button class="eye" title="Preview" aria-label="Preview ${t.name}">
+        <button class="eye" title="Upgrade required" aria-label="Upgrade required">
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
             <circle cx="12" cy="12" r="3"/>
           </svg>
         </button>
+        <button class="choose">Choose</button>
       </div>
-    `;
+    </div>
+  `).join('');
 
-    // Eye opens the phone-style preview modal (subject titlebar set to template name)
-    row.querySelector('.eye').addEventListener('click', ()=>{
-  document.getElementById('phoneTitle').textContent = t.name;
-  // Open the phone preview and render using THIS row's template (without selecting it)
-  togglePhone(true, t.key);
-});
+  // ===== 2) TEXT (locked) =====
+  const textItem = document.createElement('div');
+  textItem.className = 'acc-item';
+  textItem.innerHTML = `
+    <button class="acc-header" type="button" aria-expanded="false">
+      <span class="acc-title">Send the Contact a Text Message 🔒</span>${arrowSvg}
+    </button>
+    <div class="acc-panel" role="region" aria-label="Recommended text templates">
+      <div class="templates">
+        ${lockedList(['Text Template 1','Text Template 2','Text Template 3'])}
+      </div>
+    </div>
+  `;
+  actionsAccordionHost.appendChild(textItem);
 
+  // ===== 3) TASK (locked) =====
+  const taskItem = document.createElement('div');
+  taskItem.className = 'acc-item';
+  taskItem.innerHTML = `
+    <button class="acc-header" type="button" aria-expanded="false">
+      <span class="acc-title">Assign a Task to Me 🔒</span>${arrowSvg}
+    </button>
+    <div class="acc-panel" role="region" aria-label="Recommended task templates">
+      <div class="templates">
+        ${lockedList(['Task Template 1','Task Template 2','Task Template 3'])}
+      </div>
+    </div>
+  `;
+  actionsAccordionHost.appendChild(taskItem);
 
-    // Clicking the row selects the template
-    row.addEventListener('click', (e)=>{
-      if(e.target.closest('.eye')) return; // ignore the eye button itself
-      chosenTemplate = t.key;
-      renderTemplateList();
-      syncPhoneTitle();
-      showCtaDestIfNeeded();
-      renderMail();
+  // ===== 4) JOURNEY (locked) =====
+  const journeyItem = document.createElement('div');
+  journeyItem.className = 'acc-item';
+  journeyItem.innerHTML = `
+    <button class="acc-header" type="button" aria-expanded="false">
+      <span class="acc-title">Add to a Journey 🔒</span>${arrowSvg}
+    </button>
+    <div class="acc-panel" role="region" aria-label="Recommended journeys">
+      <div class="templates">
+        ${lockedList(['Journey 1','Journey 2','Journey 3'])}
+      </div>
+    </div>
+  `;
+  actionsAccordionHost.appendChild(journeyItem);
+
+  // ===== 5) UPDATE ATTRIBUTES (locked) =====
+  const attrsItem = document.createElement('div');
+  attrsItem.className = 'acc-item';
+  attrsItem.innerHTML = `
+    <button class="acc-header" type="button" aria-expanded="false">
+      <span class="acc-title">Update Attribute(s) 🔒</span>${arrowSvg}
+    </button>
+    <div class="acc-panel" role="region" aria-label="Recommended attribute updates">
+      <div class="templates">
+        ${lockedList(['Attribute 1','Attribute 2','Attribute 3'])}
+      </div>
+    </div>
+  `;
+  actionsAccordionHost.appendChild(attrsItem);
+
+  // ===== 6) GENERATE TRANSACTION (locked) =====
+  const txnItem = document.createElement('div');
+  txnItem.className = 'acc-item';
+  txnItem.innerHTML = `
+    <button class="acc-header" type="button" aria-expanded="false">
+      <span class="acc-title">Generate a Transaction 🔒</span>${arrowSvg}
+    </button>
+    <div class="acc-panel" role="region" aria-label="Recommended transactions">
+      <div class="templates">
+        ${lockedList(['Transaction 1','Transaction 2','Transaction 3'])}
+      </div>
+    </div>
+  `;
+  actionsAccordionHost.appendChild(txnItem);
+
+  // ===== 7) ASSIGN WORKFLOW (locked) =====
+  const wfItem = document.createElement('div');
+  wfItem.className = 'acc-item';
+  wfItem.innerHTML = `
+    <button class="acc-header" type="button" aria-expanded="false">
+      <span class="acc-title">Assign a Workflow 🔒</span>${arrowSvg}
+    </button>
+    <div class="acc-panel" role="region" aria-label="Recommended workflows">
+      <div class="templates">
+        ${lockedList(['Workflow 1','Workflow 2','Workflow 3'])}
+      </div>
+    </div>
+  `;
+  actionsAccordionHost.appendChild(wfItem);
+
+  // ===== Accordion behavior (single-open) =====
+  const items = Array.from(actionsAccordionHost.querySelectorAll('.acc-item'));
+  items.forEach(item=>{
+    const header = item.querySelector('.acc-header');
+    const panel  = item.querySelector('.acc-panel');
+    header.addEventListener('click', ()=>{
+      items.forEach(it=>{
+        if(it!==item){
+          it.querySelector('.acc-header')?.setAttribute('aria-expanded','false');
+          it.querySelector('.acc-panel')?.classList.remove('show');
+        }
+      });
+      const isOpen = header.getAttribute('aria-expanded') === 'true';
+      header.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      panel.classList.toggle('show', !isOpen);
     });
-
-    host.appendChild(row);
   });
 
-  // ensure Destination row visibility matches current selection
-  showCtaDestIfNeeded();
-}
-renderTemplateList();
+  // ===== Email panel wiring (preview + choose) =====
+  emailItem.querySelectorAll('.template-row[data-tkey]').forEach(row=>{
+    const key = row.getAttribute('data-tkey');
+    row.querySelector('.eye')?.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const t = templateDefs.find(t=>t.key===key);
+      if(t){
+        document.getElementById('phoneTitle').textContent = t.name;
+        togglePhone(true, key);
+      }
+    });
+    row.querySelector('.choose')?.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      chosenTemplate = key;
+      syncPhoneTitle();
+      renderMail();
+      goTo(IDX.finalcheck);
+    });
+  });
 
-renderTemplateList();
-
-// Locked “Add Template” link
-document.getElementById('addTemplateLocked')?.addEventListener('click', ()=>{
+// ===== Locked custom email template (opens upgrade modal) =====
+document.getElementById('addCustomEmailLink')?.addEventListener('click', (e)=>{
+  e.preventDefault();
   const title = document.getElementById('upgTitle');
-  if(title) title.textContent = 'Requires an Upgrade';
+  if (title) title.textContent = 'Unlock custom email templates';
+  const msg = document.querySelector('#upgradeModal .modal p');
+  if (msg) msg.innerHTML = 'Adding a custom email template is available on paid plans.';
   upg.classList.add('show');
 });
 
-function showCtaDestIfNeeded(){
-  const row = document.getElementById('ctaDestinationRow');
-  if(!row) return;
-  row.style.display = (chosenTemplate === 'book') ? '' : 'none';
+// ===== Timing: Immediate (opens upgrade modal with specific copy) =====
+document.getElementById('timingImmediate')?.addEventListener('click', (e)=>{
+  e.preventDefault();
+  const title = document.getElementById('upgTitle');
+  if (title) title.textContent = 'Unlock more automations';
+  const msg = document.querySelector('#upgradeModal .modal p');
+  if (msg) msg.innerHTML = 'Setting custom timing is available on paid plans.';
+  upg.classList.add('show');
+});
+
+
+  // ===== All locked recommendations (eye/choose) → show upgrade modal =====
+  actionsAccordionHost.querySelectorAll('.template-row.locked').forEach(row=>{
+    row.querySelectorAll('.eye, .choose').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const title = document.getElementById('upgTitle');
+        if(title) title.textContent = 'Unlock more automations';
+        const msg = document.querySelector('#upgradeModal .modal p');
+        if(msg) msg.innerHTML = 'These recommended items are available on paid plans.';
+        upg.classList.add('show');
+      });
+    });
+  });
 }
 
+
+
+// Initial render (all collapsed, none preselected)
+renderActionsAccordion();
 
 
 

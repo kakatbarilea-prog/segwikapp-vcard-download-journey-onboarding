@@ -24,7 +24,12 @@
   .ibtn{padding:8px;border:1px solid var(--line);border-radius:12px;background:#f8fafc;display:grid;place-items:center}
   .btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--accent);padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
   .btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
-  .btn.blue:hover{background:var(--blue-700);border-color:var(--blue-700)}
+.btn.blue:hover{background:var(--blue-700);border-color:var(--blue-700)}
+/* New CTA variants */
+.btn.orange{background:#f47a02;border-color:#f47a02;color:#fff}
+.btn.orange:hover{filter:brightness(.96)}
+.btn.gray{background:#e5e7eb;border-color:#e5e7eb;color:#374151}
+.btn.green{background:var(--green);border-color:var(--green);color:#fff}
   .btn.ghost{background:#f8fafc}
   .btn.small{padding:8px 10px;border-radius:10px;font-size:12px}
   .btn.full{width:100%}
@@ -1387,44 +1392,45 @@ textarea {
         <!-- Step: Summary with toggle -->
         <section class="slide" data-step="summary">
   <div class="head">
-    <div class="h1">Your Journey Configuration is Nearly complete</div>
-    <div class="p">Test with a person</div>
+    <div class="h1">Your journey configuration is nearly complete</div>
+    <div class="p">You’re ready to test this journey internally. <b><i>It’s not live yet</i></b> — try it first and make sure everything feels right.</div>
   </div>
   <div class="scroll">
-    <!-- Box 1 -->
-    <div class="card">
-      <ul style="margin:0;padding-left:18px;line-height:1.8">
-        <li><span id="sumCard" class="ok">Digital card complete</span></li>
-        <li><span class="ok">Instant autoresponder configured</span></li>
-        <li><span id="sumCtas" class="ok">CTA added</span></li>
-      </ul>
-    </div>
+    <!-- Push confirmation (appears above on actions below) -->
+    <div id="summaryPush" class="push" role="status" aria-live="polite"></div>
 
-    <!-- Box 2 -->
-    <div class="card" style="text-align:center">
-      <img
-        src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1760737883979.png"
-        alt="Segwik setup complete"
-        class="bridge-image"
-        style="max-width:100%;border-radius:12px"
-      />
-    </div>
-
-    <!-- Box 3 -->
+    <!-- Box: Test with Myself -->
     <div class="card">
-      <div class="row" style="align-items:center;gap:12px;justify-content:space-between">
-        <div style="font-weight:800">Activate Journey</div>
-        <div id="toggle" class="switch" role="switch" aria-checked="false"><span class="knob"></span></div>
+      <div style="font-weight:900; color:var(--accent); margin-bottom:6px;">Test with Myself</div>
+      <div style="color:var(--muted); font-size:13px; line-height:1.5; margin-bottom:10px;">
+        Send a test to your own email and experience the journey like a contact.
       </div>
+<button id="goToMyVcardBtn" class="btn blue">Go to my vCard</button>
     </div>
+
+    <!-- Box: Test with a Person -->
+    <div class="card">
+      <div style="font-weight:900; color:var(--accent); margin-bottom:6px;">Test with a Person</div>
+      <div style="color:var(--muted); font-size:13px; line-height:1.5; margin-bottom:10px;">
+        Send a test link to someone you trust. They’ll receive a link to your private vCard, fill out your vCard download form, and experience the journey as if they were a real contact — so you can see exactly how it flows.
+      </div>
+      <input id="testInviteEmail" type="email" placeholder="Enter email address" />
+<button id="sendTestInviteBtn" class="btn blue" style="margin-top:8px;">Send Test Invite</button>
+    </div>
+
+    <!-- Big full-width Activate button -->
+    <button id="activateJourneyBtn" class="btn full orange" style="justify-content:center; font-size:15px; font-weight:900; padding:14px 16px;">
+      Activate Journey — Go Live
+    </button>
   </div>
 </section>
+
 
 <!-- New Step: Share vCard -->
 <section class="slide" data-step="share">
   <div class="head">
-    <div class="h1">You’re Ready to Share Your vCard</div>
-    <div class="p">Try sending your digital card to a friend, family member, or colleague to see how your journey kicks in automatically.</div>
+    <div class="h1">This Is the Beginning of Your Journey</div>
+    <div class="p">You’ve set everything in motion. Your journey is ready to meet the world — share it and watch what happens next.</div>
   </div>
   <div class="scroll" style="align-items:stretch">
     <div class="card" style="text-align:center">
@@ -1491,7 +1497,20 @@ textarea {
         </div>
       </div>
 
-            <!-- Plain Meeting Preview popup (no phone chrome; shows raw text) -->
+            <!-- Activate Journey modal -->
+<div id="activateModal" class="modal-wrap" role="dialog" aria-modal="true" aria-labelledby="activateTitle" aria-describedby="activateDesc" style="display:none">
+  <div class="modal">
+    <h3 id="activateTitle">Activate this journey now?</h3>
+    <p id="activateDesc">This will start the automation for matching triggers.</p>
+    <div class="row">
+      <button class="btn ghost" id="activateCancel">Cancel</button>
+      <button class="btn blue" id="activateConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Plain Meeting Preview popup (no phone chrome; shows raw text) -->
+
       <div id="meetingPreviewModal" class="modal-wrap" role="dialog" aria-modal="true" aria-labelledby="meetingPrevTitle" style="display:none">
         <div class="modal">
           <h3 id="meetingPrevTitle">Preview: Meeting Details</h3>
@@ -3246,6 +3265,68 @@ toggle?.addEventListener('click', ()=>{
 });
 
 /* ===== Final Check actions ===== */
+// — Summary screen actions —
+(function(){
+  const push = document.getElementById('summaryPush');
+
+  function showPush(msg){
+    if(!push) return;
+    push.textContent = msg;
+    push.classList.add('show');
+    setTimeout(()=> push.classList.remove('show'), 2200);
+  }
+
+  // Test with a Person: send invite (fake)
+  const sendBtn = document.getElementById('sendTestInviteBtn');
+  const emailIn = document.getElementById('testInviteEmail');
+  sendBtn?.addEventListener('click', ()=>{
+    const v = (emailIn?.value || '').trim();
+    if(!v){
+      emailIn?.focus();
+      showPush('Please enter an email address.');
+      return;
+    }
+    showPush(`Test invite sent to ${v}.`);
+  });
+
+  // Test with Myself (no-op per spec; keep button for UX)
+  document.getElementById('goToMyVcardBtn')?.addEventListener('click', ()=> {
+    // intentionally no action
+  });
+
+  // Activate Journey — Go Live modal + state lifecycle
+  const actBtn = document.getElementById('activateJourneyBtn');
+  const modal  = document.getElementById('activateModal');
+  const actCancel  = document.getElementById('activateCancel');
+  const actConfirm = document.getElementById('activateConfirm');
+
+  function openActivateModal(){ if(modal){ modal.style.display='flex'; modal.classList.add('show'); } }
+  function closeActivateModal(){ if(modal){ modal.classList.remove('show'); modal.style.display='none'; } }
+
+  actBtn?.addEventListener('click', openActivateModal);
+  actCancel?.addEventListener('click', closeActivateModal);
+
+  actConfirm?.addEventListener('click', ()=>{
+    closeActivateModal();
+    if(!actBtn) return;
+    // Launching...
+    actBtn.disabled = true;
+    actBtn.classList.remove('orange','green');
+    actBtn.classList.add('gray');
+    actBtn.setAttribute('aria-busy','true');
+    actBtn.textContent = 'Launching....';
+
+    // Fake delay, then Activated
+    setTimeout(()=>{
+      actBtn.classList.remove('gray');
+      actBtn.classList.add('green');
+      actBtn.textContent = 'Journey Activated';
+      actBtn.removeAttribute('aria-busy');
+      actBtn.disabled = true;
+    }, 1800);
+  });
+})();
+
 document.getElementById('sendTestBtn')?.addEventListener('click', ()=>{
   // show push
   const p = document.getElementById('testPush');

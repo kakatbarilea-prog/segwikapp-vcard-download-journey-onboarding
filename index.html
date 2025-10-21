@@ -530,10 +530,26 @@ textarea {
 #epvSection .v-demo-photo{ position:relative; }
 
 #epvSection .epv-input{
-  width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
-  background:#f8fafc; font:inherit;
-  outline:2px solid #c7d2fe; outline-offset:1px; box-shadow:0 0 0 3px var(--blue-50);
+  width:100%;
+  padding:6px 8px;
+  border-radius:8px;
+  border:1px solid #dbe2ef;
+  background:#fbfcff;
+  font:inherit;
+  font-size:13px;
+  outline:none;
+  box-shadow:none;
 }
+#epvSection .epv-input:focus{
+  border-color:#c7d2fe;
+  box-shadow:0 0 0 2px var(--blue-50);
+}
+/* Keep dual-name inputs compact and tidy */
+#epvSection .epv-name-dual .epv-input{ min-width:0 }
+
+/* While editing a row, hide the pencil */
+#epvSection .epv-editing .epv-pencil{ display:none !important; }
+
 
 /* Two inputs for first/last name */
 #epvSection .epv-name-dual{
@@ -541,24 +557,47 @@ textarea {
 }
 
 /* Social adder */
-#epvSection .epv-social-adder{ margin:8px 0 0; padding:10px; border:1px dashed var(--line); border-radius:10px; background:#f8fafc; }
-#epvSection .epv-social-actions{ display:flex; gap:8px; margin-top:8px; }
+#epvSection .epv-social-adder{
+  margin:8px 0 0;
+  padding:10px;
+  border:1px dashed var(--line);
+  border-radius:10px;
+  background:#f8fafc;
+}
+#epvSection .epv-social-row{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  margin-top:6px;
+}
+#epvSection .epv-social-row select,
+#epvSection .epv-social-row input{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  background:#f8fafc;
+  border-radius:10px;
+  font:inherit;
+}
+#epvSection .epv-social-actions{
+  display:flex;
+  gap:16px;
+  margin-top:8px;
+  align-items:center;
+}
 #epvSection .epv-link{
-  appearance:none; border:0; background:transparent; color:var(--blue);
-  text-decoration:underline; font-weight:700; cursor:pointer; padding:0;
+  appearance:none;
+  border:0;
+  background:transparent;
+  color:var(--blue);
+  text-decoration:underline;
+  font-weight:700;
+  cursor:pointer;
+  padding:0;
 }
 
-/* Social list pills */
-#epvSection .epv-social-wrap{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
-#epvSection .epv-social-pill{
-  display:flex; align-items:center; gap:8px;
-  padding:8px 10px; border:1px solid var(--line); border-radius:999px; background:#fff; width:max-content;
-}
-#epvSection .epv-pill-remove{
-  appearance:none; border:0; background:#000; color:#fff;
-  width:24px; height:24px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
-}
-#epvSection .epv-pill-remove svg{ stroke:#fff; fill:none; stroke-width:2; }
+/* (Removed pill styles – socials now render as normal rows with black icon circles) */
+
 /* Force headshot pencil to match banner size */
 #epvSection #epvPhoto .epv-pencil-upload {
   width: 24px !important;
@@ -1201,6 +1240,9 @@ textarea {
             </div>
           </div>
 
+                    <!-- Social items render here (as rows) -->
+          <div id="epvSocialRows"></div>
+
           <!-- + Social Media trigger -->
           <div class="v-demo-row">
             <span style="width:28px;height:28px;"></span>
@@ -1209,9 +1251,9 @@ textarea {
             </div>
           </div>
 
-          <!-- Social adder (dropdown + url + Add|Cancel) -->
+          <!-- Social adder (stacked: dropdown row, url row, then link-style actions) -->
           <div id="epvSocialAdder" class="epv-social-adder" style="display:none">
-            <div class="social-row">
+            <div class="epv-social-row">
               <select id="epvSocialPlatform">
                 <option value="linkedin_personal">LinkedIn (Personal)</option>
                 <option value="linkedin_business">LinkedIn (Business)</option>
@@ -1223,16 +1265,16 @@ textarea {
                 <option value="youtube">YouTube</option>
                 <option value="tiktok">TikTok</option>
               </select>
-              <input id="epvSocialUrl" type="url" placeholder="https://…"/>
+            </div>
+            <div class="epv-social-row">
+              <input id="epvSocialUrl" type="url" placeholder="https://…" />
             </div>
             <div class="epv-social-actions">
-              <button class="btn small" data-epv-action="social-add">+ Add</button>
-              <button class="btn small ghost" data-epv-action="social-cancel">Cancel</button>
+              <button class="epv-link" data-epv-action="social-add">+ Add</button>
+              <button class="epv-link" data-epv-action="social-cancel">Cancel</button>
             </div>
           </div>
 
-          <!-- Where social links render -->
-          <div id="epvSocialList" class="epv-social-wrap"></div>
         </div>
       </div>
     </div>
@@ -1521,10 +1563,17 @@ function goTo(i){
     idx = Math.max(0, Math.min(slides.length-1, i));
   carousel.style.transform = `translateX(-${idx*100}%)`;
     // ALWAYS refresh Step 5 preview when landing there
-  if (i === IDX.finalcheck) {
+    if (i === IDX.finalcheck) {
     syncPhoneTitle();
     renderMail();
   }
+  // Ensure the "Preview & Update Your Digital Business Card" screen reflects the latest inputs
+  if (i === IDX.images) {
+    if (window && typeof window.__segwikRenderEPV === 'function') {
+      window.__segwikRenderEPV();
+    }
+  }
+
   // One-time regen button attention (per screen)
   const currentStep = slides[idx]?.dataset?.step || null;
   maybeAutoAnimateRegenOnEnter(currentStep);
@@ -1969,9 +2018,10 @@ function renderInlineVcardFromInputs(){
   host.innerHTML = `
     <div class="v-demo-banner" id="inlineBanner" style="${bannerUrl?`background-image:url('${bannerUrl}')`:''}"></div>
     <div class="v-demo-headrow">
-      <div class="v-demo-photo" id="inlinePhoto" style="${photoUrl?`background-image:url('${photoUrl}')`:''}">
+      <div class="v-demo-photo" id="inlinePhoto" style="${photoUrl?`background-image:url('${photoUrl}');background-size:cover;background-position:center;background-repeat:no-repeat;`:''}">
         ${photoUrl?'':'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>'}
       </div>
+
       <button class="v-demo-save">Save Contact</button>
     </div>
     <div class="v-demo-id">
@@ -2025,13 +2075,23 @@ function renderStatus(){
 
 /* Keep everything live */
 function updatePreviews(){
-  if (idx === IDX.preview) { renderStatus(); renderInlineVcardFromInputs(); }
+  if (idx === IDX.preview) { 
+    renderStatus(); 
+    renderInlineVcardFromInputs(); 
+  }
 
+  // Keep the peek sheet in sync, if it’s open
   if(sheet.classList.contains('show')) fillPeekFromInputs();
 
   // ALWAYS update the email previews (phone modal + Step 5 full preview)
   renderMail();
+
+  // NEW: also refresh the "Preview & Update Your Digital Business Card" screen in real time
+  if (window && typeof window.__segwikRenderEPV === 'function') {
+    window.__segwikRenderEPV();
+  }
 }
+
 
 
 /* ========= Peek sheet ========= */
@@ -2058,10 +2118,26 @@ function fillPeekFromInputs(){
   document.getElementById('peekHeadline').textContent = safe(S.headline.value,'Your Headline');
 
   const bannerDiv = document.getElementById('peekDemoBanner');
-  const photoDiv  = document.getElementById('peekDemoPhoto');
-  bannerDiv.style.backgroundImage = bannerUrl ? `url('${bannerUrl}')` : '';
-  if (photoUrl){ photoDiv.style.backgroundImage = `url('${photoUrl}')`; photoDiv.innerHTML=''; }
-  else { photoDiv.style.backgroundImage=''; if(!photoDiv.querySelector('svg')) photoDiv.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>'; }
+const photoDiv  = document.getElementById('peekDemoPhoto');
+bannerDiv.style.backgroundImage = bannerUrl ? `url('${bannerUrl}')` : '';
+bannerDiv.style.backgroundSize = bannerUrl ? 'cover' : '';
+bannerDiv.style.backgroundPosition = bannerUrl ? 'center' : '';
+bannerDiv.style.backgroundRepeat = bannerUrl ? 'no-repeat' : '';
+
+if (photoUrl){
+  photoDiv.style.backgroundImage = `url('${photoUrl}')`;
+  photoDiv.style.backgroundSize = 'cover';
+  photoDiv.style.backgroundPosition = 'center';
+  photoDiv.style.backgroundRepeat = 'no-repeat';
+  photoDiv.innerHTML='';
+} else {
+  photoDiv.style.backgroundImage='';
+  photoDiv.style.backgroundSize='';
+  photoDiv.style.backgroundPosition='';
+  photoDiv.style.backgroundRepeat='';
+  if(!photoDiv.querySelector('svg')) photoDiv.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>';
+}
+
 
   const phoneA = safe(S.phoneBiz.value,''), phoneB = safe(S.phonePersonal.value,'');
   const emailA = safe(S.emailBiz.value,''), emailB = safe(S.emailPersonal.value,'');
@@ -2698,7 +2774,7 @@ function renderMail(previewKey = null){
 
   const signature = `
     <div class="sig">
-      ${photoUrl?`<img src="${photoUrl}" alt="headshot">`:''}
+${photoUrl?`<img src="${photoUrl}" alt="headshot" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">`:''}
       <div class="meta">
         <div class="name">${safe(S.firstName?.value,'[First]')} ${safe(S.lastName?.value,'[Last]')}</div>
         <div>${safe(S.company?.value,'[Company]')}</div>
@@ -2851,8 +2927,9 @@ document.addEventListener('input', e => {
     phonePersonal:   $('#epvPhonePersonal'),
     website:         $('#epvWebsite'),
 
-    socialWrap:      $('#epvSocialList'),
+        socialRows:      $('#epvSocialRows'),
     socialAdder:     $('#epvSocialAdder'),
+
     socialPlatform:  $('#epvSocialPlatform'),
     socialUrl:       $('#epvSocialUrl'),
     fileBanner:      $('#epvBannerFile'),
@@ -2889,16 +2966,29 @@ document.addEventListener('input', e => {
     // Banner & photo
     if(ui.banner) ui.banner.style.backgroundImage = bUrl ? `url('${bUrl}')` : '';
     if(ui.photo){
-      if(pUrl){
-        ui.photo.style.backgroundImage = `url('${pUrl}')`;
+      // Always re-read the latest global headshot (photoUrl) each render; fall back to cached pUrl
+      const curPhoto = (typeof photoUrl !== 'undefined' && photoUrl) ? photoUrl : pUrl;
+
+      if(curPhoto){
+        // Keep local cache in sync so EPV file uploads still work
+        pUrl = curPhoto;
+
+        ui.photo.style.backgroundImage = `url('${curPhoto}')`;
+        ui.photo.style.backgroundSize = 'cover';
+        ui.photo.style.backgroundPosition = 'center';
+        ui.photo.style.backgroundRepeat = 'no-repeat';
+
         ui.photo.innerHTML = `<button class="epv-pencil-upload epv-small" data-epv-upload="headshot" aria-label="Upload headshot" title="Upload headshot"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
   <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
   <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
 </svg>
 </button>`;
-
-      }else{
+      } else {
         ui.photo.style.backgroundImage = '';
+        ui.photo.style.backgroundSize = '';
+        ui.photo.style.backgroundPosition = '';
+        ui.photo.style.backgroundRepeat = '';
+
         ui.photo.innerHTML = `
           <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
           <button class="epv-pencil-upload epv-small" data-epv-upload="headshot" aria-label="Upload headshot" title="Upload headshot"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
@@ -2906,10 +2996,11 @@ document.addEventListener('input', e => {
   <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
 </svg>
 </button>
-
         `;
       }
     }
+
+
 
     // Name/company/title/headline
     const first = has(State,'firstName') ? val(State.firstName) : '';
@@ -2928,18 +3019,22 @@ document.addEventListener('input', e => {
     setOr(ui.phonePersonal, has(State,'phonePersonal') ? val(State.phonePersonal) : '', 'Your Personal Phone');
     setOr(ui.website,       has(State,'website')       ? val(State.website)       : '', 'Your Website');
 
-    // Socials list as pills
-    if(ui.socialWrap){
+        // Socials list as normal rows (black icon circle, no borders), ABOVE the "+ Social Media" link
+    if(ui.socialRows){
       const valid = Social.filter(s => s && s.url && s.url.trim());
-      ui.socialWrap.innerHTML = valid.map((s, i) => {
+      ui.socialRows.innerHTML = valid.map((s) => {
         const icon = socialIconKey(s.platform);
-        return `<span class="epv-social-pill" data-idx="${i}">
-          <span aria-hidden="true">${i16(icon)}</span>
-          <a href="${s.url}" target="_blank" rel="noopener">${s.url}</a>
-          <button class="epv-pill-remove" data-epv-action="social-remove" data-idx="${i}" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-        </span>`;
+        return `
+          <div class="v-demo-row">
+            <span class="icon-pill" aria-hidden="true">${i16(icon)}</span>
+            <div class="epv-cell">
+              <span class="epv-text">${s.url}</span>
+            </div>
+          </div>
+        `;
       }).join('');
     }
+
   }
 
   function startEdit(kind){
@@ -2959,13 +3054,17 @@ document.addEventListener('input', e => {
       in1.value = has(State,'firstName') ? val(State.firstName) : '';
       in2.value = has(State,'lastName')  ? val(State.lastName)  : '';
       holder.replaceChildren(wrap);
+      const row = holder.closest('.epv-edit-row');
+      if(row) row.classList.add('epv-editing');
       wrap.appendChild(in1); wrap.appendChild(in2);
       setTimeout(()=> in1.focus(), 0);
       const commit = ()=>{
-        if(has(State,'firstName')) set(State.firstName, in1.value.trim());
-        if(has(State,'lastName'))  set(State.lastName,  in2.value.trim());
-        renderEPV(); if(typeof updatePreviews === 'function') updatePreviews();
-      };
+      if(has(State,'firstName')) set(State.firstName, in1.value.trim());
+      if(has(State,'lastName'))  set(State.lastName,  in2.value.trim());
+      renderEPV(); if(typeof updatePreviews === 'function') updatePreviews();
+      if(row) row.classList.remove('epv-editing');
+};
+
       in1.addEventListener('blur', ()=> setTimeout(commit,0));
       in2.addEventListener('blur', ()=> setTimeout(commit,0));
       [in1,in2].forEach(inp => inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); commit(); }}));
@@ -2990,12 +3089,17 @@ document.addEventListener('input', e => {
     input.placeholder = m.ph;
     input.value = m.src ? val(m.src) : '';
     m.el.replaceChildren(input);
+    const row = m.el.closest('.epv-cell') || m.el.closest('.epv-edit-row');
+    if(row) row.classList.add('epv-editing');
+
     setTimeout(()=> input.focus(), 0);
 
     const commit = ()=>{
-      if(m.src) set(m.src, input.value.trim());
-      renderEPV(); if(typeof updatePreviews === 'function') updatePreviews();
-    };
+  if(m.src) set(m.src, input.value.trim());
+  renderEPV(); if(typeof updatePreviews === 'function') updatePreviews();
+  if(row) row.classList.remove('epv-editing');
+};
+
     input.addEventListener('blur', commit);
     input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); input.blur(); }});
   }
@@ -3064,9 +3168,11 @@ document.addEventListener('input', e => {
     });
   });
 
-  // Initial render on load
+  // Initial render on load + expose for external calls
+  window.__segwikRenderEPV = renderEPV;
   renderEPV();
 })();
+
 
 
 /* ========= Init ========= */

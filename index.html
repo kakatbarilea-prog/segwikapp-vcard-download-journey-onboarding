@@ -891,11 +891,6 @@ textarea {
   </div>
 </section>
 
-<!-- Step: Brand Personality (ONE SCREEN – MULTISELECT) -->
-
-
-
-
 
     <!-- Step: Brand Personality (ONE SCREEN – MULTISELECT) -->
 <section class="slide bp-step" data-step="bp-all">
@@ -936,88 +931,7 @@ textarea {
 
 
 
-        <!-- Step: Content + AI generate (SPLIT INTO 4 SCREENS) -->
-<!-- Screen 1: Overview -->
-<section class="slide" data-step="content1">
-  <div class="head">
-    <div class="h1">Tell us about your business</div>
-    <div class="p">You can write your own or let AI draft and then edit.</div>
-  </div>
-  <div class="scroll" style="position:relative">
-    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
-
-    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
-      <button data-regen class="btn">Regenerate with Segwik AI</button>
-    </div>
-
-    <div class="card">
-      <div class="label">Is this a good overview of your business?</div>
-      <textarea id="coOverview" placeholder="Describe what your company does…"></textarea>
-    </div>
-
-  <!--   <button id="peekEmail1" class="btn">See Example Placement</button> -->
-  </div>
-</section>
-
-<!-- Screen 2: Mission -->
-<section class="slide" data-step="content2">
-  <div class="head">
-    <div class="h1">Tell us about your business</div>
-    <div class="p">You can write your own or let AI draft and then edit.</div>
-  </div>
-  <div class="scroll" style="position:relative">
-    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
-
-    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
-      <button data-regen class="btn">Regenerate with Segwik AI</button>
-    </div>
-
-    <div class="card">
-      <div class="label">Does this describe your mission accurately?</div>
-      <textarea id="coMission" placeholder="State your mission…"></textarea>
-    </div>
-  </div>
-</section>
-
-<!-- Screen 3: Values -->
-<section class="slide" data-step="content3">
-  <div class="head">
-    <div class="h1">Tell us about your business</div>
-    <div class="p">You can write your own or let AI draft and then edit.</div>
-  </div>
-  <div class="scroll" style="position:relative">
-    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
-
-    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
-      <button data-regen class="btn">Regenerate with Segwik AI</button>
-    </div>
-
-    <div class="card">
-      <div class="label">Do you agree with this value statement?</div>
-      <textarea id="coValues" placeholder="List a few core values…"></textarea>
-    </div>
-  </div>
-</section>
-
-<!-- Screen 4 (LAST of Phase 1): Differentiation -->
-<section class="slide" data-step="content4">
-  <div class="head">
-    <div class="h1">Tell us about your business</div>
-    <div class="p">You can write your own or let AI draft and then edit.</div>
-  </div>
-  <div class="scroll" style="position:relative">
-    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
-
-    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
-      <button data-regen class="btn">Regenerate with Segwik AI</button>
-    </div>
-
-    <div class="card">
-      <div class="label">Is this a good way to differentiate your business?</div>
-      <textarea id="coDiff" placeholder="What makes you different…"></textarea>
-    </div>
-  </div>
-</section>
+      
 
 <!-- PHASE 1 → PHASE 2 BRIDGE (no back/next/pager) -->
 <section class="slide" data-step="bridge">
@@ -1345,7 +1259,87 @@ textarea {
           </div>
         </section>
 
-      
+      <!-- Step: Content + AI generate (SPLIT INTO 4 SCREENS) -->
+<!-- Screen 1: Overview -->
+<section class="slide" data-step="content1">
+  <div class="head">
+    <div class="h1">Let’s Introduce Your Business</div>
+    <div class="p">Your chosen email template includes a section introducing your business.</div>
+  </div>
+  <div class="scroll" style="position:relative">
+    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
+
+    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
+      <button data-regen class="btn">Regenerate with Segwik AI</button>
+    </div>
+
+    <div class="card">
+      <div class="label">Is this a good overview of your business?</div>
+      <textarea id="coOverview" placeholder="Describe what your company does…"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 2: Mission -->
+<section class="slide" data-step="content2">
+  <div class="head">
+    <div class="h1">Share Your Mission</div>
+    <div class="p">Your chosen email template includes a mission statement section.</div>
+  </div>
+  <div class="scroll" style="position:relative">
+    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
+
+    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
+      <button data-regen class="btn">Regenerate with Segwik AI</button>
+    </div>
+
+    <div class="card">
+      <div class="label">Does this describe your mission accurately?</div>
+      <textarea id="coMission" placeholder="State your mission…"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 3: Values -->
+<section class="slide" data-step="content3">
+  <div class="head">
+    <div class="h1">Show What You Stand For</div>
+    <div class="p">Your chosen email template includes a section that highlights your organization’s values.</div>
+  </div>
+  <div class="scroll" style="position:relative">
+    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
+
+    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
+      <button data-regen class="btn">Regenerate with Segwik AI</button>
+    </div>
+
+    <div class="card">
+      <div class="label">Do you agree with this value statement?</div>
+      <textarea id="coValues" placeholder="List a few core values…"></textarea>
+    </div>
+  </div>
+</section>
+
+<!-- Screen 4 (LAST of Phase 1): Differentiation -->
+<section class="slide" data-step="content4">
+  <div class="head">
+    <div class="h1">Highlight What Sets You Apart</div>
+    <div class="p">Your chosen email template includes a section about what makes you stand out.</div>
+  </div>
+  <div class="scroll" style="position:relative">
+    <div class="ai-overlay" id="aiOverlay">Generating your copy…</div>
+
+    <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-self:flex-start">
+      <button data-regen class="btn">Regenerate with Segwik AI</button>
+    </div>
+
+    <div class="card">
+      <div class="label">Is this a good way to differentiate your business?</div>
+      <textarea id="coDiff" placeholder="What makes you different…"></textarea>
+    </div>
+  </div>
+</section>
+
 
 
         
@@ -1633,7 +1627,8 @@ textarea {
 const carousel = document.getElementById('carousel');
 const slides = Array.from(carousel.querySelectorAll('.slide'));
 let idx = 0;
-let doAutoGenNext = false;
+let personaSeeded = false;            // seed persona once (first time entering any content screen)
+const contentSeen = new Set();        // track which content screens have already shown the loader
 let chosenPersona = 'professional';
 let dummyIdx = 0;
 
@@ -1671,8 +1666,8 @@ function goTo(i){
   nav2.style.display = 'none';
   pager2.style.display = 'none';
 
-const inP1 = idx <= IDX.contentLast;        // Phase 1 = welcome .. last content screen
-const inP2 = idx >= IDX.entry;        // Phase 2 = entry .. end
+const inP1 = idx <= IDX.personality;        // Phase 1 = welcome .. ends at Brand Personality
+const inP2 = idx >= IDX.entry;              // Phase 2 = entry .. end
 
 
   if (inP1) {
@@ -1698,14 +1693,22 @@ const inP2 = idx >= IDX.entry;        // Phase 2 = entry .. end
 
   if (idx === IDX.preview) { renderStatus(); renderInlineVcardFromInputs(); }
  if (idx >= IDX.content1 && idx <= IDX.contentLast) {
-  // Seed persona automatically based on current selections, then auto-generate once.
-  if (!doAutoGenNext) {
+  const step = slides[idx]?.dataset?.step || null;
+
+  // Seed persona once (first time entering any of the content screens)
+  if (!personaSeeded) {
     chosenPersona = inferChosenPersona();
     dummyIdx = 0;
-    doAutoGenNext = true;
+    personaSeeded = true;
   }
-  setTimeout(()=>{ withLoader(fillFromDummy); doAutoGenNext = false; }, 50);
+
+  // Show the fake loader ONLY once for each individual content screen
+  if (step && !contentSeen.has(step)) {
+    contentSeen.add(step);
+    setTimeout(()=> withLoader(fillFromDummy, step), 50);
+  }
 }
+
 
 
 }
@@ -1786,17 +1789,19 @@ function renderDots(){
   pager1.innerHTML = '';
   pager2.innerHTML = '';
 
-  const inP1 = idx <= IDX.contentLast;
-  const inP2 = idx >= IDX.entry
+  const inP1 = idx <= IDX.personality;
+  const inP2 = idx >= IDX.entry;
+
 ;
 
   if (inP1) {
-    // Phase 1 dots: indices 0 .. IDX.contentLast
-    for (let i = 0; i <= IDX.contentLast; i++){
+    // Phase 1 dots: indices 0 .. IDX.personality
+    for (let i = 0; i <= IDX.personality; i++){
+
       const d = document.createElement('div');
       d.classList.add('dot');
-      // Mark the final content screen as "finish" dot
-      if (slides[i].dataset && slides[i].dataset.step === 'content4') d.classList.add('finish');
+      // Mark Brand Personality as the "finish" of Phase 1
+      if (slides[i].dataset && slides[i].dataset.step === 'bp-all') d.classList.add('finish');
       if (i === idx) d.classList.add('active');
       d.onclick = () => goTo(i);
       pager1.appendChild(d);
@@ -1815,8 +1820,9 @@ function renderDots(){
 }
 
 function updateNav(){
-  const inP1 = idx <= IDX.contentLast;
+  const inP1 = idx <= IDX.personality;
   const inP2 = idx >= IDX.entry;
+
 
   // Pick the active phase's buttons
   const back = document.getElementById(inP1 ? 'backBtn1' : 'backBtn2');
@@ -1832,28 +1838,25 @@ function updateNav(){
   // - Phase 1: "Finish" on last content screen, otherwise "Next"
   // - Phase 2: "Done" on very last slide, otherwise "Next"
     if (inP1) {
-    next.textContent = (idx === IDX.contentLast) ? 'Finish' : 'Next';
-  } else {
+  next.textContent = (idx === IDX.personality) ? 'Finish' : 'Next';
+} else {
+
     // Show "Done" on the Summary screen and on the very last slide
     next.textContent = (idx === IDX.summary || idx === slides.length - 1) ? 'Done' : 'Next';
   }
 
 }
 
-
 // Phase 1 buttons
 document.getElementById('backBtn1')?.addEventListener('click', ()=> goTo(idx-1));
 document.getElementById('nextBtn1')?.addEventListener('click', ()=>{
-  if (idx === IDX.contentLast) {
+  if (idx === IDX.personality) {
     // Finish Phase 1: go to the bridge screen first
     goTo(IDX.bridge);
   } else {
     goTo(idx+1);
   }
 });
-
-
-
 
 
 // Phase 2 buttons
@@ -2431,7 +2434,7 @@ actionsAccordionHost.innerHTML = `
       chosenTemplate = key;
       syncPhoneTitle();
       renderMail();
-      goTo(IDX.finalcheck);
+      goTo(IDX.content1);
     });
   });
 
@@ -2593,7 +2596,6 @@ function inferChosenPersona(){
 
 
 /* ========= AI Generate (dummy) ========= */
-const overlay = document.getElementById('aiOverlay');
 const coOverview = document.getElementById('coOverview');
 const coMission  = document.getElementById('coMission');
 const coValues   = document.getElementById('coValues');
@@ -2730,16 +2732,23 @@ function fillFromDummy(){
   const set = DUMMY[chosenPersona][dummyIdx % DUMMY[chosenPersona].length];
   coOverview.value=set.overview; coMission.value=set.mission; coValues.value=set.values; coDiff.value=set.diff; dummyIdx++;
 }
-function withLoader(fn){ overlay.classList.add('show'); setTimeout(()=>{ fn(); overlay.classList.remove('show'); renderMail(); }, 800); }
+function withLoader(fn, step=null){
+  const slide = step ? slides[stepIndex(step)] : slides[idx];
+  const ov = slide ? slide.querySelector('.ai-overlay') : null;
+  if (ov) ov.classList.add('show');
+  setTimeout(()=>{ fn(); if (ov) ov.classList.remove('show'); renderMail(); }, 800);
+}
+
 // Attach regenerate handler to all buttons with data-regen
 document.querySelectorAll('[data-regen]').forEach(btn=>{
   const step = stepNameForElement(btn);
   btn.addEventListener('click', ()=>{
     // Show the attention animation only once when the user clicks
     animateRegenButtonsOnce(step, 'click');
-    withLoader(fillFromDummy);
+    withLoader(fillFromDummy, step); // use the overlay inside THIS screen
   });
 });
+
 
 
 

@@ -196,7 +196,53 @@ textarea#headline{
   border-radius:8px;
   margin:10px 0 8px;
 }
+/* Caption below GIF in modal */
+#gifModal .gif-caption {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #4a5568;
+  text-align: left;
+  max-width: 90%;
+  padding-left: 16px; 
+  padding-top: 20px; 
+}
 
+
+
+/* ===== Fullscreen GIF modal overrides (centered, max screen usage) ===== */
+#gifModal .phone-frame{
+  width:100%;
+  height:100%;
+  max-width:none;
+  border-radius:0;
+  border:0;
+  background:#fff;             /* match app background; no forced black */
+}
+
+#gifModal .phone-titlebar{
+  background:#f9fafb;          /* match default titlebar */
+  color:inherit;
+  border-bottom:1px solid #eef1f6;
+}
+
+#gifModal .email-preview{
+  height:calc(100% - 50px);    /* fill remaining height below titlebar */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:transparent;      /* no forced background color */
+  overflow:hidden;              /* prevent scrollbars when centering */
+}
+
+#gifModal .entry-gif{
+  max-width:92vw;               /* fit nicely within viewport */
+  max-height:92vh;
+  width:auto;
+  height:auto;
+  margin:0;                     /* let flex centering do its job */
+  object-fit:contain;           /* show full GIF without cropping */
+  border-radius:0;              /* edge-to-edge feel in fullscreen */
+}
 
   .uploader{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .drop{ border:2px dashed #bfd3ff; background:#f5f8ff; color:#0F2D56; padding:14px; border-radius:14px; cursor:pointer; display:flex; gap:12px; align-items:center; transition:.18s ease; position:relative; min-height:74px; }
@@ -460,9 +506,8 @@ textarea {
   display:none; padding:10px 14px 12px;
 }
 .acc-panel.show{ display:block }
-.acc-locked .acc-header{ color:#94a3b8; background:#f8fafc; cursor:not-allowed }
-.acc-locked .acc-header .acc-title::after{ content:" 🔒"; font-weight:800; color:#94a3b8 }
-.acc-locked .acc-panel{ display:block; background:#f9fafb }
+.acc-locked .acc-header{ color:var(--accent); background:#fff; cursor:pointer }
+.acc-locked .acc-panel{ background:#fff }
 .placeholder-row{
   display:flex; align-items:center; justify-content:space-between; gap:8px;
   padding:8px 10px; border:1px dashed var(--line); border-radius:10px;
@@ -1024,25 +1069,27 @@ textarea {
 <!-- Step: Decide Entry -->
 <section class="slide" data-step="entry">
   <div class="head">
-    <div class="h1">What's your customer journey entry point?</div>
+    <div class="h1">Where will your customer start this journey?</div>
     <div class="p">Select from common starting points to see how contacts enter your journey.</div>
   </div>
   <div class="scroll">
     <div class="card">
-      <div class="chips stacked" id="entryChips"></div>
+      <!-- NEW: Accordion that mirrors the Actions screen behavior -->
+      <div id="entryAccordion" class="accordion" aria-label="Choose an entry point to expand and select an item"></div>
+
+      <!-- Keep custom link unchanged (still locked link) -->
       <div style="margin-top:8px">
         <a id="entryCustomLink" class="add-template" role="button">+ Create Custom Entry Point 🔒</a>
-      </div>
-      <div class="right" style="margin-top:12px">
       </div>
     </div>
   </div>
 </section>
 
+
 <!-- Step: Entry Confirm -->
 <section class="slide" data-step="entryConfirm">
   <div class="head">
-    <div class="h1">Here’s how your customer journey begins</div>
+    <br><div class="h1">Here’s how your customer journey begins</div>
     <div class="p">When someone downloads your digital card and completes the vCard form, it kicks off your follow-up journey—no manual work needed.</div>
   </div>
   <div class="scroll">
@@ -1054,6 +1101,8 @@ textarea {
   alt="Journey Entry Flow GIF"
   class="entry-gif"
 />
+
+
 
 <!-- Right-aligned blue button to open the vCard peek sheet -->
 <div class="row" style="margin-top:12px;display:flex;gap:8px;align-items:center">
@@ -1537,6 +1586,29 @@ textarea {
     </div>
   </div>
 </div>
+
+<!-- GIF Modal (reuses phone modal look for consistency) -->
+<div id="gifModal" class="phone-modal" aria-hidden="true" onclick="if(event.target.id==='gifModal'){toggleGif(false)}">
+  <div class="phone-frame" onclick="event.stopPropagation()">
+    <div class="phone-titlebar">
+      <div class="dot-r"></div><div class="dot-o"></div><div class="dot-g"></div>
+      <div style="margin-left:8px;font-weight:800;color:#0F2D56">vCard Download Preview</div>
+      <button id="gifClose" class="btn small ghost" style="margin-left:auto">Close</button>
+    </div>
+    <div class="email-preview">
+      <img
+        id="gifImage"
+        src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1760747575341.gif"
+        alt="Journey Entry Flow GIF"
+        class="entry-gif"
+      />
+      
+    </div>
+    <div id="gifCaption" class="gif-caption"><b>Here’s how your customer journey begins</b><br><br>When someone downloads your digital card and completes the vCard form, it kicks off your follow-up journey—no manual work needed.</div>
+  </div>
+</div>
+
+
 
     <!-- Bottom icon tray -->
     <div class="tray" id="footer-tray">
@@ -2674,48 +2746,174 @@ document.getElementById('handoffPreviewCard')?.addEventListener('click', ()=>{
 });
 
 
-/* ========= Entry (how automation begins) ========= */
+/* ========= Entry (how automation begins) — New Accordion ========= */
+/* IMPORTANT: Mirrors look/behavior of the Actions accordion */
+/* Updated list per spec (no default selection): */
 const entryDefs = [
-  {key:'download', label:'Downloaded My Personal Digital Card', locked:false},
-  {key:'form',     label:'Submitted a Contact Form', locked:true},
-  {key:'booked',   label:'Booked a Meeting', locked:true},
-  {key:'attended', label:'Attended an Event', locked:true},
-  {key:'clicked',  label:'Clicked a Link in an Email', locked:true},
-  {key:'scanned',  label:'Scanned your vCard QR Code', locked:true},
+  { key:'download',  label:'Downloaded My Personal Digital Card', locked:false, items:[
+    { key:'vcard-form', name:'vCard Download Form', locked:false, type:'form', isVcard:true }
+  ]},
+  { key:'contact',   label:'Submitted a Contact Form 🔒', locked:true, items:[
+    { key:'form-1', name:'Form 1', locked:true, type:'form' },
+    { key:'form-2', name:'Form 2', locked:true, type:'form' },
+    { key:'form-3', name:'Form 3', locked:true, type:'form' }
+  ]},
+  { key:'meeting',   label:'Booked a Meeting 🔒', locked:true, items:[
+    { key:'meet-1', name:'Meeting Type 1', locked:true, type:'meeting' },
+    { key:'meet-2', name:'Meeting Type 2', locked:true, type:'meeting' },
+    { key:'meet-3', name:'Meeting Type 3', locked:true, type:'meeting' }
+  ]},
+  { key:'event',     label:'Registered for an Event 🔒', locked:true, items:[
+    { key:'event-1', name:'Event A', locked:true, type:'event' },
+    { key:'event-2', name:'Event B', locked:true, type:'event' },
+    { key:'event-3', name:'Event C', locked:true, type:'event' }
+  ]},
+  { key:'order',     label:'Checked-out an Order 🔒', locked:true, items:[
+    { key:'order-1', name:'Order Source 1', locked:true, type:'order' },
+    { key:'order-2', name:'Order Source 2', locked:true, type:'order' },
+    { key:'order-3', name:'Order Source 3', locked:true, type:'order' }
+  ]},
+  { key:'project',   label:'Started a Project 🔒', locked:true, items:[
+    { key:'proj-1', name:'Project Type 1', locked:true, type:'project' },
+    { key:'proj-2', name:'Project Type 2', locked:true, type:'project' },
+    { key:'proj-3', name:'Project Type 3', locked:true, type:'project' }
+  ]}
 ];
-let chosenEntry = 'download';
 
-function renderEntryChips(){
-  const host = document.getElementById('entryChips');
+/* At screen open: nothing selected by default */
+let chosenEntry = null;
+
+/* GIF modal controls (shared GIF from Entry Confirm screen) */
+const gifModal = document.getElementById('gifModal');
+const gifImage = document.getElementById('gifImage');
+function toggleGif(show){
+  if(!gifModal) return;
+  gifModal.classList.toggle('show', !!show);
+  gifModal.setAttribute('aria-hidden', show ? 'false' : 'true');
+}
+document.getElementById('gifClose')?.addEventListener('click', ()=>toggleGif(false));
+
+/* Render Entry accordion with single-open behavior, same as Actions */
+function renderEntryAccordion(){
+  const host = document.getElementById('entryAccordion');
   if(!host) return;
+
   host.innerHTML = '';
-  entryDefs.forEach(e=>{
-    const b = document.createElement('button');
-    b.className = 'chip' + (chosenEntry===e.key?' active':'');
-    b.textContent = e.label + (e.locked ? ' 🔒' : '');
-    b.style.textAlign = 'left';
-    b.onclick = ()=>{
-      if(e.locked){
-        // Show same upgrade modal but with different heading
-        const title = document.getElementById('upgTitle');
-        if(title) title.textContent = 'Unlock more ways to start your journeys.';
-        upg.classList.add('show');
-        return;
-      }
-      chosenEntry = e.key;
-      renderEntryChips();
-    };
-    host.appendChild(b);
+
+  const arrowSvg = `
+    <span class="acc-arrow" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </span>
+  `;
+
+  // Build each accordion item
+  entryDefs.forEach(def=>{
+    const item = document.createElement('div');
+    item.className = 'acc-item' + (def.locked ? ' acc-locked' : '');
+    item.setAttribute('data-ep', def.key);
+
+    item.innerHTML = `
+      <button class="acc-header" type="button" aria-expanded="false">
+        <span class="acc-title">${def.label}</span>${arrowSvg}
+      </button>
+      <div class="acc-panel" role="region" aria-label="${def.label}">
+        <div class="templates">
+          ${
+            def.items.map(it => `
+              <div class="template-row ${it.locked ? 'locked' : ''}" data-ep-item="${it.key}">
+                <div class="name">${it.name}</div>
+                <div class="actions">
+                  <button class="eye" title="${it.locked ? 'Upgrade required' : 'Preview'}" aria-label="${it.locked ? 'Upgrade required' : 'Preview'}">
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </button>
+                  <button class="choose">Choose</button>
+                </div>
+              </div>
+            `).join('')
+          }
+        </div>
+      </div>
+    `;
+
+    host.appendChild(item);
+  });
+
+  // Single-open behavior (match Actions)
+  const items = Array.from(host.querySelectorAll('.acc-item'));
+  items.forEach(it=>{
+    const header = it.querySelector('.acc-header');
+    const panel  = it.querySelector('.acc-panel');
+
+    // NOTE: Even locked headers expand (no upgrade modal on headers)
+    header.addEventListener('click', ()=>{
+      items.forEach(other=>{
+        if(other!==it){
+          other.querySelector('.acc-header')?.setAttribute('aria-expanded','false');
+          other.querySelector('.acc-panel')?.classList.remove('show');
+        }
+      });
+      const isOpen = header.getAttribute('aria-expanded') === 'true';
+      header.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      panel.classList.toggle('show', !isOpen);
+    });
+
+    // Wire up eye/choose actions inside the panel
+    panel.querySelectorAll('.template-row').forEach(row=>{
+      const isLocked = row.classList.contains('locked');
+      const rowKey   = row.getAttribute('data-ep-item');
+      const epKey    = it.getAttribute('data-ep');
+
+      // Eye behavior
+      row.querySelector('.eye')?.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if(isLocked){
+          // Items under locked entries trigger upgrade modal
+          const title = document.getElementById('upgTitle');
+          if(title) title.textContent = 'Unlock this journey entry point';
+          const msg = document.querySelector('#upgradeModal .modal p');
+          if (msg) msg.innerHTML = 'Selecting or previewing this action is available on paid plans.';
+          upg.classList.add('show');
+          return;
+        }
+
+        // For the unlocked "vCard Download Form", open the GIF
+        toggleGif(true);
+      });
+
+      // Choose behavior
+      row.querySelector('.choose')?.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if(isLocked){
+          const title = document.getElementById('upgTitle');
+          if(title) title.textContent = 'Unlock this journey entry point';
+          const msg = document.querySelector('#upgradeModal .modal p');
+          if (msg) msg.innerHTML = 'Choosing this action is available on paid plans.';
+          upg.classList.add('show');
+          return;
+        }
+
+        // Set selection (unlocked)
+        chosenEntry = epKey;           // 'download'
+        // Show the Entry Confirm screen after choose (keeps flow identical to spec)
+        goTo(IDX.entryConfirm);
+      });
+    });
   });
 }
-renderEntryChips();
 
-/* Entry footer controls */
+// Initial render: all collapsed; nothing preselected
+renderEntryAccordion();
+
+/* Keep custom link behavior (locked link) */
 document.getElementById('entryCustomLink')?.addEventListener('click', ()=>{
   const title = document.getElementById('upgTitle');
   if(title) title.textContent = 'Unlock more ways to start your journeys.';
   upg.classList.add('show');
 });
+
 
 
 

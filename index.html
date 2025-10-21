@@ -110,56 +110,6 @@ textarea#headline{
  
 
   /* vCard tiles in the inline/peek previews */
-
-  /* === Inline Profile Editor styles === */
-.editable-wrap { padding:10px 14px 16px; display:grid; gap:10px; }
-.edit-row {
-  display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-  padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:#fff;
-}
-.edit-row .left { display:flex; align-items:center; gap:10px; }
-.edit-row .labelish { font-weight:800; color:#0b1220; }
-.edit-row .value { color:#1f2937; }
-.edit-row.placeholder .value { color:#111; opacity:0.7; } /* placeholders should read clearly */
-.pencil {
-  appearance:none; border:1px solid #000; background:#000; color:#fff;
-  border-radius:10px; width:32px; height:32px; display:grid; place-items:center;
-  cursor:pointer; flex:0 0 32px;
-}
-.pencil svg { width:16px; height:16px; stroke:#fff; }
-.inline-input, .inline-textarea {
-  width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#f8fafc; font:inherit;
-}
-.inline-textarea { min-height:64px; }
-.inline-actions { display:flex; gap:10px; margin-top:8px; }
-.inline-actions .btn.small { padding:6px 10px; }
-
-.v-edit-banner {
-  position:relative; height:180px; background:#eef2f7; background-size:cover; background-position:center;
-}
-.v-edit-banner .center-pencil{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  appearance:none; border:0; background:transparent; color:#000; padding:0; display:inline-grid; place-items:center; cursor:pointer;
-}
-.v-edit-banner .center-pencil svg{ width:22px; height:22px; stroke:#000; }
-
-.v-edit-photo {
-  position:relative; width:84px; height:84px; border-radius:50%; border:3px solid #fff; background:#e9edf3; display:grid; place-items:center; color:#9aa4b2; box-shadow:0 4px 12px rgba(0,0,0,.08); background-size:cover; background-position:center;
-}
-.v-edit-photo .center-pencil{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  appearance:none; border:0; background:transparent; color:#000; padding:0; display:inline-grid; place-items:center; cursor:pointer;
-}
-.v-edit-photo .center-pencil svg{ width:22px; height:22px; stroke:#000; }
-
-
-.inline-name-twocol { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.add-social-link {
-  margin-top:8px; display:inline-block; color:#2563eb; font-weight:700; text-decoration:underline; cursor:pointer;
-}
-.social-row.inline { grid-template-columns:160px 1fr 36px; }
-
-
   .vcard{border:1px solid #e6ebf2;border-radius:18px;overflow:hidden}
   .v-banner{position:relative;height:180px;background:#dbe6ff url('https://images.unsplash.com/photo-1551817958-d33c6c9f24a1?q=80&w=1200&auto=format&fit=crop') center/cover}
   .v-banner::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,0) 50%)}
@@ -548,64 +498,80 @@ textarea {
   margin: 0 auto;          /* Centers the image */
   object-fit: contain;     /* Keeps full image visible without distortion */
 }
-/* === Inline edit affordance (plain black pencil, no box) === */
-.pencil-inline{
-  appearance:none; background:transparent; border:0; padding:0;
-  margin-left:8px; cursor:pointer; vertical-align:middle; line-height:0;
-}
-.pencil-inline svg{ width:16px; height:16px; stroke:#000; fill:none; }
+/* ===== EPV (Preview screen only) ===== */
+#epvSection .epv-edit-row{ display:flex; align-items:center; gap:8px; }
+#epvSection .epv-cell{ display:flex; align-items:center; gap:8px; flex:1 1 auto; }
+#epvSection .epv-text{ display:inline-block; }
 
-
-
-/* Make the text itself editable; show placeholder when empty */
-.editable{
-  display:inline; outline:none; border-radius:6px;
+#epvSection .epv-pencil{
+  appearance:none; border:0; background:transparent; color:#000;
+  width:24px; height:24px;
+  display:grid; place-items:center; cursor:pointer;
 }
-.editable:focus{
-  box-shadow:0 0 0 2px rgba(37,99,235,.25);
-  background:#f8fafc;
-}
-.editable[data-placeholder]:empty::before{
-  content:attr(data-placeholder);
-  color:#111; opacity:.7;
-}
-/* Hide placeholder text while the pencil-triggered focus is active */
-.editable.suppress-ph[data-placeholder]:empty::before{
-  content:"";
-}
-/* Allow “glow” even before true focus when we intentionally open two boxes */
-.editable.prefocus{
-  box-shadow:0 0 0 2px rgba(37,99,235,.25);
-  background:#f8fafc;
+#epvSection .epv-pencil svg{
+  fill:currentColor; stroke:none;
 }
 
 
-/* Align pencil to the right for list rows */
-.v-demo-row .right-pencil{
-  margin-left:auto;
+#epvSection .epv-pencil-upload{
+  appearance:none; border:1px solid var(--line); background:#fff; color:#000;
+  width:24px; height:24px; border-radius:50%;
+  display:grid; place-items:center; cursor:pointer;
+  position:absolute; right:8px; bottom:8px; transform:none;
+  opacity:1; box-shadow:0 1px 2px rgba(0,0,0,.08);
+}
+#epvSection .epv-pencil-upload.epv-small{ width:22px; height:22px; }
+#epvSection .epv-pencil-upload svg{ fill:currentColor; stroke:none; }
+#epvSection .epv-pencil-upload:hover{ background:#f8fafc; }
+
+
+
+#epvSection .v-demo-banner{ position:relative; }
+#epvSection .v-demo-photo{ position:relative; }
+
+#epvSection .epv-input{
+  width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+  background:#f8fafc; font:inherit;
+  outline:2px solid #c7d2fe; outline-offset:1px; box-shadow:0 0 0 3px var(--blue-50);
 }
 
-/* Ensure old-popup typography spacing matches */
-.v-demo-id .line{ margin:2px 0; }
+/* Two inputs for first/last name */
+#epvSection .epv-name-dual{
+  display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;
+}
 
-/* Force the Social Adder to be vertical: Dropdown > URL > Links */
-#socialAdder .stack{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:0;
+/* Social adder */
+#epvSection .epv-social-adder{ margin:8px 0 0; padding:10px; border:1px dashed var(--line); border-radius:10px; background:#f8fafc; }
+#epvSection .epv-social-actions{ display:flex; gap:8px; margin-top:8px; }
+#epvSection .epv-link{
+  appearance:none; border:0; background:transparent; color:var(--blue);
+  text-decoration:underline; font-weight:700; cursor:pointer; padding:0;
 }
-#socialAdder select,
-#socialAdder input{
-  padding:10px 12px;
-  border:1px solid var(--line);
-  background:#f8fafc;
-  border-radius:10px;
-  font:inherit;
+
+/* Social list pills */
+#epvSection .epv-social-wrap{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+#epvSection .epv-social-pill{
+  display:flex; align-items:center; gap:8px;
+  padding:8px 10px; border:1px solid var(--line); border-radius:999px; background:#fff; width:max-content;
 }
-#socialAdder .link-row{
-  display:flex;
-  gap:12px;
+#epvSection .epv-pill-remove{
+  appearance:none; border:0; background:#000; color:#fff;
+  width:24px; height:24px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
 }
+#epvSection .epv-pill-remove svg{ stroke:#fff; fill:none; stroke-width:2; }
+/* Force headshot pencil to match banner size */
+#epvSection #epvPhoto .epv-pencil-upload {
+  width: 24px !important;
+  height: 24px !important;
+  right: 8px;
+  bottom: 8px;
+}
+
+#epvSection #epvPhoto .epv-pencil-upload svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
 
 </style>
 </head>
@@ -1058,54 +1024,217 @@ textarea {
   </div>
 </section>
 
-<!-- Step: Preview & Personalize (INLINE EDITOR) -->
-<section class="slide" data-step="images">
+<section class="slide" data-step="images" id="epvSection">
   <div class="head">
-    <div class="h1">Preview & Personalize Your Profile</div>
-    <div class="p">Review your digital card below. Click ✏️ to edit.</div>
+    <div class="h1">Preview & Update Your Digital Business Card</div>
+    <div class="p">Review your details below. Click ✏️ to edit.</div>
   </div>
 
-  <div class="scroll" style="position:relative">
-    <!-- Keep a hidden banner input so existing S.banner listeners keep working -->
-    <input id="banner" type="file" accept="image/*" style="display:none" />
+  <div class="scroll">
+    <!-- Hidden file inputs (scoped IDs so we don't touch other screens) -->
+    <input id="epvBannerFile" type="file" accept="image/*" hidden>
+    <input id="epvPhotoFile"  type="file" accept="image/*" hidden>
 
     <div class="card">
-      <!-- INLINE vCard EDITOR -->
-      <div class="vcard-demo" id="profileEditorHost">
-        <!-- Gets rendered by renderProfileEditor() -->
+      <!-- Inline vCard (keeps same visual style as modal, no "Where this info appears…") -->
+      <div class="vcard-demo" id="epvCard">
+        <div class="v-demo-banner" id="epvBanner">
+          <!-- Center black pencil to upload banner -->
+          <button class="epv-pencil-upload" data-epv-upload="banner" aria-label="Upload banner" title="Upload banner">
+            <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+
+          </button>
+        </div>
+
+        <div class="v-demo-headrow">
+          <div class="v-demo-photo" id="epvPhoto">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+            <button class="epv-pencil-upload epv-small" data-epv-upload="headshot" aria-label="Upload headshot" title="Upload headshot">
+              <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+            </button>
+          </div>
+          <button class="v-demo-save" type="button">Save Contact</button>
+        </div>
+
+        <div class="v-demo-id">
+          <div class="epv-edit-row">
+            <div class="v-demo-name" id="epvName">Your Name</div>
+            <button class="epv-pencil" data-epv-edit="name" aria-label="Edit name" title="Edit name">
+              <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+            </button>
+          </div>
+
+          <div class="epv-edit-row">
+            <div class="v-demo-company" id="epvCompany">Your Company</div>
+            <button class="epv-pencil" data-epv-edit="company" aria-label="Edit company" title="Edit company">
+              <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+            </button>
+          </div>
+
+          <div class="epv-edit-row">
+            <div class="v-demo-title" id="epvTitle">Your Title</div>
+            <button class="epv-pencil" data-epv-edit="title" aria-label="Edit title" title="Edit title">
+             <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+            </button>
+          </div>
+
+          <div class="epv-edit-row">
+            <div class="v-demo-headline" id="epvHeadline">Your Headline</div>
+            <button class="epv-pencil" data-epv-edit="headline" aria-label="Edit headline" title="Edit headline">
+              <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+            </button>
+          </div>
+        </div>
+
+        <!-- Contact rows below headline -->
+        <div class="v-demo-list" id="epvList">
+          <!-- Business Email -->
+          <div class="v-demo-row">
+            <span class="icon-pill" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            </span>
+            <div class="epv-cell">
+              <span id="epvEmailBiz" class="epv-text" data-epv-field="emailBiz">Your Business Email</span>
+              <button class="epv-pencil" data-epv-edit="emailBiz" aria-label="Edit business email" title="Edit business email">
+               <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+              </button>
+            </div>
+          </div>
+
+          <!-- Personal Email -->
+          <div class="v-demo-row">
+            <span class="icon-pill" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            </span>
+            <div class="epv-cell">
+              <span id="epvEmailPersonal" class="epv-text" data-epv-field="emailPersonal">Your Personal Email</span>
+              <button class="epv-pencil" data-epv-edit="emailPersonal" aria-label="Edit personal email" title="Edit personal email">
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+              </button>
+            </div>
+          </div>
+
+          <!-- Business Phone -->
+          <div class="v-demo-row">
+            <span class="icon-pill" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.3 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.7c.1.8.3 1.6.6 2.4a2 2 0 0 1-.5 2L8.1 9.9a16 16 0 0 0 6 6l1.5-1.1a2 2 0 0 1 2.1-.5c.8.3 1.6.5 2.4.6A2 2 0 0 1 22 16.9z"/></svg>
+            </span>
+            <div class="epv-cell">
+              <span id="epvPhoneBiz" class="epv-text" data-epv-field="phoneBiz">Your Business Phone</span>
+              <button class="epv-pencil" data-epv-edit="phoneBiz" aria-label="Edit business phone" title="Edit business phone">
+               <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+              </button>
+            </div>
+          </div>
+
+          <!-- Personal Phone -->
+          <div class="v-demo-row">
+            <span class="icon-pill" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.3 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.7c.1.8.3 1.6.6 2.4a2 2 0 0 1-.5 2L8.1 9.9a16 16 0 0 0 6 6l1.5-1.1a2 2 0 0 1 2.1-.5c.8.3 1.6.5 2.4.6A2 2 0 0 1 22 16.9z"/></svg>
+            </span>
+            <div class="epv-cell">
+              <span id="epvPhonePersonal" class="epv-text" data-epv-field="phonePersonal">Your Personal Phone</span>
+              <button class="epv-pencil" data-epv-edit="phonePersonal" aria-label="Edit personal phone" title="Edit personal phone">
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+              </button>
+            </div>
+          </div>
+
+          <!-- Website -->
+          <div class="v-demo-row">
+            <span class="icon-pill" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24">
+                <path d="M8.5 14.5l-1 1a4.5 4.5 0 1 1-6.4-6.4l1-1a4.5 4.5 0 0 1 6.4 0"/>
+                <path d="M15.5 9.5l1-1a4.5 4.5 0 1 1 6.4 6.4l-1 1a4.5 4.5 0 0 1-6.4 0"/>
+                <path d="M9 12h6"/>
+              </svg>
+            </span>
+            <div class="epv-cell">
+              <span id="epvWebsite" class="epv-text" data-epv-field="website">Your Website</span>
+              <button class="epv-pencil" data-epv-edit="website" aria-label="Edit website" title="Edit website">
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+
+              </button>
+            </div>
+          </div>
+
+          <!-- + Social Media trigger -->
+          <div class="v-demo-row">
+            <span style="width:28px;height:28px;"></span>
+            <div class="epv-cell" style="display:flex;align-items:center;gap:10px">
+              <button class="epv-link" id="epvSocialToggle" data-epv-action="social-open">+ Social Media</button>
+            </div>
+          </div>
+
+          <!-- Social adder (dropdown + url + Add|Cancel) -->
+          <div id="epvSocialAdder" class="epv-social-adder" style="display:none">
+            <div class="social-row">
+              <select id="epvSocialPlatform">
+                <option value="linkedin_personal">LinkedIn (Personal)</option>
+                <option value="linkedin_business">LinkedIn (Business)</option>
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="pinterest">Pinterest</option>
+                <option value="x">X (Twitter)</option>
+                <option value="google">Google</option>
+                <option value="youtube">YouTube</option>
+                <option value="tiktok">TikTok</option>
+              </select>
+              <input id="epvSocialUrl" type="url" placeholder="https://…"/>
+            </div>
+            <div class="epv-social-actions">
+              <button class="btn small" data-epv-action="social-add">+ Add</button>
+              <button class="btn small ghost" data-epv-action="social-cancel">Cancel</button>
+            </div>
+          </div>
+
+          <!-- Where social links render -->
+          <div id="epvSocialList" class="epv-social-wrap"></div>
+        </div>
       </div>
-
-      <!-- + Social Media inline adder (hidden until '+ Social Media' is clicked) -->
-      <div id="socialAdder" style="display:none; margin-top:12px; padding:10px; border:1px dashed var(--line); border-radius:10px; background:#f8fafc">
-  <div class="label" style="margin-bottom:6px">Add a social link</div>
-
-  <!-- DROPDOWN -->
-  <div class="stack">
-    <select id="socialAdderPlatform" aria-label="Social platform">
-      <option value="linkedin_business">LinkedIn (Business)</option>
-      <option value="linkedin_personal">LinkedIn (Personal)</option>
-      <option value="facebook">Facebook</option>
-      <option value="instagram">Instagram</option>
-      <option value="youtube">YouTube</option>
-      <option value="x">X (Twitter)</option>
-      <option value="pinterest">Pinterest</option>
-      <option value="google">Google</option>
-      <option value="tiktok">TikTok</option>
-    </select>
-  </div>
-
-  <!-- URL FIELD (below the dropdown) -->
-  <div class="stack" style="margin-top:8px">
-    <input id="socialAdderUrl" type="url" placeholder="https://..." />
-  </div>
-
-  <!-- +Add / Cancel LINKS (below the URL) -->
-  <div class="link-row" style="margin-top:8px">
-    <a id="socialAdderAdd" class="link-text" style="text-decoration:none; cursor:pointer">+ Add</a>
-    <a id="socialAdderCancel" class="link-text" style="text-decoration:none; cursor:pointer">Cancel</a>
-  </div>
-</div>
-
     </div>
   </div>
 </section>
@@ -1256,11 +1385,11 @@ textarea {
       </div>
 
       <!-- Back/Next + pager (Phase 1) -->
-<div id="nav1" class="nav">
+<div id="nav1" class="nav" style="display:none">
   <button id="backBtn1" class="btn small ghost">Back</button>
   <button id="nextBtn1" class="btn small">Next</button>
 </div>
-<div id="pager1" class="pager"></div>
+<div id="pager1" class="pager" style="display:none"></div>
 
 <!-- Back/Next + pager (Phase 2) -->
 <div id="nav2" class="nav" style="display:none">
@@ -1399,8 +1528,6 @@ function goTo(i){
   // One-time regen button attention (per screen)
   const currentStep = slides[idx]?.dataset?.step || null;
   maybeAutoAnimateRegenOnEnter(currentStep);
-    if (i === IDX.images) { renderProfileEditor(); }
-
 
 
   renderDots(); updateNav();
@@ -1717,13 +1844,11 @@ const logoThumb  = document.getElementById('logoThumb');
 function readToDataURL(file, cb){ const r=new FileReader(); r.onload = e => cb(e.target.result); r.readAsDataURL(file); }
 S.photo?.addEventListener('change', ()=>{
   const f=S.photo.files?.[0]; if(!f) return;
-  readToDataURL(f, url=>{ photoUrl = url; if(photoThumb){ photoThumb.style.display='block'; photoThumb.style.backgroundImage = `url('${url}')`; } updatePreviews(); }); renderProfileEditor();
-
+  readToDataURL(f, url=>{ photoUrl = url; if(photoThumb){ photoThumb.style.display='block'; photoThumb.style.backgroundImage = `url('${url}')`; } updatePreviews(); });
 });
 S.banner?.addEventListener('change', ()=>{
   const f=S.banner.files?.[0]; if(!f) return;
-  readToDataURL(f, url=>{ bannerUrl = url; if(bannerThumb){ bannerThumb.style.display='block'; bannerThumb.style.backgroundImage = `url('${url}')`; } updatePreviews(); }); renderProfileEditor();
-
+  readToDataURL(f, url=>{ bannerUrl = url; if(bannerThumb){ bannerThumb.style.display='block'; bannerThumb.style.backgroundImage = `url('${url}')`; } updatePreviews(); });
 });
 S.logo?.addEventListener('change', ()=>{
   const f=S.logo.files?.[0]; if(!f) return;
@@ -1822,292 +1947,8 @@ function oxfordList(arr){
   if(arr.length===2) return `${arr[0]} and ${arr[1]}`;
   return `${arr.slice(0,-1).join(', ')}, and ${arr[arr.length-1]}`;
 }
-/* === Inline Profile Editor (Preview & Personalize) === */
-function pencilSvg(){
-  return `<svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M12 20h9"/>
-    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z"/>
-  </svg>`;
-}
-
-
-
-/* Map display 'fields' to existing inputs/state */
-const FIELD_MAP = {
-  firstname: () => S.firstName,
-  lastname: () => S.lastName,
-  company: () => S.company,
-  title: () => S.title,
-  headline: () => S.headline,
-  emailBiz: () => S.emailBiz,
-  emailPersonal: () => S.emailPersonal,
-  phoneBiz: () => S.phoneBiz,
-  phonePersonal: () => S.phonePersonal,
-  website: () => S.website
-};
-
-/* Placeholders (exact text requested) */
-const PLACEHOLDERS = {
-  name: 'Your Name',
-  company: 'Your Company',
-  title: 'Your Title',
-  headline: 'Your Headline',
-  emailBiz: 'Your Business Email',
-  emailPersonal: 'Your Personal Email',
-  phoneBiz: 'Your Business Phone',
-  phonePersonal: 'Your Personal Phone',
-  website: 'Your Webstie', /* keeping original misspelling as provided */
-  linkedin: 'Your LinkedIn',
-  facebook: 'Your Facebook',
-  instagram: 'Your Instagram',
-  youtube: 'Your Youtube',
-  x: 'Your X'
-};
-
-/* Core renderer – builds the inline, editable vCard */
-function renderProfileEditor() {
-  const host = document.getElementById('profileEditorHost');
-  if (!host) return;
-
-  const valOr = (v) => (v && v.trim()) ? v.trim() : '';
-  const fullName = `${valOr(S.firstName?.value)} ${valOr(S.lastName?.value)}`.trim();
-
-  // Build socials list (no placeholders; only show what exists)
-  const socialRowsHtml = socials.map((s, i) => `
-    <div class="v-demo-row" data-social-index="${i}">
-      <span class="icon-pill">${i16(socialIconKey(s.platform))}</span>
-      <span class="editable" data-field="social_${i}" data-placeholder="">${s.url || ''}</span>
-      <button class="pencil-inline right-pencil" data-social-index="${i}" aria-label="Edit social">${pencilSvg()}</button>
-    </div>
-  `).join('');
-
-  host.innerHTML = `
-    <div class="vcard-demo">
-      <div class="v-demo-banner v-edit-banner" id="oldLookBanner" style="${bannerUrl ? `background-image:url('${bannerUrl}')` : ''}">
-        <button class="center-pencil" id="editBannerBtn" aria-label="Edit banner">${pencilSvg()}</button>
-      </div>
-
-      <div class="v-demo-headrow">
-        <div class="v-demo-photo v-edit-photo" id="oldLookPhoto" style="${photoUrl ? `background-image:url('${photoUrl}')` : ''}">
-          ${photoUrl ? '' : '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>'}
-          <button class="center-pencil" id="editPhotoBtn" aria-label="Edit headshot">${pencilSvg()}</button>
-        </div>
-        <button class="v-demo-save">Save Contact</button>
-      </div>
-
-      <div class="v-demo-id">
-        <div class="v-demo-name line">
-          <span id="ed_name" class="editable" data-field="name" data-placeholder="Your Name">${fullName}</span>
-          <button class="pencil-inline" data-focus="ed_name" aria-label="Edit name">${pencilSvg()}</button>
-        </div>
-        <div class="v-demo-company line">
-          <span id="ed_company" class="editable" data-field="company" data-placeholder="Your Company">${valOr(S.company?.value)}</span>
-          <button class="pencil-inline" data-focus="ed_company" aria-label="Edit company">${pencilSvg()}</button>
-        </div>
-        <div class="v-demo-title line">
-          <span id="ed_title" class="editable" data-field="title" data-placeholder="Your Title">${valOr(S.title?.value)}</span>
-          <button class="pencil-inline" data-focus="ed_title" aria-label="Edit title">${pencilSvg()}</button>
-        </div>
-        <div class="v-demo-headline line">
-          <span id="ed_headline" class="editable" data-field="headline" data-placeholder="Your Headline">${valOr(S.headline?.value)}</span>
-          <button class="pencil-inline" data-focus="ed_headline" aria-label="Edit headline">${pencilSvg()}</button>
-        </div>
-      </div>
-
-      <div class="v-demo-list">
-        <!-- Phones -->
-        <div class="v-demo-row">
-          <span class="icon-pill">${i16('phone')}</span>
-          <span id="ed_phoneBiz" class="editable" data-field="phoneBiz" data-placeholder="Your Business Phone">${valOr(S.phoneBiz?.value)}</span>
-          <button class="pencil-inline right-pencil" data-focus="ed_phoneBiz" aria-label="Edit business phone">${pencilSvg()}</button>
-        </div>
-        <div class="v-demo-row">
-          <span class="icon-pill">${i16('phone')}</span>
-          <span id="ed_phonePersonal" class="editable" data-field="phonePersonal" data-placeholder="Your Personal Phone">${valOr(S.phonePersonal?.value)}</span>
-          <button class="pencil-inline right-pencil" data-focus="ed_phonePersonal" aria-label="Edit personal phone">${pencilSvg()}</button>
-        </div>
-
-        <!-- Emails -->
-        <div class="v-demo-row">
-          <span class="icon-pill">${i16('mail')}</span>
-          <span id="ed_emailBiz" class="editable" data-field="emailBiz" data-placeholder="Your Business Email">${valOr(S.emailBiz?.value)}</span>
-          <button class="pencil-inline right-pencil" data-focus="ed_emailBiz" aria-label="Edit business email">${pencilSvg()}</button>
-        </div>
-        <div class="v-demo-row">
-          <span class="icon-pill">${i16('mail')}</span>
-          <span id="ed_emailPersonal" class="editable" data-field="emailPersonal" data-placeholder="Your Personal Email">${valOr(S.emailPersonal?.value)}</span>
-          <button class="pencil-inline right-pencil" data-focus="ed_emailPersonal" aria-label="Edit personal email">${pencilSvg()}</button>
-        </div>
-
-        <!-- Website -->
-        <div class="v-demo-row">
-          <span class="icon-pill">${i16('link')}</span>
-          <span id="ed_website" class="editable" data-field="website" data-placeholder="Your Webstie">${valOr(S.website?.value)}</span>
-          <button class="pencil-inline right-pencil" data-focus="ed_website" aria-label="Edit website">${pencilSvg()}</button>
-        </div>
-
-        <!-- EXISTING Socials (no placeholders) -->
-        ${socialRowsHtml}
-
-        <!-- + Social Media (NO ICON before this) -->
-        <div class="v-demo-row">
-          <a id="addSocialInline" class="add-social-link">+ Social Media</a>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Image edit triggers
-  document.getElementById('editBannerBtn')?.addEventListener('click', ()=>S.banner?.click());
-  document.getElementById('editPhotoBtn')?.addEventListener('click', ()=>S.photo?.click());
-
-  // Generic pencil → focus editable & hide placeholder while focused
-  host.querySelectorAll('[data-focus]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.getAttribute('data-focus');
-      // Special handling for NAME → open two boxes (first/last)
-      if (id === 'ed_name'){ openNameDualInputs(); return; }
-
-      const el = document.getElementById(id);
-      if(el){
-        el.classList.add('suppress-ph');
-        el.focus();
-        placeCaretAtEnd(el);
-      }
-    });
-  });
-
-  // Social pencils → open adder prefilled
-  host.querySelectorAll('[data-social-index]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const i = parseInt(btn.getAttribute('data-social-index'),10);
-      const row = socials[i];
-      if (!row) return;
-      const sel = document.getElementById('socialAdderPlatform');
-      const url = document.getElementById('socialAdderUrl');
-      document.getElementById('socialAdder').style.display = 'block';
-      if (sel) sel.value = row.platform;
-      if (url) { url.value = row.url || ''; url.focus(); }
-    });
-  });
-
-  // “+ Social Media” opens adder (dropdown > URL > +Add/Cancel)
-  document.getElementById('addSocialInline')?.addEventListener('click', ()=>{
-    const sel = document.getElementById('socialAdderPlatform');
-    const url = document.getElementById('socialAdderUrl');
-    document.getElementById('socialAdder').style.display = 'block';
-    if (sel) sel.value = 'linkedin_business';
-    if (url) { url.value = ''; url.focus(); }
-  });
-
-  // Make text spans inline-editable; BLUR = save to inputs/state
-  wireInlineEditors();
-}
-
-function openNameDualInputs(){
-  // Replace the single “Your Name” span with two editable boxes
-  const line = document.querySelector('.v-demo-name.line');
-  if(!line) return;
-
-  const first = (S.firstName?.value || '').trim();
-  const last  = (S.lastName?.value  || '').trim();
-
-  line.innerHTML = `
-    <span id="ed_first" class="editable prefocus suppress-ph" data-field="firstname" data-placeholder="First Name">${first}</span>
-    <span style="display:inline-block;width:8px"></span>
-    <span id="ed_last" class="editable prefocus suppress-ph" data-field="lastname" data-placeholder="Last Name">${last}</span>
-    <button class="pencil-inline" data-focus="ed_first" aria-label="Edit first name">${pencilSvg()}</button>
-  `;
-
-  // Make them live-editable and keep your glow
-  wireInlineEditors();
-
-  // Focus the first box immediately
-  const el = document.getElementById('ed_first');
-  if (el){ el.focus(); placeCaretAtEnd(el); }
-}
-
-
-function placeCaretAtEnd(el){
-  const sel = window.getSelection(); const range = document.createRange();
-  range.selectNodeContents(el); range.collapse(false);
-  sel.removeAllRanges(); sel.addRange(range);
-}
-
-/* Split "Firstname Lastname" into S.firstName / S.lastName (best-effort) */
-function commitName(text){
-  const t = (text || '').trim().replace(/\s+/g,' ');
-  if (!t){ if (S.firstName) S.firstName.value=''; if (S.lastName) S.lastName.value=''; return; }
-  const parts = t.split(' ');
-  if (parts.length === 1){ if (S.firstName) S.firstName.value = parts[0]; if (S.lastName) S.lastName.value = ''; return; }
-  const last = parts.pop(); const first = parts.join(' ');
-  if (S.firstName) S.firstName.value = first;
-  if (S.lastName)  S.lastName.value  = last;
-}
-
-/* Apply contenteditable behavior to all .editable spans and write back to S on blur */
-function wireInlineEditors(){
-  document.querySelectorAll('#profileEditorHost .editable').forEach(el=>{
-    const field = el.getAttribute('data-field');
-    el.contentEditable = 'true';
-
-    el.addEventListener('keydown', (e)=>{
-      if (e.key === 'Enter'){ e.preventDefault(); el.blur(); }
-    });
-
-    // When focused (via pencil or click), hide placeholder pseudo
-    el.addEventListener('focus', ()=>{
-      el.classList.add('suppress-ph');
-    });
-
-    el.addEventListener('blur', ()=>{
-      const txt = (el.textContent || '').trim();
-
-      switch(field){
-        case 'name': {
-          // Support typing a full name in the single “Your Name” slot (fallback)
-          commitName(txt);
-          break;
-        }
-        case 'firstname': if (S.firstName) S.firstName.value = txt; break;
-        case 'lastname' : if (S.lastName ) S.lastName.value  = txt; break;
-
-        case 'company' : if (S.company ) S.company.value  = txt; break;
-        case 'title'   : if (S.title   ) S.title.value    = txt; break;
-        case 'headline': if (S.headline) S.headline.value = txt; break;
-
-        case 'phoneBiz'     : if (S.phoneBiz     ) S.phoneBiz.value      = txt; break;
-        case 'phonePersonal': if (S.phonePersonal) S.phonePersonal.value = txt; break;
-        case 'emailBiz'     : if (S.emailBiz     ) S.emailBiz.value      = txt; break;
-        case 'emailPersonal': if (S.emailPersonal) S.emailPersonal.value = txt; break;
-        case 'website'      : if (S.website      ) S.website.value       = txt; break;
-
-        default: {
-          // social_N indices → update socials array
-          const m = /^social_(\d+)$/.exec(field || '');
-          if (m){
-            const i = parseInt(m[1],10);
-            if (socials[i]){
-              socials[i].url = txt;
-              // if cleared, remove row
-              if (!txt){ socials.splice(i,1); }
-            }
-          }
-        }
-      }
-
-      updatePreviews();
-      renderProfileEditor();
-    });
-  });
-}
-
-
-
-
 
 /* ========= Inline vCard (Step 3) & Status ========= */
-
 function inlineRow(iconName, text){
   if(!text) return '';
   return `<div class="v-demo-row"><span class="icon-pill" aria-hidden="true">${i16(iconName)}</span><span>${text}</span></div>`;
@@ -2980,38 +2821,251 @@ document.addEventListener('input', e => {
     e.target.style.height = (e.target.scrollHeight) + 'px';
   }
 });
+/* ===== EPV: Inline, editable vCard for the Preview screen ONLY ===== */
+(function(){
+  const $ = (sel, ctx=document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
 
-// === Inline Social Adder wiring (Dropdown > URL > +Add / Cancel) ===
-(function wireSocialAdderOnce(){
-  const addBtn = document.getElementById('socialAdderAdd');
-  const cancelBtn = document.getElementById('socialAdderCancel');
-  if (!addBtn || addBtn.dataset.wired === '1') return;
-  addBtn.dataset.wired = '1';
+  // Reuse existing global state if present (do not create/rename globals)
+  const has = (o,k)=> Object.prototype.hasOwnProperty.call(o||{}, k);
+  const State = (typeof S !== 'undefined') ? S : {};
+  const Social = (typeof socials !== 'undefined') ? socials : [];
+  // Banner/headshot data URLs from existing globals if available
+  let bUrl = (typeof bannerUrl !== 'undefined') ? bannerUrl : '';
+  let pUrl = (typeof photoUrl  !== 'undefined') ? photoUrl  : '';
 
-  addBtn.addEventListener('click', (e)=>{
-    e.preventDefault();
-    const sel = document.getElementById('socialAdderPlatform');
-    const url = document.getElementById('socialAdderUrl');
-    const plat = sel?.value || '';
-    const href = (url?.value || '').trim();
-    if (!plat || !href) { url?.focus(); return; }
+  const sec = $('#epvSection');
+  if(!sec) return; // screen might not be rendered yet
 
-    // Insert ABOVE (top of list)
-    socials.unshift({ platform: plat, url: href });
+  const ui = {
+    banner:  $('#epvBanner'),
+    photo:   $('#epvPhoto'),
+    name:    $('#epvName'),
+    company: $('#epvCompany'),
+    title:   $('#epvTitle'),
+    headline:$('#epvHeadline'),
 
-    // Close adder and refresh UI
-    if (url) url.value = '';
-    document.getElementById('socialAdder').style.display = 'none';
-    updatePreviews();
-    renderProfileEditor();
+    emailBiz:        $('#epvEmailBiz'),
+    emailPersonal:   $('#epvEmailPersonal'),
+    phoneBiz:        $('#epvPhoneBiz'),
+    phonePersonal:   $('#epvPhonePersonal'),
+    website:         $('#epvWebsite'),
+
+    socialWrap:      $('#epvSocialList'),
+    socialAdder:     $('#epvSocialAdder'),
+    socialPlatform:  $('#epvSocialPlatform'),
+    socialUrl:       $('#epvSocialUrl'),
+    fileBanner:      $('#epvBannerFile'),
+    filePhoto:       $('#epvPhotoFile'),
+  };
+
+  function val(input){ return (input && typeof input.value === 'string') ? input.value.trim() : ''; }
+  function set(input, v){ if(input){ input.value = v; input.dispatchEvent(new Event('input')); } }
+
+  function textOr(el, s, ph){ if(el) el.textContent = s || ph; }
+
+  function socialIconKey(platform){
+    if(platform && platform.startsWith('linkedin')) return 'linkedin';
+    return { facebook:'facebook', instagram:'instagram', pinterest:'pinterest', x:'x', google:'google', youtube:'youtube', tiktok:'tiktok' }[platform] || 'link';
+  }
+  function i16(name){
+    switch (name) {
+      case 'phone': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.3 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.7c.1.8.3 1.6.6 2.4a2 2 0 0 1-.5 2L8.1 9.9a16 16 0 0 0 6 6l1.5-1.1a2 2 0 0 1 2.1-.5c.8.3 1.6.5 2.4.6A2 2 0 0 1 22 16.9z"/></svg>`;
+      case 'mail': return `<svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>`;
+      case 'link': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M8.5 14.5l-1 1a4.5 4.5 0 1 1-6.4-6.4l1-1a4.5 4.5 0 0 1 6.4 0"/><path d="M15.5 9.5l1-1a4.5 4.5 0 1 1 6.4 6.4l-1 1a4.5 4.5 0 0 1-6.4 0"/><path d="M9 12h6"/></svg>`;
+      case 'linkedin': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 9h4v11H4z"/><circle cx="6" cy="5" r="2"/><path d="M10 9h4v2a4 4 0 0 1 8 0v9h-4v-8a2 2 0 0 0-4 0v8h-4z"/></svg>`;
+      case 'youtube': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M22 12s0-3-.4-4.5A3 3 0 0 0 19.5 5C17.3 4.8 12 4.8 12 4.8s-5.3 0-7.5.2A3 3 0 0 0 2.4 7.5C2 9 2 12 2 12s0 3 .4 4.5A3 3 0 0 0 4.5 19c2.2.2 7.5.2 7.5.2s5.3 0 7.5-.2a3 3 0 0 0 2.1-2.5C22 15 22 12 22 12z"/><path d="M10 9l5 3-5 3z"/></svg>`;
+      case 'x': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg>`;
+      case 'instagram': return `<svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1"/></svg>`;
+      case 'facebook': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M18 2h-3a4 4 0 0 0-4 4v3H8v4h3v9h4v-9h3l1-4h-4V6a1 1 0 0 1 1-1h3z"/></svg>`;
+      case 'pinterest': return `<svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M11 19c.5-3.8 1.8-6 1.8-8 0-1.6-1.2-2.7-2.8-2.7S7.2 9.2 7.2 10.8c0 1.1.6 2.1 1.8 2.5"/></svg>`;
+      case 'google': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M12 12h8"/></svg>`;
+      case 'tiktok': return `<svg width="16" height="16" viewBox="0 0 24 24"><path d="M14 6a5 5 0 0 0 5 5"/><path d="M10 7v8.5a3.5 3.5 0 1 1-3-3.45"/></svg>`;
+    }
+    return '';
+  }
+
+  function renderEPV(){
+    // Banner & photo
+    if(ui.banner) ui.banner.style.backgroundImage = bUrl ? `url('${bUrl}')` : '';
+    if(ui.photo){
+      if(pUrl){
+        ui.photo.style.backgroundImage = `url('${pUrl}')`;
+        ui.photo.innerHTML = `<button class="epv-pencil-upload epv-small" data-epv-upload="headshot" aria-label="Upload headshot" title="Upload headshot"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+</button>`;
+
+      }else{
+        ui.photo.style.backgroundImage = '';
+        ui.photo.innerHTML = `
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+          <button class="epv-pencil-upload epv-small" data-epv-upload="headshot" aria-label="Upload headshot" title="Upload headshot"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.714 0l-1.018 1.018 3.714 3.714 1.018-1.018a2.625 2.625 0 0 0 0-3.714z"/>
+  <path d="M2.25 21.75 6.603 20.45a9 9 0 0 0 3.018-1.948l9.5-9.5-3.714-3.714-9.5 9.5A9 9 0 0 0 4.3 15.897L2.25 21.75z"/>
+</svg>
+</button>
+
+        `;
+      }
+    }
+
+    // Name/company/title/headline
+    const first = has(State,'firstName') ? val(State.firstName) : '';
+    const last  = has(State,'lastName')  ? val(State.lastName)  : '';
+    const nameText = `${first || 'Your'} ${last || 'Name'}`.trim();
+    textOr(ui.name, nameText, 'Your Name');
+    textOr(ui.company, has(State,'company') ? val(State.company) : '', 'Your Company');
+    textOr(ui.title,   has(State,'title')   ? val(State.title)   : '', 'Your Title');
+    textOr(ui.headline,has(State,'headline')? val(State.headline): '', 'Your Headline');
+
+    // Contacts (show data if present)
+    const setOr = (el, src, ph) => textOr(el, src ? src : '', ph);
+    setOr(ui.emailBiz,      has(State,'emailBiz')      ? val(State.emailBiz)      : '', 'Your Business Email');
+    setOr(ui.emailPersonal, has(State,'emailPersonal') ? val(State.emailPersonal) : '', 'Your Personal Email');
+    setOr(ui.phoneBiz,      has(State,'phoneBiz')      ? val(State.phoneBiz)      : '', 'Your Business Phone');
+    setOr(ui.phonePersonal, has(State,'phonePersonal') ? val(State.phonePersonal) : '', 'Your Personal Phone');
+    setOr(ui.website,       has(State,'website')       ? val(State.website)       : '', 'Your Website');
+
+    // Socials list as pills
+    if(ui.socialWrap){
+      const valid = Social.filter(s => s && s.url && s.url.trim());
+      ui.socialWrap.innerHTML = valid.map((s, i) => {
+        const icon = socialIconKey(s.platform);
+        return `<span class="epv-social-pill" data-idx="${i}">
+          <span aria-hidden="true">${i16(icon)}</span>
+          <a href="${s.url}" target="_blank" rel="noopener">${s.url}</a>
+          <button class="epv-pill-remove" data-epv-action="social-remove" data-idx="${i}" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        </span>`;
+      }).join('');
+    }
+  }
+
+  function startEdit(kind){
+    // Prevent multiple inputs at once
+    if($('#epvSection .epv-input')) return;
+
+    if(kind==='name'){
+      const holder = ui.name;
+      if(!holder) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'epv-name-dual';
+      const in1 = document.createElement('input');
+      const in2 = document.createElement('input');
+      [in1,in2].forEach(inp => { inp.type='text'; inp.className='epv-input'; });
+      in1.placeholder = 'First name';
+      in2.placeholder = 'Last name';
+      in1.value = has(State,'firstName') ? val(State.firstName) : '';
+      in2.value = has(State,'lastName')  ? val(State.lastName)  : '';
+      holder.replaceChildren(wrap);
+      wrap.appendChild(in1); wrap.appendChild(in2);
+      setTimeout(()=> in1.focus(), 0);
+      const commit = ()=>{
+        if(has(State,'firstName')) set(State.firstName, in1.value.trim());
+        if(has(State,'lastName'))  set(State.lastName,  in2.value.trim());
+        renderEPV(); if(typeof updatePreviews === 'function') updatePreviews();
+      };
+      in1.addEventListener('blur', ()=> setTimeout(commit,0));
+      in2.addEventListener('blur', ()=> setTimeout(commit,0));
+      [in1,in2].forEach(inp => inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); commit(); }}));
+      return;
+    }
+
+    const map = {
+      company: {el:ui.company, src: State.company, ph:'Your Company'},
+      title:   {el:ui.title,   src: State.title,   ph:'Your Title'},
+      headline:{el:ui.headline,src: State.headline,ph:'Your Headline'},
+      emailBiz:      {el:ui.emailBiz,      src: State.emailBiz,      ph:'Your Business Email', type:'email'},
+      emailPersonal: {el:ui.emailPersonal, src: State.emailPersonal, ph:'Your Personal Email', type:'email'},
+      phoneBiz:      {el:ui.phoneBiz,      src: State.phoneBiz,      ph:'Your Business Phone'},
+      phonePersonal: {el:ui.phonePersonal, src: State.phonePersonal, ph:'Your Personal Phone'},
+      website:       {el:ui.website,       src: State.website,       ph:'Your Website', type:'url'}
+    };
+    const m = map[kind]; if(!m || !m.el) return;
+
+    const input = document.createElement('input');
+    input.type = m.type || 'text';
+    input.className = 'epv-input';
+    input.placeholder = m.ph;
+    input.value = m.src ? val(m.src) : '';
+    m.el.replaceChildren(input);
+    setTimeout(()=> input.focus(), 0);
+
+    const commit = ()=>{
+      if(m.src) set(m.src, input.value.trim());
+      renderEPV(); if(typeof updatePreviews === 'function') updatePreviews();
+    };
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); input.blur(); }});
+  }
+
+  function openSocialAdder(){ if(ui.socialAdder) ui.socialAdder.style.display=''; }
+  function closeSocialAdder(){
+    if(ui.socialAdder) ui.socialAdder.style.display='none';
+    if(ui.socialPlatform) ui.socialPlatform.value = 'linkedin_business';
+    if(ui.socialUrl) ui.socialUrl.value = '';
+  }
+  function addSocial(){
+    if(!ui.socialPlatform || !ui.socialUrl) return;
+    const url = ui.socialUrl.value.trim();
+    if(!url){ closeSocialAdder(); return; }
+    Social.push({ platform: ui.socialPlatform.value, url });
+    closeSocialAdder();
+    renderEPV(); if(typeof updatePreviews === 'function') updatePreviews();
+  }
+
+  // Read file -> dataURL
+  function readFileToDataURL(file, cb){ const r=new FileReader(); r.onload = e => cb(e.target.result); r.readAsDataURL(file); }
+
+  // Event delegation only inside this section
+  sec.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button');
+    if(!btn) return;
+
+    if(btn.matches('[data-epv-edit]')){
+      startEdit(btn.getAttribute('data-epv-edit'));
+      return;
+    }
+
+    if(btn.matches('[data-epv-upload]')){
+      const kind = btn.getAttribute('data-epv-upload');
+      if(kind==='banner') ui.fileBanner?.click();
+      if(kind==='headshot') ui.filePhoto?.click();
+      return;
+    }
+
+    if(btn.matches('[data-epv-action="social-open"]')){ openSocialAdder(); return; }
+    if(btn.matches('[data-epv-action="social-cancel"]')){ closeSocialAdder(); return; }
+    if(btn.matches('[data-epv-action="social-add"]')){ addSocial(); return; }
+    if(btn.matches('[data-epv-action="social-remove"]')){
+      const idx = parseInt(btn.getAttribute('data-idx'),10);
+      if(!Number.isNaN(idx)){ Social.splice(idx,1); renderEPV(); if(typeof updatePreviews === 'function') updatePreviews(); }
+      return;
+    }
   });
 
-  cancelBtn?.addEventListener('click', (e)=>{
-    e.preventDefault();
-    const url = document.getElementById('socialAdderUrl');
-    if (url) url.value = '';
-    document.getElementById('socialAdder').style.display = 'none';
+  // File inputs (scoped)
+  ui.fileBanner?.addEventListener('change', ()=>{
+    const f = ui.fileBanner.files?.[0]; if(!f) return;
+    readFileToDataURL(f, url=>{
+      bUrl = url;
+      // Push to existing global var if present so other screens match
+      if(typeof bannerUrl !== 'undefined') bannerUrl = url;
+      renderEPV(); if(typeof updatePreviews === 'function') updatePreviews();
+    });
   });
+  ui.filePhoto?.addEventListener('change', ()=>{
+    const f = ui.filePhoto.files?.[0]; if(!f) return;
+    readFileToDataURL(f, url=>{
+      pUrl = url;
+      if(typeof photoUrl !== 'undefined') photoUrl = url;
+      renderEPV(); if(typeof updatePreviews === 'function') updatePreviews();
+    });
+  });
+
+  // Initial render on load
+  renderEPV();
 })();
 
 

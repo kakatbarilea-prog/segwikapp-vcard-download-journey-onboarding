@@ -661,6 +661,114 @@ textarea {
   height: 12px !important;
 }
 
+/* Journey infographic (Share screen) */
+.journey-visual{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:10px 12px;          /* compact to fit on one screen */
+  margin-bottom:8px;
+}
+
+.jv{
+  position:relative;
+  display:grid;
+  grid-template-columns:32px 1fr; /* icon column tighter */
+  row-gap:6px;                    /* less space between rows */
+  column-gap:10px;
+  align-items:start;
+  min-height:0;
+}
+
+/* Vertical rail that visually touches both icons */
+.jv::before{
+  content:"";
+  position:absolute;
+  left:16px;                     /* center of 32px icon column */
+  top:18px;                      /* unchanged line height start */
+  bottom:18px;                   /* unchanged line height end   */
+  width:2px;
+  background:#cfd7e7;
+  z-index:0;                     /* ensure the rail is UNDER icons/masks */
+}
+
+
+/* Icons */
+.jv-ico{
+  width:32px; height:32px;
+  display:grid; place-items:center;
+  color:var(--accent);
+  position:relative;  /* allow the mask to position inside the icon box */
+  z-index:1;          /* above the rail */
+}
+/* White mask behind the icon so the rail never visually overlaps */
+.jv-ico::after{
+  content:"";
+  position:absolute;
+  inset:4px;           /* ~24px circle inside the 32px icon box */
+  border-radius:50%;
+  background:#fff;     /* same as card background */
+  z-index:1;           /* sits above the rail, below the SVG */
+}
+/* keep the SVG above the mask */
+.jv-ico svg{ position:relative; z-index:2; }
+
+.jv-ico svg{ width:26px; height:26px; }
+
+/* Content (compact) */
+.jv-content{ min-width:0 }
+.jv-title{ font-weight:900; color:var(--accent); font-size:13px; line-height:1.25; margin:0 0 2px 0; }
+.jv-sub{ font-size:12px; color:#475569; line-height:1.35; }
+.jv-content .p{ font-size:12px; color:var(--muted); line-height:1.4; }
+
+/* Share grid: QR image left, content right */
+.share-grid{
+  display:grid;
+  grid-template-columns:128px 1fr;  /* square image + content */
+  gap:12px;
+  align-items:center;
+}
+
+/* Square QR image */
+.qr-thumb{
+  width:auto;
+  height:230px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  object-fit:cover;
+  background:#f8fafc;
+  display:block;         /* ensures margin works properly */
+  margin:0 auto;         /* <-- Centers the QR image horizontally */
+}
+
+
+/* Tighten the share heading to save space */
+.share-grid .h1{
+  font-size:16px;
+  text-align:center;   /* Centers the heading */
+}
+
+
+/* Safety: on very narrow widths, stack to keep everything visible */
+@media (max-width: 390px){
+  .share-grid{
+  display:grid;
+  grid-template-columns:1fr;  /* single column so the QR can sit centered */
+  gap:12px;
+  align-items:start;
+  justify-items:center;       /* center the QR horizontally */
+}
+
+}
+
+
+/* Share screen: two-column layout for image (left) and actions (right) */
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center}
+@media (max-width:520px){
+  .share-grid{grid-template-columns:1fr;gap:10px}
+}
+
 
 </style>
 </head>
@@ -1429,20 +1537,62 @@ textarea {
 <!-- New Step: Share vCard -->
 <section class="slide" data-step="share">
   <div class="head">
-    <div class="h1">This Is the Beginning of Your Journey</div>
-    <div class="p">You’ve set everything in motion. Your journey is ready to meet the world — share it and watch what happens next.</div>
+    <div class="h1">This Is the Beginning of Your Journey🎉</div>
+    <div class="p">You’ve built it — now share it and let your journey do the work.</div>
   </div>
   <div class="scroll" style="align-items:stretch">
-    <div class="card" style="text-align:center">
-      <img
-  src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1760983868620.png"
-  alt="Share your vCard"
-  class="share-image"
-/>
 
+    <!-- Journey Infographic (inserted above the image card) -->
+<div class="journey-visual" aria-label="Journey overview">
+  <div class="jv">
+    <!-- Row 1: Starting Point -->
+    <div class="jv-ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+        <path d="M12 22s7-4.35 7-11a7 7 0 1 0-14 0c0 6.65 7 11 7 11z"></path>
+        <circle cx="12" cy="11" r="2.5"></circle>
+      </svg>
+    </div>
+    <div class="jv-content">
+      <div class="jv-title">Starting Point</div>
+      <div class="jv-sub"><b>Entry Trigger:</b> Downloaded My Personal Digital Card</div>
+      <div class="p" style="margin:4px 0 0">
+        This is where your journey begins — when someone connects with you through this entry point, Segwik takes it from there.
+      </div>
     </div>
 
-    <div class="card" style="display:grid;grid-template-columns:1fr;gap:10px">
+    <!-- Row 2: Goal -->
+    <div class="jv-ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <circle cx="12" cy="12" r="5"></circle>
+        <circle cx="12" cy="12" r="1.5"></circle>
+      </svg>
+    </div>
+    <div class="jv-content">
+      <div class="jv-title">Goal</div>
+      <div class="jv-sub"><b>End Action:</b> Schedule a Meeting</div>
+      <div class="p" style="margin:4px 0 0">
+        This is the destination — your journey leads here when someone completes this action.
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END: Journey Infographic -->
+
+<div class="card share-grid">
+  <!-- LEFT: square QR image -->
+  <img
+    class="qr-thumb"
+    src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1761084416951.png"
+    alt="QR preview"
+    width="128" height="128"
+    loading="lazy"
+  />
+
+  <!-- RIGHT: heading + buttons -->
+  <div>
+    <div class="h1" style="margin:0 0 10px 0">Start Sharing Your vCard</div>
+    <div style="display:grid;grid-template-columns:1fr;gap:10px">
       <button class="btn full" id="copyLinkBtn" style="justify-content:center">
         <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="margin-right:6px">
           <rect x="9" y="9" width="13" height="13" rx="2"></rect>
@@ -1461,6 +1611,12 @@ textarea {
       </button>
     </div>
   </div>
+</div>
+
+
+
+
+       
 </section>
 
 

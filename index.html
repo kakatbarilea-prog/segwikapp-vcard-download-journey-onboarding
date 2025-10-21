@@ -1089,28 +1089,23 @@ textarea {
 <!-- Step: Entry Confirm -->
 <section class="slide" data-step="entryConfirm">
   <div class="head">
-    <br><div class="h1">Here’s how your customer journey begins</div>
-    <div class="p">When someone downloads your digital card and completes the vCard form, it kicks off your follow-up journey—no manual work needed.</div>
+    <div class="h1">Define Your Journey Goal</div>
+    <div class="p">Where does this journey lead? What’s the outcome you want to achieve at the end of this flow?</div>
   </div>
+
   <div class="scroll">
-    <button id="viewDownloadForm" class="btn">Preview This Customer Journey Entry Point</button>
+    <div class="card">
+      <!-- New: Journey Goal accordion (mirrors existing fold/unfold behavior) -->
+      <div id="goalAccordion" class="accordion" aria-label="Choose a journey goal to expand and select an item"></div>
 
-<!-- GIF preview of the entry flow -->
-<img
-  src="https://d34hmiuaex7c0.cloudfront.net/2952/uploads/cmaspages/gallery/galleryitem_1760747575341.gif"
-  alt="Journey Entry Flow GIF"
-  class="entry-gif"
-/>
-
-
-
-<!-- Right-aligned blue button to open the vCard peek sheet -->
-<div class="row" style="margin-top:12px;display:flex;gap:8px;align-items:center">
-  <button id="previewVCardBtn" class="btn blue" style="margin-left:auto">Preview My VCard</button>
-</div>
-
+      <!-- Locked, hyperlinked text (no modal wiring per spec) -->
+      <div style="margin-top:8px">
+        <a id="goalCustomLink" class="add-template locked" role="button">+ Custom Journey Goal 🔒</a>
+      </div>
+    </div>
   </div>
 </section>
+
 
 <section class="slide" data-step="images" id="epvSection">
   <div class="head">
@@ -1502,6 +1497,18 @@ textarea {
         </div>
       </div>
 
+            <!-- Plain Meeting Preview popup (no phone chrome; shows raw text) -->
+      <div id="meetingPreviewModal" class="modal-wrap" role="dialog" aria-modal="true" aria-labelledby="meetingPrevTitle" style="display:none">
+        <div class="modal">
+          <h3 id="meetingPrevTitle">Preview: Meeting Details</h3>
+          <pre id="meetingPrevBody" style="margin:0; white-space:pre-wrap">[meeting.agenda_items]</pre>
+          <div class="row" style="margin-top:12px">
+            <button class="btn ghost" id="meetingPrevClose">Close</button>
+          </div>
+        </div>
+      </div>
+
+
       <!-- vCard peek sheet (steps 1–2) -->
       <div id="peekProfileSheet" class="peeksheet-wrap" aria-hidden="true" onclick="if(event.target.id==='peekProfileSheet'){togglePeek(false)}">
         <div class="peeksheet" role="dialog" aria-modal="true" aria-label="vCard field preview" onclick="event.stopPropagation()">
@@ -1592,7 +1599,7 @@ textarea {
   <div class="phone-frame" onclick="event.stopPropagation()">
     <div class="phone-titlebar">
       <div class="dot-r"></div><div class="dot-o"></div><div class="dot-g"></div>
-      <div style="margin-left:8px;font-weight:800;color:#0F2D56">vCard Download Preview</div>
+      <div style="margin-left:8px;font-weight:800;color:#0F2D56">vCard Download Example Preview</div>
       <button id="gifClose" class="btn small ghost" style="margin-left:auto">Close</button>
     </div>
     <div class="email-preview">
@@ -2906,6 +2913,168 @@ function renderEntryAccordion(){
 
 // Initial render: all collapsed; nothing preselected
 renderEntryAccordion();
+
+/* ===== Goal (Define Journey Goal) Accordion ===== */
+const goalDefs = [
+  {
+    key: 'schedule',
+    label: 'Schedule a Meeting',
+    locked: false,
+    items: [
+      { key:'meet-1', name:'Meeting Type 1', locked:false },
+      { key:'meet-2', name:'Meeting Type 2', locked:false },
+      { key:'meet-3', name:'Meeting Type 3', locked:false }
+    ]
+  },
+  {
+    key: 'event',
+    label: 'Register for an Event 🔒',
+    locked: true,
+    items: [
+      { key:'event-1', name:'Event Type 1', locked:true },
+      { key:'event-2', name:'Event Type 2', locked:true },
+      { key:'event-3', name:'Event Type 3', locked:true }
+    ]
+  },
+  {
+    key: 'task',
+    label: 'Assign a Task 🔒',
+    locked: true,
+    items: [
+      { key:'task-1', name:'Task 1', locked:true },
+      { key:'task-2', name:'Task 2', locked:true },
+      { key:'task-3', name:'Task 3', locked:true }
+    ]
+  }
+];
+
+let chosenGoal = null;
+
+// Plain meeting preview modal controls
+const meetingPrevModal = document.getElementById('meetingPreviewModal');
+const meetingPrevBody  = document.getElementById('meetingPrevBody');
+const meetingPrevClose = document.getElementById('meetingPrevClose');
+function toggleMeetingPreview(show, text='[meeting.agenda_items]'){
+  if(meetingPrevBody) meetingPrevBody.textContent = text;
+  if(meetingPrevModal){
+    meetingPrevModal.style.display = show ? 'flex' : 'none';
+  }
+}
+meetingPrevClose?.addEventListener('click', ()=> toggleMeetingPreview(false));
+meetingPrevModal?.addEventListener('click', (e)=>{ if(e.target.id==='meetingPreviewModal') toggleMeetingPreview(false); });
+
+function renderGoalAccordion(){
+  const host = document.getElementById('goalAccordion');
+  if(!host) return;
+  host.innerHTML = '';
+
+  const arrowSvg = `
+    <span class="acc-arrow" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </span>
+  `;
+
+  goalDefs.forEach(def=>{
+    const item = document.createElement('div');
+    item.className = 'acc-item' + (def.locked ? ' acc-locked' : '');
+    item.setAttribute('data-goal', def.key);
+
+    item.innerHTML = `
+      <button class="acc-header" type="button" aria-expanded="false">
+        <span class="acc-title">${def.label}</span>${arrowSvg}
+      </button>
+      <div class="acc-panel" role="region" aria-label="${def.label}">
+        <div class="templates">
+          ${def.items.map(it => `
+            <div class="template-row ${it.locked ? 'locked' : ''}" data-goal-item="${it.key}">
+              <div class="name">${it.name}</div>
+              <div class="actions">
+                <button class="eye" title="${it.locked ? 'Upgrade required' : 'Preview'}" aria-label="${it.locked ? 'Upgrade required' : 'Preview'}">
+                  <svg width="18" height="18" viewBox="0 0 24 24">
+                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+                <button class="choose">Choose</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    host.appendChild(item);
+  });
+
+  // Single-open behavior (mirrors other accordions)
+  const items = Array.from(host.querySelectorAll('.acc-item'));
+  items.forEach(it=>{
+    const header = it.querySelector('.acc-header');
+    const panel  = it.querySelector('.acc-panel');
+    header.addEventListener('click', ()=>{
+      items.forEach(other=>{
+        if(other!==it){
+          other.querySelector('.acc-header')?.setAttribute('aria-expanded','false');
+          other.querySelector('.acc-panel')?.classList.remove('show');
+        }
+      });
+      const isOpen = header.getAttribute('aria-expanded') === 'true';
+      header.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      panel.classList.toggle('show', !isOpen);
+    });
+
+    // Wire up eye / choose inside each panel row
+    panel.querySelectorAll('.template-row').forEach(row=>{
+      const isLocked = row.classList.contains('locked');
+
+      // Eye: unlocked = show plain popup with raw text; locked = upgrade modal
+      row.querySelector('.eye')?.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if(isLocked){
+          const title = document.getElementById('upgTitle');
+          if(title) title.textContent = 'Unlock this journey goal';
+          const msg = document.querySelector('#upgradeModal .modal p');
+          if (msg) msg.innerHTML = 'Previewing this goal is available on paid plans.';
+          upg.classList.add('show');
+          return;
+        }
+        // Unlocked (Schedule a Meeting) — show raw text only
+        toggleMeetingPreview(true, '[meeting.agenda_items]');
+      });
+
+      // Choose: unlocked = set goal; locked = upgrade modal
+      row.querySelector('.choose')?.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if(isLocked){
+          const title = document.getElementById('upgTitle');
+          if(title) title.textContent = 'Unlock this journey goal';
+          const msg = document.querySelector('#upgradeModal .modal p');
+          if (msg) msg.innerHTML = 'Choosing this goal is available on paid plans.';
+          upg.classList.add('show');
+          return;
+        }
+                        // Save chosen goal and move to the immediate next screen
+        chosenGoal = row.getAttribute('data-goal-item'); // e.g., 'meet-1'
+        goTo(idx + 1);
+
+
+      });
+    });
+  });
+}
+
+// Initial render of the Goal accordion on the (renamed) Entry Confirm screen
+renderGoalAccordion();
+// Wire the locked custom goal link to open the upgrade modal
+document.getElementById('goalCustomLink')?.addEventListener('click', (e)=>{
+  e.preventDefault();
+  const title = document.getElementById('upgTitle');
+  if (title) title.textContent = 'Unlock custom journey goals';
+  const msg = document.querySelector('#upgradeModal .modal p');
+  if (msg) msg.innerHTML = 'Creating a custom journey goal is available on paid plans.';
+  upg.classList.add('show');
+});
+
 
 /* Keep custom link behavior (locked link) */
 document.getElementById('entryCustomLink')?.addEventListener('click', ()=>{

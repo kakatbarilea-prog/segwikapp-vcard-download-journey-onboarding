@@ -22,7 +22,7 @@
   .screen{flex:1;position:relative;background:var(--bg);height:calc(100% - var(--status-h) - var(--footer-h));overflow:hidden}
   .tray{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px;border-top:1px solid var(--line);background:#fff}
   .ibtn{padding:8px;border:1px solid var(--line);border-radius:12px;background:#f8fafc;display:grid;place-items:center}
-  .btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--accent);padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--accent);padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
   .btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
 .btn.blue:hover{background:var(--blue-700);border-color:var(--blue-700)}
 /* New CTA variants */
@@ -769,6 +769,70 @@ textarea {
   .share-grid{grid-template-columns:1fr;gap:10px}
 }
 
+/* ===== Automation Step (new screen) ===== */
+.card.disabled{
+  opacity:.55;
+  filter:grayscale(.15);
+}
+
+.card.disabled .row, 
+.card.disabled .box-sub {
+  pointer-events:none; /* Blocks only buttons and other actions */
+}
+
+
+
+.card .row.two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.card .box-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:6px;
+}
+.card .box-title{
+  font-weight:900;
+  color:var(--accent);
+  font-size:16px;
+}
+.card .box-sub{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.plus-ico{
+  appearance:none;
+  border:1px solid var(--line);
+  background:#fff;
+  width:28px; height:28px; border-radius:8px;
+  display:grid; place-items:center; cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.plus-ico:hover{ box-shadow:0 1px 6px rgba(0,0,0,.08) }
+.plus-ico:active{ transform:scale(.96) }
+.plus-ico svg{ width:16px; height:16px; }
+
+/* Fullscreen modal for EPV and generic previews */
+#epvFullModal .phone-frame,
+#autoGenericModal .phone-frame{
+  width:100%; height:100%;
+  max-width:none;
+  border-radius:0; border:0; background:#fff;
+}
+#epvFullModal .email-preview,
+#autoGenericModal .email-preview{
+  height:calc(100% - 50px);
+  display:flex; align-items:center; justify-content:center;
+  background:transparent; overflow:auto;
+}
+#epvFullModal .epv-modal-host,
+#autoGenericModal .auto-generic-host{
+  width:100%; max-width:460px; margin:0 auto; padding:14px;
+}
 
 </style>
 </head>
@@ -869,11 +933,7 @@ textarea {
   </div>
 </div>
 
-<!-- Headline as a 2-line textarea -->
-<div style="margin-top:10px">
-  <div class="label">Headline</div>
-  <textarea id="headline" placeholder="Share What You’re Known For" rows="2"></textarea>
-</div>
+
 
             </div>
 
@@ -1113,26 +1173,6 @@ textarea {
 </section>
 
 
-<!-- Step: Entry Confirm -->
-<section class="slide" data-step="entryConfirm">
-  <div class="head">
-    <div class="h1">Define Your Journey Goal</div>
-    <div class="p">Where does this journey lead? What’s the outcome you want to achieve at the end of this flow?</div>
-  </div>
-
-  <div class="scroll">
-    <div class="card">
-      <!-- New: Journey Goal accordion (mirrors existing fold/unfold behavior) -->
-      <div id="goalAccordion" class="accordion" aria-label="Choose a journey goal to expand and select an item"></div>
-
-      <!-- Locked, hyperlinked text (no modal wiring per spec) -->
-      <div style="margin-top:8px">
-        <a id="goalCustomLink" class="add-template locked" role="button">+ Custom Journey Goal 🔒</a>
-      </div>
-    </div>
-  </div>
-</section>
-
 
 <section class="slide" data-step="images" id="epvSection">
   <div class="head">
@@ -1352,14 +1392,50 @@ textarea {
   </div>
 </section>
 
+<!-- Step: Automation (AFTER EPV) -->
+<section class="slide" data-step="automation">
+  <div class="head">
+    <div class="h1">Add Automation to Your Journey Step</div>
+  </div>
 
+  <div class="scroll">
 
+    <!-- BOX 1: Visit Page -->
+    <div class="card" id="autoVisitCard">
+      <div class="box-head">
+        <div class="box-title">Visit Page</div>
+      </div>
+      <div class="box-sub">Filter: Digital Card Page</div>
 
+      <div class="row two" style="margin-top:10px">
+        <button id="autoVisitPreview" class="btn full">Preview</button>
+        <button id="autoVisitAdd" class="btn blue full">Add Touchpoint</button>
+      </div>
+    </div>
 
+    <!-- Recommended label (disappears when + is clicked) -->
+    <div id="autoRecLabel" style="font-weight:700; color:var(--accent); margin:12px 0 6px 0">Recommended&nbsp;Next&nbsp;Step</div>
 
+    <!-- BOX 2: Download File (grayed) -->
+    <div class="card disabled" id="autoRecCard" aria-disabled="true">
+      <div class="box-head">
+        <div class="box-title">Download File</div>
+        <button id="autoRecEnable" class="plus-ico" title="Enable step" aria-label="Enable step">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </div>
+      <div class="box-sub">Filter: Digital Card Document Type</div>
 
+      <div class="row two" style="margin-top:10px">
+        <button id="autoRecPreview" class="btn full">Preview</button>
+        <button id="autoRecAdd" class="btn blue full">Add Touchpoint</button>
+      </div>
+    </div>
 
-        <!-- Step: Journey — Choose actions -->
+  </div>
+</section>
+
+ <!-- Step: Journey — Choose actions -->
         <section class="slide" data-step="actions">
           <div class="head">
             <div class="h1">What should happen after the customer journey starts?</div>
@@ -1371,6 +1447,32 @@ textarea {
 </div>
           </div>
         </section>
+
+
+
+
+
+<!-- Step: Entry Confirm -->
+<section class="slide" data-step="entryConfirm">
+  <div class="head">
+    <div class="h1">Define Your Journey Goal</div>
+    <div class="p">Where does this journey lead? What’s the outcome you want to achieve at the end of this flow?</div>
+  </div>
+
+  <div class="scroll">
+    <div class="card">
+      <!-- New: Journey Goal accordion (mirrors existing fold/unfold behavior) -->
+      <div id="goalAccordion" class="accordion" aria-label="Choose a journey goal to expand and select an item"></div>
+
+      <!-- Locked, hyperlinked text (no modal wiring per spec) -->
+      <div style="margin-top:8px">
+        <a id="goalCustomLink" class="add-template locked" role="button">+ Custom Journey Goal 🔒</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 
       <!-- Step: Content + AI generate (SPLIT INTO 4 SCREENS) -->
 <!-- Screen 1: Overview -->
@@ -1784,6 +1886,39 @@ textarea {
   </div>
 </div>
 
+<!-- EPV Fullscreen Modal -->
+<div id="epvFullModal" class="phone-modal" aria-hidden="true" onclick="if(event.target.id==='epvFullModal'){toggleEpvFull(false)}">
+  <div class="phone-frame" onclick="event.stopPropagation()">
+    <div class="phone-titlebar">
+      <div class="dot-r"></div><div class="dot-o"></div><div class="dot-g"></div>
+      <div style="margin-left:8px;font-weight:800;color:#0F2D56">Digital Card Preview</div>
+      <button id="epvFullClose" class="btn small ghost" style="margin-left:auto">Close</button>
+    </div>
+    <div class="email-preview">
+      <div class="epv-modal-host" id="epvModalHost"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Generic Fullscreen Modal (Download File preview placeholder) -->
+<div id="autoGenericModal" class="phone-modal" aria-hidden="true" onclick="if(event.target.id==='autoGenericModal'){toggleAutoGeneric(false)}">
+  <div class="phone-frame" onclick="event.stopPropagation()">
+    <div class="phone-titlebar">
+      <div class="dot-r"></div><div class="dot-o"></div><div class="dot-g"></div>
+      <div style="margin-left:8px;font-weight:800;color:#0F2D56">Preview</div>
+      <button id="autoGenericClose" class="btn small ghost" style="margin-left:auto">Close</button>
+    </div>
+    <div class="email-preview">
+      <div class="auto-generic-host" id="autoGenericHost">
+        <!-- Placeholder content; we’ll refine later -->
+        <div class="card">
+          <div class="h1">Download File</div>
+          <div class="p">This is a placeholder preview. We’ll decide exactly what to show here next.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
     <!-- Bottom icon tray -->
@@ -1912,11 +2047,13 @@ const IDX = {
   handoff:       stepIndex('handoff'),
   entry:         stepIndex('entry'),
   images:        stepIndex('images'),
+  automation:    stepIndex('automation'),   // ← INSERTED NEW SCREEN
   entryConfirm:  stepIndex('entryConfirm'),
   finalcheck:    stepIndex('finalcheck'),
   summary:       stepIndex('summary'),
   share:         stepIndex('share')   // ← NEW
 };
+
 
 
 
@@ -2500,6 +2637,23 @@ actionsAccordionHost.innerHTML = `
   `;
   actionsAccordionHost.appendChild(textItem);
 
+
+// ===== 3) TASK (locked) =====
+  const visitorItem = document.createElement('div');
+  visitorItem.className = 'acc-item';
+  visitorItem.innerHTML = `
+    <button class="acc-header" type="button" aria-expanded="false">
+      <span class="acc-title">Capture Visitor Information 🔒</span>${arrowSvg}
+    </button>
+    <div class="acc-panel" role="region" aria-label="Recommended task templates">
+      <div class="templates">
+        ${lockedList(['Details 1','Details 2','Details 3'])}
+      </div>
+    </div>
+  `;
+  actionsAccordionHost.appendChild(visitorItem);
+
+
   // ===== 3) TASK (locked) =====
   const taskItem = document.createElement('div');
   taskItem.className = 'acc-item';
@@ -2514,6 +2668,7 @@ actionsAccordionHost.innerHTML = `
     </div>
   `;
   actionsAccordionHost.appendChild(taskItem);
+  
 
   // ===== 4) JOURNEY (locked) =====
   const journeyItem = document.createElement('div');
@@ -2605,12 +2760,13 @@ actionsAccordionHost.innerHTML = `
       }
     });
     row.querySelector('.choose')?.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      chosenTemplate = key;
-      syncPhoneTitle();
-      renderMail();
-      goTo(IDX.content1);
-    });
+  e.stopPropagation();
+  chosenTemplate = key;
+  syncPhoneTitle();
+  renderMail();
+  goTo(idx + 1); // proceed to whatever the next screen is
+});
+
   });
 
 // ===== Locked custom email template (opens upgrade modal) =====
@@ -2941,8 +3097,12 @@ document.getElementById('handoffPreviewCard')?.addEventListener('click', ()=>{
 /* IMPORTANT: Mirrors look/behavior of the Actions accordion */
 /* Updated list per spec (no default selection): */
 const entryDefs = [
-  { key:'download',  label:'Downloaded My Personal Digital Card', locked:false, items:[
-    { key:'vcard-form', name:'vCard Download Form', locked:false, type:'form', isVcard:true }
+  { key:'download',  label:'Visited a Page', locked:false, items:[
+    { key:'vcard-form', name:'Download Digital Business Card Page', locked:false, type:'form', isVcard:true },
+    // ===== NEW locked dummies (open upgrade modal on click) =====
+    { key:'page-1', name:'Page 1', locked:true, type:'page' },
+    { key:'page-2', name:'Page 2', locked:true, type:'page' },
+    { key:'page-3', name:'Page 3', locked:true, type:'page' }
   ]},
   { key:'contact',   label:'Submitted a Contact Form 🔒', locked:true, items:[
     { key:'form-1', name:'Form 1', locked:true, type:'form' },
@@ -2970,6 +3130,7 @@ const entryDefs = [
     { key:'proj-3', name:'Project Type 3', locked:true, type:'project' }
   ]}
 ];
+
 
 /* At screen open: nothing selected by default */
 let chosenEntry = null;
@@ -3088,8 +3249,8 @@ function renderEntryAccordion(){
 
         // Set selection (unlocked)
         chosenEntry = epKey;           // 'download'
-        // Show the Entry Confirm screen after choose (keeps flow identical to spec)
-        goTo(IDX.entryConfirm);
+        // ALWAYS go to the next screen
+        goTo(idx + 1);
       });
     });
   });
@@ -3269,6 +3430,69 @@ document.getElementById('entryCustomLink')?.addEventListener('click', ()=>{
 
 
 
+
+/* ========= Automation Step (screen after EPV) ========= */
+// Buttons
+const autoVisitPreviewBtn = document.getElementById('autoVisitPreview');
+const autoVisitAddBtn     = document.getElementById('autoVisitAdd');
+
+const autoRecLabel        = document.getElementById('autoRecLabel');
+const autoRecCard         = document.getElementById('autoRecCard');
+const autoRecEnableBtn    = document.getElementById('autoRecEnable');
+const autoRecPreviewBtn   = document.getElementById('autoRecPreview');
+const autoRecAddBtn       = document.getElementById('autoRecAdd');
+
+// EPV Fullscreen Modal (clones the EPV card)
+const epvFullModal   = document.getElementById('epvFullModal');
+const epvModalHost   = document.getElementById('epvModalHost');
+const epvFullClose   = document.getElementById('epvFullClose');
+
+function toggleEpvFull(show){
+  if(!epvFullModal) return;
+  epvFullModal.classList.toggle('show', !!show);
+  epvFullModal.setAttribute('aria-hidden', show ? 'false' : 'true');
+
+  // Always clear the modal host so no items are shown
+  if(epvModalHost) epvModalHost.innerHTML = '';
+}
+
+epvFullClose?.addEventListener('click', ()=> toggleEpvFull(false));
+
+// Generic Fullscreen Modal (placeholder for "Download File" preview)
+const autoGenericModal = document.getElementById('autoGenericModal');
+const autoGenericClose = document.getElementById('autoGenericClose');
+function toggleAutoGeneric(show){
+  if(!autoGenericModal) return;
+  autoGenericModal.classList.toggle('show', !!show);
+  autoGenericModal.setAttribute('aria-hidden', show ? 'false' : 'true');
+}
+autoGenericClose?.addEventListener('click', ()=> toggleAutoGeneric(false));
+
+// Wire buttons
+autoVisitPreviewBtn?.addEventListener('click', ()=> toggleEpvFull(true));
+autoVisitAddBtn?.addEventListener('click', ()=> goTo(idx + 1));
+
+autoRecPreviewBtn?.addEventListener('click', ()=> toggleAutoGeneric(true));
+autoRecAddBtn?.addEventListener('click', ()=> goTo(idx + 1));
+
+// Enable the second box (remove gray + hide "Recommended Next Step")
+autoRecEnableBtn?.addEventListener('click', ()=>{
+  const isEnabled = !autoRecCard.classList.contains('disabled');
+
+  if (isEnabled) {
+    // Revert to disabled state
+    autoRecCard.classList.add('disabled');
+    autoRecCard.setAttribute('aria-disabled', 'true');
+    autoRecLabel.style.display = 'block';
+    autoRecEnableBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>'; // plus icon
+  } else {
+    // Enable the card
+    autoRecCard.classList.remove('disabled');
+    autoRecCard.removeAttribute('aria-disabled');
+    autoRecLabel.style.display = 'none';
+    autoRecEnableBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14"/></svg>'; // minus icon
+  }
+});
 
 
 

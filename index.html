@@ -518,6 +518,13 @@ textarea {
   padding:8px 10px; border:1px dashed var(--line); border-radius:10px;
   color:#9aa4b2; background:#f8fafc;
 }
+.entry-heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 6px 0 4px 0;
+}
+
 .template-row .choose{
   appearance:none; border:1px solid var(--line); background:#2563eb; color:#fff;
   border-radius:8px; padding:6px 10px; font-weight:800; cursor:pointer;
@@ -1127,7 +1134,6 @@ textarea {
   </div>
 </section>
 
-
 <!-- New screen: Journey Intro (moved content + new image) -->
 <section class="slide" data-step="journeyIntro">
   <div class="head">
@@ -1149,6 +1155,32 @@ textarea {
     </div>
   </div>
 </section>
+
+
+<!-- Step: Entry Confirm -->
+<section class="slide" data-step="entryConfirm">
+  <div class="head">
+    <div class="h1">Define Your Journey Goal</div>
+    <div class="p">Where does this journey lead? What’s the outcome you want to achieve at the end of this flow?</div>
+  </div>
+
+  <div class="scroll">
+    <div class="card">
+      <!-- New: Journey Goal accordion (mirrors existing fold/unfold behavior) -->
+      <div id="goalAccordion" class="accordion" aria-label="Choose a journey goal to expand and select an item"></div>
+
+      <!-- Locked, hyperlinked text (no modal wiring per spec) -->
+      <div style="margin-top:8px">
+        <a id="goalCustomLink" class="add-template locked" role="button">+ Custom Journey Goal 🔒</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
 
 
 
@@ -1447,31 +1479,6 @@ textarea {
 </div>
           </div>
         </section>
-
-
-
-
-
-<!-- Step: Entry Confirm -->
-<section class="slide" data-step="entryConfirm">
-  <div class="head">
-    <div class="h1">Define Your Journey Goal</div>
-    <div class="p">Where does this journey lead? What’s the outcome you want to achieve at the end of this flow?</div>
-  </div>
-
-  <div class="scroll">
-    <div class="card">
-      <!-- New: Journey Goal accordion (mirrors existing fold/unfold behavior) -->
-      <div id="goalAccordion" class="accordion" aria-label="Choose a journey goal to expand and select an item"></div>
-
-      <!-- Locked, hyperlinked text (no modal wiring per spec) -->
-      <div style="margin-top:8px">
-        <a id="goalCustomLink" class="add-template locked" role="button">+ Custom Journey Goal 🔒</a>
-      </div>
-    </div>
-  </div>
-</section>
-
 
 
       <!-- Step: Content + AI generate (SPLIT INTO 4 SCREENS) -->
@@ -1977,7 +1984,7 @@ function goTo(i){
   pager2.style.display = 'none';
 
 const inP1 = idx <= IDX.personality;        // Phase 1 = welcome .. ends at Brand Personality
-const inP2 = idx >= IDX.entry;              // Phase 2 = entry .. end
+const inP2 = idx >= IDX.entryConfirm;             // Phase 2 = entry .. end
 
 
   if (inP1) {
@@ -2102,7 +2109,8 @@ function renderDots(){
   pager2.innerHTML = '';
 
   const inP1 = idx <= IDX.personality;
-  const inP2 = idx >= IDX.entry;
+  const inP2 = idx >= IDX.entryConfirm;
+
 
 ;
 
@@ -2120,7 +2128,7 @@ function renderDots(){
     }
     } else if (inP2) {
     // Phase 2 dots: indices IDX.entry .. slides.length-1
-    for (let i = IDX.entry; i < slides.length; i++) {
+for (let i = IDX.entryConfirm; i < slides.length; i++) {
       const d = document.createElement('div');
       d.classList.add('dot');
       if (i === idx) d.classList.add('active');
@@ -2133,7 +2141,7 @@ function renderDots(){
 
 function updateNav(){
   const inP1 = idx <= IDX.personality;
-  const inP2 = idx >= IDX.entry;
+  const inP2 = idx >= IDX.entryConfirm;
 
 
   // Pick the active phase's buttons
@@ -2143,7 +2151,7 @@ function updateNav(){
   if (!back || !next) return;
 
   // Back button ghosted at the start of each phase
- const isPhaseStart = inP1 ? (idx === 0) : (idx === IDX.entry);
+const isPhaseStart = inP1 ? (idx === 0) : (idx === IDX.entryConfirm);
   back.classList.toggle('ghost', isPhaseStart);
 
   // Next text:
@@ -2208,8 +2216,9 @@ document.getElementById('pager1').style.display = '';
 document.getElementById('bridgeContinue')?.addEventListener('click', ()=> goTo(IDX.journeyIntro));
 
 // Journey Intro screen → proceed to Phase 2 entry
-document.getElementById('journeySkip')?.addEventListener('click', ()=> goTo(IDX.entry));
-document.getElementById('journeyContinue')?.addEventListener('click', ()=> goTo(IDX.entry));
+document.getElementById('journeySkip')?.addEventListener('click', ()=> goTo(IDX.entryConfirm));
+document.getElementById('journeyContinue')?.addEventListener('click', ()=> goTo(IDX.entryConfirm));
+
 
 
 
@@ -3098,12 +3107,14 @@ document.getElementById('handoffPreviewCard')?.addEventListener('click', ()=>{
 /* Updated list per spec (no default selection): */
 const entryDefs = [
   { key:'download',  label:'Visited a Page', locked:false, items:[
+    { key:'heading', name:'What Page?', isHeading:true }, // not clickable
     { key:'vcard-form', name:'Download Digital Business Card Page', locked:false, type:'form', isVcard:true },
-    // ===== NEW locked dummies (open upgrade modal on click) =====
+    { key:'any-page', name:'Any Page', locked:true, type:'page' },
     { key:'page-1', name:'Page 1', locked:true, type:'page' },
     { key:'page-2', name:'Page 2', locked:true, type:'page' },
     { key:'page-3', name:'Page 3', locked:true, type:'page' }
-  ]},
+]},
+
   { key:'contact',   label:'Submitted a Contact Form 🔒', locked:true, items:[
     { key:'form-1', name:'Form 1', locked:true, type:'form' },
     { key:'form-2', name:'Form 2', locked:true, type:'form' },
@@ -3169,24 +3180,31 @@ function renderEntryAccordion(){
         <span class="acc-title">${def.label}</span>${arrowSvg}
       </button>
       <div class="acc-panel" role="region" aria-label="${def.label}">
-        <div class="templates">
+                <div class="templates">
           ${
-            def.items.map(it => `
-              <div class="template-row ${it.locked ? 'locked' : ''}" data-ep-item="${it.key}">
-                <div class="name">${it.name}</div>
-                <div class="actions">
-                  <button class="eye" title="${it.locked ? 'Upgrade required' : 'Preview'}" aria-label="${it.locked ? 'Upgrade required' : 'Preview'}">
-                    <svg width="18" height="18" viewBox="0 0 24 24">
-                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
-                      <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                  </button>
-                  <button class="choose">Choose</button>
+            def.items.map(it => it.isHeading
+              ? `
+  <div class="entry-heading">${it.name}</div>
+`
+
+              : `
+                <div class="template-row ${it.locked ? 'locked' : ''}" data-ep-item="${it.key}">
+                  <div class="name">${it.name}</div>
+                  <div class="actions">
+                    <button class="eye" title="${it.locked ? 'Upgrade required' : 'Preview'}" aria-label="${it.locked ? 'Upgrade required' : 'Preview'}">
+                      <svg width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    </button>
+                    <button class="choose">Choose</button>
+                  </div>
                 </div>
-              </div>
-            `).join('')
+              `
+            ).join('')
           }
         </div>
+
       </div>
     `;
 
@@ -3213,7 +3231,7 @@ function renderEntryAccordion(){
     });
 
     // Wire up eye/choose actions inside the panel
-    panel.querySelectorAll('.template-row').forEach(row=>{
+    panel.querySelectorAll('.template-row:not(.is-heading)').forEach(row=>{
       const isLocked = row.classList.contains('locked');
       const rowKey   = row.getAttribute('data-ep-item');
       const epKey    = it.getAttribute('data-ep');
@@ -3369,7 +3387,7 @@ function renderGoalAccordion(){
     });
 
     // Wire up eye / choose inside each panel row
-    panel.querySelectorAll('.template-row').forEach(row=>{
+panel.querySelectorAll('.template-row:not(.is-heading)').forEach(row=>{
       const isLocked = row.classList.contains('locked');
 
       // Eye: unlocked = show plain popup with raw text; locked = upgrade modal

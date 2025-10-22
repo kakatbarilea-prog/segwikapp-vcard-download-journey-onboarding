@@ -786,6 +786,8 @@ textarea {
 .card.disabled .box-sub {
   pointer-events:none; /* Blocks only buttons and other actions */
 }
+/* Ensure Next Step action buttons are always clickable */
+.action-grid .action-btn { pointer-events:auto; }
 
 
 
@@ -822,6 +824,54 @@ textarea {
 .plus-ico:hover{ box-shadow:0 1px 6px rgba(0,0,0,.08) }
 .plus-ico:active{ transform:scale(.96) }
 .plus-ico svg{ width:16px; height:16px; }
+
+/* ===== Next Step screen ===== */
+.action-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+@media (max-width:520px){ .action-grid{ grid-template-columns:1fr; } }
+
+.action-btn{
+  appearance:none;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:12px;
+  padding:10px 12px;
+  text-align:left;
+  font-weight:800;
+  color:var(--accent);
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+}
+.action-btn:hover{ background:#f8fafc; }
+
+.action-badge{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12px; font-weight:800; color:#065f46; background:#d1fae5;
+  border:1px solid #a7f3d0; padding:2px 8px; border-radius:999px;
+}
+
+.action-summary{
+  margin-top:6px; font-size:12px; color:#475569; font-weight:600;
+}
+
+#actionConfigBody .row{ display:grid; gap:8px; margin-bottom:10px; }
+#actionConfigBody .row.two{ grid-template-columns:1fr 1fr; }
+#actionConfigBody label{ font-size:12px; color:var(--muted); font-weight:800; }
+#actionConfigBody select, #actionConfigBody input[type="text"], #actionConfigBody textarea{
+  width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#f8fafc; font:inherit;
+}
+#actionConfigBody textarea{ min-height:110px; }
+#actionConfigBody .tabs{ display:flex; gap:8px; margin-bottom:8px; }
+#actionConfigBody .tab{ padding:8px 10px; border:1px solid var(--line); background:#fff; border-radius:999px; cursor:pointer; font-weight:800; }
+#actionConfigBody .tab.active{ background:#eff6ff; border-color:#c7d2fe; }
+#actionConfigBody .addlink{ color:var(--blue); text-decoration:underline; cursor:pointer; font-weight:700; }
+
 
 /* Fullscreen modal for EPV and generic previews */
 #epvFullModal .phone-frame,
@@ -1602,7 +1652,66 @@ textarea {
 </section>
 
       
- 
+ <!-- Step: Next Step (configure post-goal actions) -->
+<div class="slide" data-step="nextstep">
+  <div class="head">
+    <div class="h1">Set the Next Step in This Journey</div>
+    <div class="p">Choose what should happen whether the customer reaches the goal or not. Click any option to configure it.</div>
+  </div>
+
+  <div class="scroll">
+    <!-- Success box -->
+    <div class="card">
+      <div class="box-head">
+        <div class="box-title">🟢 If customer <i>reaches</i> this goal</i></div>
+      </div>
+
+      <div class="action-grid" id="nextSuccessGrid">
+        <button class="action-btn" data-scope="success" data-action="updateAttribute">Update Attribute</button>
+        <button class="action-btn" data-scope="success" data-action="startJourney">Start Another Journey</button>
+        <button class="action-btn" data-scope="success" data-action="sendEmail">Send Email</button>
+        <button class="action-btn" data-scope="success" data-action="sendText">Send Text</button>
+        <button class="action-btn" data-scope="success" data-action="assignTask">Assign a Task</button>
+        <button class="action-btn" data-scope="success" data-action="notifyTeam">Notify Team Member</button>
+        <button class="action-btn" data-scope="success" data-action="addAudience">Add to an Audience</button>
+        <button class="action-btn" data-scope="success" data-action="endJourney">End Journey</button>
+      </div>
+    </div>
+
+    <!-- Failure box -->
+    <div class="card">
+      <div class="box-head">
+        <div class="box-title">🔴 If customer <i>does not reach</i> this goal</div>
+      </div>
+
+      <div class="action-grid" id="nextFailureGrid">
+        <button class="action-btn" data-scope="failure" data-action="updateAttribute">Update Attribute</button>
+        <button class="action-btn" data-scope="failure" data-action="startJourney">Start Another Journey</button>
+        <button class="action-btn" data-scope="failure" data-action="sendEmail">Send Email</button>
+        <button class="action-btn" data-scope="failure" data-action="sendText">Send Text</button>
+        <button class="action-btn" data-scope="failure" data-action="assignTask">Assign a Task</button>
+        <button class="action-btn" data-scope="failure" data-action="notifyTeam">Notify Team Member</button>
+        <button class="action-btn" data-scope="failure" data-action="addAudience">Add to an Audience</button>
+        <button class="action-btn" data-scope="failure" data-action="endJourney">End Journey</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reusable Action Config Modal -->
+<div class="modal-wrap" id="actionConfigWrap" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="actionConfigTitle">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
+      <h3 id="actionConfigTitle" style="margin:0">Configure Action</h3>
+      <div style="display:flex; gap:6px;">
+        <button class="btn small blue" id="actionConfigSubmit">Submit</button>
+        <button class="btn small" id="actionConfigClose">Close</button>
+      </div>
+    </div>
+    <div id="actionConfigBody"></div>
+  </div>
+</div>
+
 
 
 
@@ -2054,12 +2163,17 @@ const IDX = {
   handoff:       stepIndex('handoff'),
   entry:         stepIndex('entry'),
   images:        stepIndex('images'),
-  automation:    stepIndex('automation'),   // ← INSERTED NEW SCREEN
+  automation:    stepIndex('automation'),
   entryConfirm:  stepIndex('entryConfirm'),
   finalcheck:    stepIndex('finalcheck'),
+
+  /* 👇 NEW SCREEN goes here (after Final Check, before Summary) */
+  nextstep:      stepIndex('nextstep'),
+
   summary:       stepIndex('summary'),
-  share:         stepIndex('share')   // ← NEW
+  share:         stepIndex('share')
 };
+
 
 
 
@@ -4028,6 +4142,341 @@ document.addEventListener('input', e => {
   renderEPV();
 })();
 
+/* ===== Next Step: robust click delegation (hotfix) =====
+   Ensures buttons remain clickable even if the slide is injected later
+   or if the original listeners missed (e.g., DOM not ready). */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.action-btn');
+  if (!btn) return;
+
+  const scope = btn.getAttribute('data-scope');
+  const action = btn.getAttribute('data-action');
+  if (!scope || !action) return;
+
+  // If modal DOM isn’t present (e.g., pasted in the wrong place), bail gracefully
+  if (!document.getElementById('actionConfigWrap')) return;
+
+  // Use the same openAction you already have
+  openAction(scope, action);
+}, true); // capture = true makes it extra reliable across nested elements
+
+
+/* State bucket: everything the user configures here is stored */
+const NextStepConfig = {
+  success: {},   // e.g. { sendEmail: {...}, updateAttribute: {...} }
+  failure: {}
+};
+
+/* Option sets (stub/example lists – replace with real data later) */
+const OPTIONS = {
+  attributes: ['Contact Type','Lifecycle Stage','Tags','Lead Source','Owner'],
+  attributeOps: ['Set','Add','Remove','Clear'],
+  journeys: ['Welcome Nurture','Reactivation','Upsell: Pro','Post-Event Follow-up'],
+  emailTemplates: ['Thanks + Next Steps','We Missed You','Winback Offer'],
+  smsTemplates: ['Short Thank You','Reminder 24h','Winback SMS'],
+  tasks: ['Call Back','Prepare Proposal','QA Account','Book Demo'],
+  assignTo: ['Contact','Me','Team Member'],
+  teamMembers: ['Alex Rivera','Jordan Lee','Taylor Kim','Morgan Chen'],
+  audiences: ['Newsletter','VIP Clients','Beta Testers','Local Leads']
+};
+
+/* DOM refs for the reusable modal */
+const actionWrap   = document.getElementById('actionConfigWrap');
+const actionBody   = document.getElementById('actionConfigBody');
+const actionTitle  = document.getElementById('actionConfigTitle');
+const actionSubmit = document.getElementById('actionConfigSubmit');
+const actionClose  = document.getElementById('actionConfigClose');
+
+/* Context of the open modal */
+let actionCtx = { scope:null, action:null };
+
+/* Helpers */
+function openAction(scope, action){
+  actionCtx = { scope, action };
+  actionTitle.textContent = `Configure: ${labelForAction(action)} (${scope === 'success' ? 'Goal reached' : 'Goal not reached'})`;
+  renderActionForm(action);
+  actionWrap.classList.add('show');
+  actionWrap.setAttribute('aria-hidden','false');
+}
+function closeAction(){
+  actionWrap.classList.remove('show');
+  actionWrap.setAttribute('aria-hidden','true');
+  actionBody.innerHTML = '';
+}
+
+function labelForAction(action){
+  return ({
+    updateAttribute: 'Update Attribute',
+    startJourney:    'Start Another Journey',
+    sendEmail:       'Send Email',
+    sendText:        'Send Text',
+    assignTask:      'Assign a Task',
+    notifyTeam:      'Notify Team Member',
+    addAudience:     'Add to an Audience',
+    endJourney:      'End Journey'
+  })[action] || action;
+}
+
+function sel(name, list){
+  return `
+    <label>${name}</label>
+    <select data-field="${name}">
+      ${list.map(v=>`<option value="${v}">${v}</option>`).join('')}
+    </select>
+  `;
+}
+function input(name, ph=''){
+  return `
+    <label>${name}</label>
+    <input type="text" data-field="${name}" placeholder="${ph}">
+  `;
+}
+function textarea(name, ph=''){
+  return `
+    <label>${name}</label>
+    <textarea data-field="${name}" placeholder="${ph}"></textarea>
+  `;
+}
+
+function renderActionForm(action){
+  // default: simple row container
+  let html = '';
+
+  if(action === 'updateAttribute'){
+    html = `
+      <div class="row two">
+        <div>${sel('Attribute', OPTIONS.attributes)}</div>
+        <div>${sel('Operation', OPTIONS.attributeOps)}</div>
+      </div>
+      <div class="row">
+        ${input('Value', 'Type the new value, tag, etc.')}
+      </div>
+    `;
+  }
+
+  else if(action === 'startJourney'){
+    html = `
+      <div class="row">
+        ${sel('Journey', OPTIONS.journeys)}
+      </div>
+    `;
+  }
+
+  else if(action === 'sendEmail'){
+    html = `
+      <div class="row">
+        ${sel('Template', OPTIONS.emailTemplates)}
+      </div>
+      <div class="row">
+        <span class="addlink" id="addEmailTLink">+ Add Email Template</span>
+      </div>
+      <div class="row" id="newEmailTBox" style="display:none;">
+        ${textarea('New Template', 'Write your email template here...')}
+      </div>
+    `;
+  }
+
+  else if(action === 'sendText'){
+    html = `
+      <div class="row">
+        ${sel('Template', OPTIONS.smsTemplates)}
+      </div>
+      <div class="row">
+        <span class="addlink" id="addSmsTLink">+ Add Text Template</span>
+      </div>
+      <div class="row" id="newSmsTBox" style="display:none;">
+        ${textarea('New SMS Template', 'Write your SMS template here...')}
+      </div>
+    `;
+  }
+
+  else if(action === 'assignTask'){
+    html = `
+      <div class="row">
+        ${sel('Task', OPTIONS.tasks)}
+      </div>
+      <div class="row two">
+        <div>${sel('Assign To', OPTIONS.assignTo)}</div>
+        <div>${sel('Team Member', OPTIONS.teamMembers)}</div>
+      </div>
+    `;
+  }
+
+  else if(action === 'notifyTeam'){
+    html = `
+      <div class="tabs">
+        <button class="tab active" data-tab="email">Email</button>
+        <button class="tab" data-tab="text">Text</button>
+      </div>
+      <div class="row" data-pane="email">
+        ${sel('Email Template', OPTIONS.emailTemplates)}
+      </div>
+      <div class="row" data-pane="email">
+        <span class="addlink" id="addTeamEmailT">+ Add From Scratch</span>
+      </div>
+      <div class="row" id="newTeamEmailBox" style="display:none;" data-pane="email">
+        ${textarea('New Email Template', 'Write your email to team member...')}
+      </div>
+
+      <div class="row" data-pane="text" style="display:none;">
+        ${sel('Text Template', OPTIONS.smsTemplates)}
+      </div>
+      <div class="row" data-pane="text" style="display:none;">
+        <span class="addlink" id="addTeamSmsT">+ Add From Scratch</span>
+      </div>
+      <div class="row" id="newTeamSmsBox" style="display:none;" data-pane="text">
+        ${textarea('New Text Template', 'Write your SMS to team member...')}
+      </div>
+
+      <div class="row">
+        ${sel('Team Member', OPTIONS.teamMembers)}
+      </div>
+    `;
+  }
+
+  else if(action === 'addAudience'){
+    html = `
+      <div class="row">
+        ${sel('Audience', OPTIONS.audiences)}
+      </div>
+    `;
+  }
+
+  else if(action === 'endJourney'){
+    html = `
+      <div class="row">
+        <div class="p">Are you sure you want to end the journey at this point?</div>
+      </div>
+    `;
+  }
+
+  actionBody.innerHTML = html;
+
+  // wire “+ Add …” links
+  const addEmailTLink = document.getElementById('addEmailTLink');
+  if(addEmailTLink){
+    addEmailTLink.addEventListener('click', ()=>{
+      const box = document.getElementById('newEmailTBox');
+      if(box) box.style.display = '';
+    });
+  }
+  const addSmsTLink = document.getElementById('addSmsTLink');
+  if(addSmsTLink){
+    addSmsTLink.addEventListener('click', ()=>{
+      const box = document.getElementById('newSmsTBox');
+      if(box) box.style.display = '';
+    });
+  }
+  const addTeamEmailT = document.getElementById('addTeamEmailT');
+  if(addTeamEmailT){
+    addTeamEmailT.addEventListener('click', ()=>{
+      const box = document.getElementById('newTeamEmailBox');
+      if(box) box.style.display = '';
+    });
+  }
+  const addTeamSmsT = document.getElementById('addTeamSmsT');
+  if(addTeamSmsT){
+    addTeamSmsT.addEventListener('click', ()=>{
+      const box = document.getElementById('newTeamSmsBox');
+      if(box) box.style.display = '';
+    });
+  }
+
+  // tabs (email/text) for Notify Team
+  actionBody.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      actionBody.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      const key = t.getAttribute('data-tab');
+      actionBody.querySelectorAll('[data-pane]').forEach(p=>{
+        p.style.display = (p.getAttribute('data-pane') === key) ? '' : 'none';
+      });
+    });
+  });
+}
+
+function collectFormData(){
+  // Read all inputs/selects/textarea with data-field into object
+  const data = {};
+  actionBody.querySelectorAll('[data-field]').forEach(el=>{
+    const k = el.getAttribute('data-field');
+    data[k] = (el.tagName === 'SELECT') ? el.value : (el.value || '').trim();
+  });
+
+  // Extras for notifyTeam tabs
+  const activeTab = actionBody.querySelector('.tab.active')?.getAttribute('data-tab');
+  if(activeTab) data['Channel'] = activeTab;
+
+  return data;
+}
+
+function summarize(action, data){
+  // Create short, human-readable summary shown under the button
+  switch(action){
+    case 'updateAttribute': return `${data['Operation']} ${data['Attribute']}${data['Value']?` → "${data['Value']}"`:''}`;
+    case 'startJourney':    return `Journey: ${data['Journey']}`;
+    case 'sendEmail':       return data['New Template'] ? 'Custom Email Template' : `Template: ${data['Template']}`;
+    case 'sendText':        return data['New SMS Template'] ? 'Custom Text Template' : `Template: ${data['Template']}`;
+    case 'assignTask':      return `Task: ${data['Task']} → ${data['Assign To']}${data['Team Member']?` (${data['Team Member']})`:''}`;
+    case 'notifyTeam':      return `${data['Channel'] === 'text' ? 'Text' : 'Email'} → ${data['Team Member'] || 'Team Member'}`;
+    case 'addAudience':     return `Audience: ${data['Audience']}`;
+    case 'endJourney':      return 'Journey will end';
+    default: return 'Configured';
+  }
+}
+
+function renderActionSummaries(){
+  // Apply summaries into each button area as a small badge + line
+  ['success','failure'].forEach(scope=>{
+    const grid = document.getElementById(scope==='success' ? 'nextSuccessGrid' : 'nextFailureGrid');
+    if(!grid) return;
+    grid.querySelectorAll('.action-btn').forEach(btn=>{
+      const key = btn.getAttribute('data-action');
+      // remove old summary rows
+      btn.nextElementSibling?.classList?.contains('action-summary') && btn.nextElementSibling.remove();
+      const data = NextStepConfig[scope][key];
+      if(data){
+        // badge inline on button
+        btn.innerHTML = `${labelForAction(key)} <span class="action-badge">Configured</span>`;
+        // summary line under button
+        const s = document.createElement('div');
+        s.className = 'action-summary';
+        s.textContent = summarize(key, data);
+        grid.insertBefore(s, btn.nextSibling);
+      } else {
+        btn.innerHTML = labelForAction(key);
+      }
+    });
+  });
+}
+
+/* Open/Close */
+actionClose?.addEventListener('click', closeAction);
+actionWrap?.addEventListener('click', (e)=>{ if(e.target === actionWrap) closeAction(); });
+
+/* Submit: store config + paint summary */
+actionSubmit?.addEventListener('click', ()=>{
+  const data = collectFormData();
+  const { scope, action } = actionCtx || {};
+  if(!scope || !action) return;
+  // For End Journey, store a simple flag
+  NextStepConfig[scope][action] = (action === 'endJourney') ? { confirm:true } : data;
+  renderActionSummaries();
+  closeAction();
+});
+
+/* Delegate clicks from both grids */
+document.getElementById('nextSuccessGrid')?.addEventListener('click', (e)=>{
+  const b = e.target.closest('.action-btn'); if(!b) return;
+  openAction(b.getAttribute('data-scope'), b.getAttribute('data-action'));
+});
+document.getElementById('nextFailureGrid')?.addEventListener('click', (e)=>{
+  const b = e.target.closest('.action-btn'); if(!b) return;
+  openAction(b.getAttribute('data-scope'), b.getAttribute('data-action'));
+});
+
+/* Repaint on load (in case of persisted state later) */
+renderActionSummaries();
 
 
 /* ========= Init ========= */
